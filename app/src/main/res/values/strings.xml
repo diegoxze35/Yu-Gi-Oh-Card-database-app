@@ -1,0 +1,14 @@
+<resources>
+	<string name="app_name">Yu-Gi-Oh!</string>
+	<string name="text_button_load_cards">Load more cards</string>
+	<string name="loading_message">Getting more cards</string>
+	<string name="searching_message"> searching… </string>
+	<string name="not_result_search"> Not found </string>
+	<string name="search_message">Press Enter to search in Database</string>
+	<string name="menu_main_activity_my_decks">My Decks</string>
+	<string name="menu_main_activity_advanced_search">Advanced Search</string>
+	<string name="ocg_ban_list">OCG</string>
+	<string name="tcg_ban_list">TCG</string>
+	<string name="pendulum_scale">Scale</string>
+	<!--<string name="title_toolbar">Yu-Gi-Oh!\nCard database</string>-->
+</resources>
