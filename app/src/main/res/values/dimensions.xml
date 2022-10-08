@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<!-- Size for image card in recyclerview -->
-		<dimen name="width_small_card_image"> 110dp </dimen>
-		<dimen name="height_small_card_image"> 170dp </dimen>
-</resources>
