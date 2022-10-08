@@ -5,76 +5,115 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import retrofit2.Response
-import java.util.Stack
 import javax.inject.Inject
-import kotlin.random.Random
 
 //class using for use case
 
 class CardProvider @Inject constructor(private val service: YuGiOhApi, private val gson: Gson) {
 	
-	private val stack: Stack<Set<Long>> = Stack()
-	
 	companion object {
 		private const val MIN = 0L
+		private var isInit = false
+		private lateinit var jsonObject: JsonObject
+		private val MAX by lazy {
+			jsonObject.getAsJsonObject("meta").get("total_rows").asLong
+		}
 	}
+	
+	private val mutex = Mutex()
+	
+	private lateinit var job1: Job
+	private lateinit var job2: Job
+	
+	private lateinit var list1: List<Long>
+	private lateinit var list2: List<Long>
+	private var listResult: MutableList<Card> = mutableListOf()
 	
 	suspend fun getListRandomCards(): List<Card>? {
-		val currentList = mutableListOf<Card>()
+		listResult.clear()
 		return withContext(Dispatchers.IO) {
-			lateinit var response: Response<JsonObject>
-			while (currentList.size < 10) {
-				if (stack.empty()) {
-					response = service.randomCard(offset = 0L)
-					if (!response.isSuccessful || response.body() == null) return@withContext null
-					val jsonObject = response.body()!!
-					val max = jsonObject.getAsJsonObject("meta").get("total_rows").asLong
-					stack.push(getFirstSet(max))
+			if (!isInit) {
+				val sequence by lazy {
+					generateSequence(MIN) {
+						if (it != MAX) return@generateSequence it + 1
+						null
+					}
 				}
-				getRandoms().forEach {
-					response = service.randomCard(offset = it)
-					if (!response.isSuccessful || response.body() == null) return@withContext null
-					currentList.add(
-						gson.fromJson(
-							response.body()!!.getAsJsonArray("data")[0],
-							Card::class.java
-						)
-					)
-				}
+				val response = service.randomCard(offset = MIN)
+				if (!response.isSuccessful || (response.body())?.also { jsonObject = it } == null)
+					return@withContext null
+				val allNumbers = sequence.toList()
+				val index = ((allNumbers.size / 2) + 1)
+				list1 = allNumbers.subList(0, index).shuffled()
+				list2 = allNumbers.subList(index, allNumbers.size).shuffled()
+				isInit = true
 			}
-			return@withContext currentList
+			if (list1.isEmpty() && list2.isEmpty()) {
+				isInit = false
+				return@withContext getListRandomCards()
+			}
+			job1 = async { getCardsList1() }
+			job2 = async { getCardsList2() }
+			joinAll(job1, job2)
+			if (listResult.size != 10) { //fail api call
+				listResult.clear()
+				return@withContext null
+			}
+			listResult
 		}
 	}
 	
-	private fun getFirstSet(max: Long): Set<Long> = generateSequence(MIN) {
-		if (it < max) return@generateSequence it + 1
-		null
-	}.toSet()
-	
-	private fun getRandoms(): Set<Long> {
-		val random = Random(System.currentTimeMillis())
-		val currentSet = stack.peek()
-		if (currentSet.size <= 5)
-			return stack.pop()
-		val currentSetWithoutFirstAndLast = currentSet.run {
-			minusElement(currentSet.first()).minusElement(currentSet.last())
-		}
-		stack[stack.size - 1] -= currentSetWithoutFirstAndLast
-		val numberRandom =
-			(currentSetWithoutFirstAndLast.first() + 1 until currentSetWithoutFirstAndLast.last()).random(random)
-		stack.apply {
-			if (numberRandom % 2L == 0L) {
-				push((currentSetWithoutFirstAndLast.first() until numberRandom).toSet())
-				push((numberRandom + 1..currentSetWithoutFirstAndLast.last()).toSet())
-			} else {
-				push((numberRandom + 1..currentSetWithoutFirstAndLast.last()).toSet())
-				push((currentSetWithoutFirstAndLast.first() until numberRandom).toSet())
+	private suspend fun getCardsList1() {
+		var index = 0L
+		list1.takeLastWhile {
+			index++ < 5L
+		}.also { reduceList ->
+			list1 = list1.filter { it !in reduceList }
+		}.map {
+			val response = service.randomCard(offset = it)
+			if (!response.isSuccessful || response.body() == null) {
+				job2.cancel()
+				return
 			}
+			val card = gson.fromJson(
+				response.body()!!.getAsJsonArray("data")[0],
+				Card::class.java
+			)
+			addCardMutex(card)
 		}
-		return setOf(numberRandom)
+	}
+	
+	
+	private suspend fun getCardsList2() {
+		var index = 0L
+		list2.takeLastWhile {
+			index++ < 5L
+		}.also { reduceList ->
+			list2 = list2.filter { it !in reduceList }
+		}.map {
+			val response = service.randomCard(offset = it)
+			if (!response.isSuccessful || response.body() == null) {
+				job1.cancel()
+				return
+			}
+			val card = gson.fromJson(
+				response.body()!!.getAsJsonArray("data")[0],
+				Card::class.java
+			)
+			addCardMutex(card)
+		}
+	}
+	
+	private suspend fun addCardMutex(card: Card) {
+		mutex.withLock {
+			listResult.add(card)
+		}
 	}
 	
 	suspend fun searchCard(query: String): List<Card>? {
