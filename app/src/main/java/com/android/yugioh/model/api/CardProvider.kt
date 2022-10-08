@@ -61,10 +61,7 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 			job1 = async { getCardsList1() }
 			job2 = async { getCardsList2() }
 			joinAll(job1, job2)
-			if (listResult.size != 10) { //fail api call
-				listResult.clear()
-				return@withContext null
-			}
+			
 			listResult
 		}
 	}
