@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.sync.Mutex
@@ -28,8 +27,6 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 	
 	private val mutex = Mutex()
 	
-	private lateinit var job1: Job
-	private lateinit var job2: Job
 	
 	private lateinit var list1: List<Long>
 	private lateinit var list2: List<Long>
@@ -58,24 +55,41 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 				isInit = false
 				return@withContext getListRandomCards()
 			}
-			job1 = async { getCardsList1() }
-			job2 = async { getCardsList2() }
+			val job1 = async {
+				var index = 0
+				randomCardsList(
+					list1.takeWhile {
+						index++ < 5
+					}.also { reduceList ->
+						list1 = list1.filter { it !in reduceList }
+					}
+				)
+			}
+			val job2 = async {
+				var index = 0
+				randomCardsList(
+					list2.takeWhile {
+						index++ < 5
+					}.also { reduceList ->
+						list2 = list2.filter { it !in reduceList }
+					}
+				)
+			}
 			joinAll(job1, job2)
-			
 			listResult
 		}
 	}
 	
-	private suspend fun getCardsList1() {
-		var index = 0L
+	private suspend fun randomCardsList(list: List<Long>) {
+		/*var index = 0L
 		list1.takeLastWhile {
 			index++ < 5L
 		}.also { reduceList ->
 			list1 = list1.filter { it !in reduceList }
-		}.map {
+		}*/list.map {
 			val response = service.randomCard(offset = it)
 			if (!response.isSuccessful || response.body() == null) {
-				job2.cancel()
+				/*job2.cancel()*/
 				return
 			}
 			val card = gson.fromJson(
@@ -87,7 +101,7 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 	}
 	
 	
-	private suspend fun getCardsList2() {
+	/*private suspend fun getCardsList2() {
 		var index = 0L
 		list2.takeLastWhile {
 			index++ < 5L
@@ -105,7 +119,7 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 			)
 			addCardMutex(card)
 		}
-	}
+	}*/
 	
 	private suspend fun addCardMutex(card: Card) {
 		mutex.withLock {
