@@ -57,15 +57,15 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 		viewModelScope.launch {
 			modelProgressBar.postValue(filterListModel.value!!.isEmpty())
 			filterListModel.value = (
-					searchData[query]?.also {
-						modelMessageLoading.postValue(true)
-					} ?: service.searchCard(query)?.let {
-						modelMessageLoading.postValue(true)
-						if (it.isNotEmpty())
-							searchData[query] = it
-						it
-					}
-					)
+				searchData[query]?.also {
+					modelMessageLoading.postValue(true)
+				} ?: service.searchCard(query)?.let {
+					modelMessageLoading.postValue(true)
+					if (it.isNotEmpty())
+						searchData[query] = it
+					it
+				}
+			)
 			modelProgressBar.postValue(true)
 		}
 	}
@@ -83,6 +83,11 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 				modelMessageLoading.postValue(it.isNotEmpty())
 			})
 		}
+	}
+	
+	override fun onCleared() {
+		CardProvider.isInit = false
+		super.onCleared()
 	}
 	
 }
