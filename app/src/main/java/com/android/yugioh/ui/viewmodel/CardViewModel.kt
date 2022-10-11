@@ -14,8 +14,6 @@ import javax.inject.Inject
 @HiltViewModel
 class CardViewModel @Inject constructor(private val service: CardProvider) : ViewModel() {
 	
-	/*private val service = CardProvider()*/
-	
 	private val currentList: MutableList<Card> = mutableListOf()
 	
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()

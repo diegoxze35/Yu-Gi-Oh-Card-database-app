@@ -92,15 +92,6 @@ sealed class Card(
 			parcel.readString()?.let {
 				BanListState.valueOf(it)
 			}
-			/*kotlin.run {
-				val array = arrayOf<String?>()
-				parcel.readStringArray(array)
-				val cardFormatArray = arrayOf<BanListState?>()
-				array.forEachIndexed { index, s ->
-					cardFormatArray[index] = s?.let { BanListState.valueOf(s) }
-				}
-				cardFormatArray
-			}*/
 		)
 		
 		override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -110,9 +101,6 @@ sealed class Card(
 				}.toTypedArray())
 				writeString(banTCG?.enum?.name)
 				writeString(banOCG?.enum?.name)
-				/*writeStringArray(banInfo.map {
-					it?.name
-				}.toTypedArray())*/
 			}
 		}
 		
@@ -131,36 +119,6 @@ sealed class Card(
 		}
 		
 	}
-	
-	/*data class BanListInfo(val banTCG: BanListState, val banOCG: BanListState) : Parcelable {
-		
-		companion object CREATOR : Parcelable.Creator<BanListInfo> {
-			
-			override fun createFromParcel(source: Parcel): BanListInfo {
-				return BanListInfo(source)
-			}
-			
-			override fun newArray(size: Int): Array<BanListInfo?> {
-				return arrayOfNulls(size)
-			}
-		}
-		
-		constructor(parcel: Parcel) : this(
-			BanListState.valueOf(parcel.readString()!!), BanListState.valueOf(parcel.readString()!!)
-		)
-		
-		override fun describeContents(): Int {
-			return 0
-		}
-		
-		override fun writeToParcel(dest: Parcel, flags: Int) {
-			with(dest) {
-				writeString(banTCG.getEnumName())
-				writeString(banOCG.getEnumName())
-			}
-		}
-	}*/
-	
 	override fun writeToParcel(dest: Parcel, flags: Int) {
 		with(dest) {
 			writeInt(id)
