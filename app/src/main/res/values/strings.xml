@@ -7,9 +7,10 @@
 	<string name="search_message">Press Enter to search in Database</string>
 	<string name="menu_main_activity_my_decks">My Decks</string>
 	<string name="menu_main_activity_advanced_search">Advanced Search</string>
-	<string name="ocg_ban_list">OCG</string>
-	<string name="tcg_ban_list">TCG</string>
-	<string name="pendulum_scale">Scale</string>
-	<string name="level_info">Level</string>
+	<string name="ocg_ban_list">OCG\n</string>
+	<string name="tcg_ban_list">TCG\n</string>
+	<string name="pendulum_scale">Scale %1$d</string>
+	<string name="level_info">Level\n%1$d</string>
+	<string name="linkval_info">Linkval\n%1$d</string>
 	<!--<string name="title_toolbar">Yu-Gi-Oh!\nCard database</string>-->
 </resources>
