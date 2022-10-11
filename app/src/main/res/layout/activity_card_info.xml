@@ -141,7 +141,7 @@
 					app:layout_constraintStart_toEndOf="@+id/textViewDef"
 					app:layout_constraintTop_toBottomOf="@+id/guidelineDivider1"
 					tools:drawableBottomCompat="@drawable/level_xyz_monster_s"
-					tools:text="Level 2" />
+					android:text="@string/level_info" />
 				
 				<TextView
 					android:id="@+id/textViewAttribute"

@@ -1,6 +1,8 @@
 package com.android.yugioh.model.data
 
 interface Enum {
-	fun getEnumName() : String
+	
+	val enum: kotlin.Enum<*>
+	
 	val icon: Int
 }

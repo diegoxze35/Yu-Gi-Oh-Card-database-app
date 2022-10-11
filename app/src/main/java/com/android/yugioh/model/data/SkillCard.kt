@@ -3,6 +3,7 @@ package com.android.yugioh.model.data
 import android.os.Parcel
 import android.os.Parcelable
 import com.android.yugioh.R
+import kotlin.Enum
 
 data class SkillCard(
 	override val id: Int,
@@ -54,8 +55,6 @@ data class SkillCard(
 			
 			SKILL_CARD("Skill Card");
 			
-			override fun getEnumName(): String = this.name
-			
 			override fun toString(): String = type
 			
 			override val color: Int
@@ -64,6 +63,8 @@ data class SkillCard(
 			override val icon: Int
 				get() = R.drawable.skill_s
 			
+			override val enum: Enum<*>
+				get() = this
 		}
 		
 		enum class RaceSkill(override val race: String) : Race {
@@ -112,12 +113,13 @@ data class SkillCard(
 			LUMIS_AND_UMB("Lumis and Umb"),
 			EMPTY("");
 			
-			override fun getEnumName(): String = this.name
-			
 			override fun toString(): String = race
 			
 			override val icon: Int
 				get() = R.drawable.race_skill_s
+			
+			override val enum: Enum<*>
+				get() = this
 		}
 	}
 	

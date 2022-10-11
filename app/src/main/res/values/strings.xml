@@ -10,5 +10,6 @@
 	<string name="ocg_ban_list">OCG</string>
 	<string name="tcg_ban_list">TCG</string>
 	<string name="pendulum_scale">Scale</string>
+	<string name="level_info">Level</string>
 	<!--<string name="title_toolbar">Yu-Gi-Oh!\nCard database</string>-->
 </resources>

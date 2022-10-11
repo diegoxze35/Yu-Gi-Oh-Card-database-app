@@ -12,13 +12,13 @@ data class MonsterCard(
 	override val race: RaceMonsterCard,
 	override val archetype: String?,
 	override val card_images: List<Image>,
-	override val banListInfo: BanListInfo?,
+	override val format: Format?,
 	val attack: Short,
 	val defense: Short?, //link monsters defense is null
 	val level: Byte, /*Represents a level monster or link rating value in link monsters*/
 	val attribute: AttributeMonster,
 	val scaleOfPendulum: Byte?
-) : Card(id, name, type, description, race, archetype, card_images, banListInfo) {
+) : Card(id, name, type, description, race, archetype, card_images, format) {
 	
 	constructor(parcel: Parcel) : this(
 		parcel.readInt(),
@@ -31,7 +31,7 @@ data class MonsterCard(
 			parcel.readTypedList(this, Image.CREATOR)
 			this
 		},
-		parcel.readTypedObject(BanListInfo.CREATOR),
+		parcel.readTypedObject(Format.CREATOR),
 		parcel.readValue(Short::class.java.classLoader) as Short,
 		parcel.readValue(Short::class.java.classLoader) as Short?,
 		parcel.readValue(Byte::class.java.classLoader) as Byte,
@@ -195,7 +195,8 @@ data class MonsterCard(
 				R.drawable.effect_monster_s
 			);
 			
-			override fun getEnumName(): String = this.name
+			override val enum: kotlin.Enum<*>
+				get() = this
 			
 			override fun toString(): String = type
 		}
@@ -237,9 +238,10 @@ data class MonsterCard(
 			//*OTHER*//*
 			CREATOR_GOD("Creator-God", R.drawable.divine_beast_s);
 			
-			override fun toString(): String = race
+			override val enum: kotlin.Enum<*>
+				get() = this
 			
-			override fun getEnumName(): String = this.name
+			override fun toString(): String = race
 			
 		}
 		
@@ -253,7 +255,8 @@ data class MonsterCard(
 			WIND(R.drawable.wind_s),
 			DIVINE(R.drawable.divine_s);
 			
-			override fun getEnumName(): String = this.name
+			override val enum: kotlin.Enum<*>
+				get() = this
 			
 		}
 	}

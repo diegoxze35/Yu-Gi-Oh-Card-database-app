@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
@@ -91,9 +92,9 @@ class CardInfoActivity : AppCompatActivity() {
 			
 			setTextView(findViewById(R.id.textViewType), type)
 			setTextView(findViewById(R.id.textViewRace), race)
-			banListInfo?.let {
-				setTextView(textBanOCG, it.banOCG)
-				setTextView(textBanTCG, it.banTCG)
+			format?.let {
+				it.banTCG?.let { TCG -> setTextView(textBanTCG, TCG) } ?: textBanTCG.setVisibility(View.GONE)
+				it.banOCG?.let { OCG -> setTextView(textBanOCG, OCG) } ?: textBanOCG.setVisibility(View.GONE)
 			} ?: kotlin.run {
 				textBanOCG.isGone = true
 				textBanTCG.isGone = true

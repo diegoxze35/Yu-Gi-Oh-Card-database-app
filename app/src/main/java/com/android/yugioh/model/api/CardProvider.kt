@@ -18,7 +18,7 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 	
 	companion object {
 		private const val MIN = 0L
-		private var isInit = false
+		var isInit = false
 		private lateinit var jsonObject: JsonObject
 		private val MAX by lazy {
 			jsonObject.getAsJsonObject("meta").get("total_rows").asLong
@@ -81,15 +81,9 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 	}
 	
 	private suspend fun randomCardsList(list: List<Long>) {
-		/*var index = 0L
-		list1.takeLastWhile {
-			index++ < 5L
-		}.also { reduceList ->
-			list1 = list1.filter { it !in reduceList }
-		}*/list.map {
+		list.map {
 			val response = service.randomCard(offset = it)
 			if (!response.isSuccessful || response.body() == null) {
-				/*job2.cancel()*/
 				return
 			}
 			val card = gson.fromJson(
@@ -99,27 +93,6 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 			addCardMutex(card)
 		}
 	}
-	
-	
-	/*private suspend fun getCardsList2() {
-		var index = 0L
-		list2.takeLastWhile {
-			index++ < 5L
-		}.also { reduceList ->
-			list2 = list2.filter { it !in reduceList }
-		}.map {
-			val response = service.randomCard(offset = it)
-			if (!response.isSuccessful || response.body() == null) {
-				job1.cancel()
-				return
-			}
-			val card = gson.fromJson(
-				response.body()!!.getAsJsonArray("data")[0],
-				Card::class.java
-			)
-			addCardMutex(card)
-		}
-	}*/
 	
 	private suspend fun addCardMutex(card: Card) {
 		mutex.withLock {

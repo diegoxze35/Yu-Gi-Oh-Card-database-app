@@ -3,6 +3,7 @@ package com.android.yugioh.model.data
 import android.os.Parcel
 import android.os.Parcelable
 import com.android.yugioh.R
+import kotlin.Enum
 
 data class SpellTrapCard(
 	override val id: Int,
@@ -12,8 +13,8 @@ data class SpellTrapCard(
 	override val race: RaceSpellTrap,
 	override val archetype: String?,
 	override val card_images: List<Image>,
-	override val banListInfo: BanListInfo?
-) : Card(id, name, type, description, race, archetype, card_images, banListInfo) {
+	override val format: Format?
+) : Card(id, name, type, description, race, archetype, card_images, format) {
 	
 	constructor(parcel: Parcel) : this(
 		parcel.readInt(),
@@ -26,7 +27,7 @@ data class SpellTrapCard(
 			parcel.readTypedList(this, Image.CREATOR)
 			this
 		},
-		parcel.readTypedObject(BanListInfo.CREATOR)
+		parcel.readTypedObject(Format.CREATOR)
 	)
 	
 	companion object CREATOR : Parcelable.Creator<SpellTrapCard> {
@@ -48,9 +49,10 @@ data class SpellTrapCard(
 			SPELL_CARD("Spell Card", R.color.colorSpellCard, R.drawable.spell_card_s),
 			TRAP_CARD("Trap Card", R.color.colorTrampCard, R.drawable.trap_card_s);
 			
-			override fun getEnumName(): String = this.name
-			
 			override fun toString(): String = type
+			
+			override val enum: Enum<*>
+				get() = this
 			
 		}
 		
@@ -71,7 +73,8 @@ data class SpellTrapCard(
 			
 			override fun toString(): String = race
 			
-			override fun getEnumName(): String = this.name
+			override val enum: Enum<*>
+				get() = this
 			
 		}
 	}

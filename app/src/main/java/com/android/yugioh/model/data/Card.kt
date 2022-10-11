@@ -12,17 +12,15 @@ sealed class Card(
 	open val race: Race,
 	open val archetype: String?,
 	open val card_images: List<Image>,
-	open val banListInfo: BanListInfo?
+	open val format: Format?
 ) : Parcelable {
 	
 	data class Image(
-		val imageUrl: String,
-		val imageUrlSmall: String
+		val imageUrl: String, val imageUrlSmall: String
 	) : Parcelable {
 		
 		constructor(parcel: Parcel) : this(
-			parcel.readString()!!,
-			parcel.readString()!!
+			parcel.readString()!!, parcel.readString()!!
 		)
 		
 		override fun writeToParcel(dest: Parcel, flags: Int) {
@@ -48,21 +46,95 @@ sealed class Card(
 		
 	}
 	
-	data class BanListInfo(val banTCG: BanListState, val banOCG: BanListState) : Parcelable {
+	enum class CardFormat(private val format: String) {
+		
+		TCG("TCG"),
+		OCG("OCG"),
+		RUSH_DUEL("Rush Duel");
+		
+		override fun toString(): String = this.format
+		
+	}
+	
+	enum class BanListState(private val status: String, override val icon: Int) : Enum {
+		
+		BANNED("Banned", R.drawable.banlist_banned_s),
+		LIMITED("Limited", R.drawable.banlist_limited_s),
+		SEMI_LIMITED("Semi-Limited", R.drawable.banlist_semilimited_s),
+		UNLIMITED("Unlimited", R.drawable.banlist_unlimited_s);
+		
+		override val enum: kotlin.Enum<*>
+			get() = this
+		
+		override fun toString(): String = status
+	}
+	
+	data class Format(
+		val formats: Array<CardFormat?>,
+		val banTCG: BanListState?,
+		val banOCG: BanListState?
+	) :
+		Parcelable {
+		constructor(parcel: Parcel) : this(
+			kotlin.run {
+				val size = 3
+				val array = arrayOfNulls<String?>(size)
+				parcel.readStringArray(array)
+				val cardFormatArray = arrayOfNulls<CardFormat?>(size)
+				array.forEachIndexed { index, s ->
+					cardFormatArray[index] = s?.let { CardFormat.valueOf(s) }
+				}
+				cardFormatArray
+			},
+			parcel.readString()?.let {
+				BanListState.valueOf(it)
+			},
+			parcel.readString()?.let {
+				BanListState.valueOf(it)
+			}
+			/*kotlin.run {
+				val array = arrayOf<String?>()
+				parcel.readStringArray(array)
+				val cardFormatArray = arrayOf<BanListState?>()
+				array.forEachIndexed { index, s ->
+					cardFormatArray[index] = s?.let { BanListState.valueOf(s) }
+				}
+				cardFormatArray
+			}*/
+		)
+		
+		override fun writeToParcel(parcel: Parcel, flags: Int) {
+			with(parcel) {
+				writeStringArray(formats.map {
+					it?.name
+				}.toTypedArray())
+				writeString(banTCG?.enum?.name)
+				writeString(banOCG?.enum?.name)
+				/*writeStringArray(banInfo.map {
+					it?.name
+				}.toTypedArray())*/
+			}
+		}
+		
+		override fun describeContents(): Int {
+			return 0
+		}
+		
+		companion object CREATOR : Parcelable.Creator<Format> {
+			override fun createFromParcel(parcel: Parcel): Format {
+				return Format(parcel)
+			}
+			
+			override fun newArray(size: Int): Array<Format?> {
+				return arrayOfNulls(size)
+			}
+		}
+		
+	}
+	
+	/*data class BanListInfo(val banTCG: BanListState, val banOCG: BanListState) : Parcelable {
 		
 		companion object CREATOR : Parcelable.Creator<BanListInfo> {
-			
-			enum class BanListState(private val status: String, override val icon: Int) : Enum {
-				
-				BANNED("Banned", R.drawable.banlist_banned_s),
-				LIMITED("Limited", R.drawable.banlist_limited_s),
-				SEMI_LIMITED("Semi-Limited", R.drawable.banlist_semilimited_s),
-				UNLIMITED("Unlimited", R.drawable.banlist_unlimited_s);
-				
-				override fun getEnumName(): String = this.name
-				
-				override fun toString(): String = status
-			}
 			
 			override fun createFromParcel(source: Parcel): BanListInfo {
 				return BanListInfo(source)
@@ -87,18 +159,18 @@ sealed class Card(
 				writeString(banOCG.getEnumName())
 			}
 		}
-	}
+	}*/
 	
 	override fun writeToParcel(dest: Parcel, flags: Int) {
 		with(dest) {
 			writeInt(id)
 			writeString(name)
-			writeString(type.getEnumName())
+			writeString(type.enum.name)
 			writeString(description)
-			writeString(race.getEnumName())
+			writeString(race.enum.name)
 			writeString(archetype)
 			writeTypedList(card_images)
-			writeTypedObject(banListInfo, flags)
+			writeTypedObject(format, flags)
 		}
 	}
 	

@@ -62,7 +62,7 @@ object ModuleClass {
 				val description = get("desc").asString
 				val archetype = get("archetype")?.asString
 				val images = deserializeListImage(get("card_images").asJsonArray)
-				val banList = deserializeBanInfo(getAsJsonObject("banlist_info"))
+				val format = deserializeFormatAndBanInfo(this)
 				
 				when (val type = get("type").asString) {
 					TypeSpellTrap.SPELL_CARD.toString(), TypeSpellTrap.TRAP_CARD.toString() ->
@@ -80,7 +80,7 @@ object ModuleClass {
 							),
 							archetype,
 							images,
-							banList
+							format
 						)
 					TypeSkill.SKILL_CARD.toString() ->
 						SkillCard(
@@ -109,7 +109,7 @@ object ModuleClass {
 							),
 							archetype,
 							images,
-							banList,
+							format,
 							with(get("atk")) {
 								if (!isJsonNull)
 									return@with asShort
