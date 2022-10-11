@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
@@ -90,11 +89,15 @@ class CardInfoActivity : AppCompatActivity() {
 				}
 			}
 			
-			setTextView(findViewById(R.id.textViewType), type)
-			setTextView(findViewById(R.id.textViewRace), race)
+			findViewById<TextView>(R.id.textViewType).setIconAndText(type)
+			findViewById<TextView>(R.id.textViewRace).setIconAndText(race)
 			format?.let {
-				it.banTCG?.let { TCG -> setTextView(textBanTCG, TCG) } ?: textBanTCG.setVisibility(View.GONE)
-				it.banOCG?.let { OCG -> setTextView(textBanOCG, OCG) } ?: textBanOCG.setVisibility(View.GONE)
+				it.banTCG?.let { TCG -> textBanTCG.setIconAndText(TCG) } ?: textBanTCG.apply {
+					isGone = true
+				}
+				it.banOCG?.let { OCG -> textBanOCG.setIconAndText(OCG) } ?: textBanOCG.apply {
+					isGone = true
+				}
 			} ?: kotlin.run {
 				textBanOCG.isGone = true
 				textBanTCG.isGone = true
@@ -118,23 +121,34 @@ class CardInfoActivity : AppCompatActivity() {
 				
 				level.let {
 					levelText.apply {
+						lateinit var text: String
 						setCompoundDrawablesWithIntrinsicBounds(
 							0, 0, 0, when (type) {
-								MonsterType.XYZ_MONSTER, MonsterType.XYZ_PENDULUM_EFFECT_MONSTER
-								-> R.drawable.level_xyz_monster_s
-								MonsterType.LINK_MONSTER
-								-> R.drawable.linkval_s
-								else
-								-> R.drawable.level_monster_s
+								MonsterType.XYZ_MONSTER,
+								MonsterType.XYZ_PENDULUM_EFFECT_MONSTER -> {
+									text = getString(R.string.level_info, it)
+									R.drawable.level_xyz_monster_s
+								}
+								MonsterType.LINK_MONSTER -> {
+									text = getString(R.string.linkval_info, it)
+									R.drawable.linkval_s
+								}
+								else -> {
+									text = getString(R.string.level_info, it)
+									R.drawable.level_monster_s
+								}
 							}
 						)
-						text = "$it"
+						this.text = text
 					}
 				}
-				setTextView(findViewById(R.id.textViewAttribute), attribute)
+				findViewById<TextView>(R.id.textViewAttribute).setIconAndText(attribute)
 				
-				scaleOfPendulum?.let { textScalePendulum.text = "$it" }
-					?: textScalePendulum.apply { isGone = true }
+				scaleOfPendulum?.let {
+					textScalePendulum.text = getString(R.string.pendulum_scale, it)
+				} ?: textScalePendulum.apply {
+					isGone = true
+				}
 				
 			} else {
 				atkText.isGone = true
@@ -149,8 +163,8 @@ class CardInfoActivity : AppCompatActivity() {
 		}
 	}
 	
-	private fun setTextView(tv: TextView, value: Enum) {
-		tv.apply {
+	private fun TextView.setIconAndText(value: Enum) {
+		this.apply {
 			setCompoundDrawablesWithIntrinsicBounds(
 				0, 0, 0, value.icon
 			)
