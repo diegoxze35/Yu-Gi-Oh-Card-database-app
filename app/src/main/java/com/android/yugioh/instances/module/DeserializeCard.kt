@@ -1,10 +1,11 @@
 package com.android.yugioh.instances.module
 
+import com.android.yugioh.model.data.Card.BanListState
+import com.android.yugioh.model.data.Card.CardFormat
+import com.android.yugioh.model.data.Card.Format
 import com.android.yugioh.model.data.Card.Image
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import com.android.yugioh.model.data.Card.BanListInfo
-import com.android.yugioh.model.data.Card.BanListInfo.CREATOR.BanListState
 
 interface DeserializeCard {
 	
@@ -24,18 +25,35 @@ interface DeserializeCard {
 		return images
 	}
 	
-	fun deserializeBanInfo(info: JsonObject?): BanListInfo {
-		val currentStates = arrayOf(BanListState.UNLIMITED, BanListState.UNLIMITED)
-		return info?.let {
-			arrayOf(
-				it.get("ban_tcg")?.asString,
-				it.get("ban_ocg")?.asString
-			).forEachIndexed { index, str ->
-				str?.let {
-					currentStates[index] = deserializeStringToEnumValue(str, BanListState.values())
-				}
+	fun deserializeFormatAndBanInfo(info: JsonObject): Format {
+		
+		/*	formats = [
+				0 - TCG
+				1 - OCG
+				2 - Rush Duel
+			]
+		*/
+		val formats = CardFormat.values()
+		val currentFormats = arrayOfNulls<CardFormat?>(formats.size)
+		val arrayFormats =
+			info.get("misc_info").asJsonArray[0].asJsonObject.getAsJsonArray("formats")
+		for (index in currentFormats.indices) {
+			currentFormats[index] = arrayFormats.find {
+				it.asString == formats[index].toString()
+			}?.let {
+				deserializeStringToEnumValue(it.asString, formats)
 			}
-			BanListInfo(currentStates[0], currentStates[1])
-		} ?: BanListInfo(currentStates[0], currentStates[1])
+		}
+		val currentsStatesBan = arrayOfNulls<BanListState?>(formats.size - 1) //[TCG, OCG]
+		val formatsBan = arrayOf("ban_tcg", "ban_ocg")
+		val banListInfo: JsonObject? = info.getAsJsonObject("banlist_info")
+		for (index in formatsBan.indices) {
+			if (currentFormats[index] == null)
+				continue
+			currentsStatesBan[index] = banListInfo?.get(formatsBan[index])?.let {
+				deserializeStringToEnumValue(it.asString, BanListState.values())
+			} ?: BanListState.UNLIMITED
+		}
+		return Format(currentFormats, currentsStatesBan[0], currentsStatesBan[1])
 	}
 }
