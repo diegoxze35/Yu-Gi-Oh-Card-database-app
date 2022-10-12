@@ -15,6 +15,8 @@ import com.android.yugioh.model.data.Card
 import com.android.yugioh.model.data.Enum
 import com.android.yugioh.model.data.MonsterCard
 import com.android.yugioh.model.data.MonsterCard.CREATOR.MonsterType
+import com.android.yugioh.model.data.SkillCard
+import com.android.yugioh.model.data.SpellTrapCard
 import com.android.yugioh.ui.view.CardAdapter.Companion.BACKGROUND_COLOR
 import com.android.yugioh.ui.view.CardAdapter.Companion.CARD_PARCELABLE
 import com.android.yugioh.ui.view.CardAdapter.Companion.TEXT_COLOR
@@ -77,7 +79,7 @@ class CardInfoActivity : AppCompatActivity() {
 				textArchetype.text = it
 			} ?: kotlin.run {
 				textArchetype.isGone = true
-				if (this@with !is MonsterCard) {
+				if (this@with is SpellTrapCard) {
 					(ConstraintSet()).run {
 						layout = findViewById(R.id.constraintLayoutInfoCard)
 						clone(layout)
@@ -107,7 +109,10 @@ class CardInfoActivity : AppCompatActivity() {
 					connect(
 						R.id.textViewDescription,
 						ConstraintSet.TOP,
-						R.id.guidelineDivider1,
+						if (this@with is SkillCard)
+							R.id.guidelineDivider1
+						else
+							R.id.guidelineDivider2,
 						ConstraintSet.BOTTOM
 					)
 					applyTo(layout)
