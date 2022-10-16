@@ -12,5 +12,6 @@
 	<string name="pendulum_scale">Scale %1$d</string>
 	<string name="level_info">Level\n%1$d</string>
 	<string name="linkval_info">Linkval\n%1$d</string>
+	<string name="search_card">Search Card</string>
 	<!--<string name="title_toolbar">Yu-Gi-Oh!\nCard database</string>-->
 </resources>

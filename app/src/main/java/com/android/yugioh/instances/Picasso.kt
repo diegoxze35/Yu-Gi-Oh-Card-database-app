@@ -7,7 +7,6 @@ object Picasso {
 	
 	operator fun invoke(): Picasso = Picasso.get()
 	
-	fun setImageFromUrlInImageView(picasso: Picasso, url: String, img: ImageView) =
-		picasso.load(url).into(img)
+	fun Picasso.setImageFromUrlInImageView(url: String, img: ImageView) = load(url).into(img)
 	
 }

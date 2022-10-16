@@ -1,7 +1,6 @@
 package com.android.yugioh.ui.view
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -13,18 +12,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.android.yugioh.R
 import com.android.yugioh.instances.Picasso
+import com.android.yugioh.instances.Picasso.setImageFromUrlInImageView
 import com.android.yugioh.model.data.Card
 
-class CardAdapter(private val cards: MutableList<Card>) :
+class CardAdapter(private val cards: MutableList<Card>, private val onCLick: (Card) -> Unit) :
 	RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
 	
 	private val picasso = Picasso()
-	
-	companion object {
-		const val CARD_PARCELABLE = "card"
-		const val BACKGROUND_COLOR = "backgroundColor"
-		const val TEXT_COLOR = "textColor"
-	}
 	
 	fun addListCard(cards: List<Card>) {
 		val position = itemCount
@@ -81,8 +75,7 @@ class CardAdapter(private val cards: MutableList<Card>) :
 				cardName.text = card.name
 				typeCard.text = card.type.toString()
 				raceCard.text = card.race.toString()
-				Picasso.setImageFromUrlInImageView(
-					picasso,
+				picasso.setImageFromUrlInImageView(
 					card.card_images[0].imageUrlSmall,
 					imageCard
 				)
@@ -97,14 +90,7 @@ class CardAdapter(private val cards: MutableList<Card>) :
 				cardName.setTextColor(currentColor)
 				typeCard.setTextColor(currentColor)
 				raceCard.setTextColor(currentColor)
-				itemView.setOnClickListener {
-					(Intent(contextActivity, CardInfoActivity::class.java)).run {
-						putExtra(BACKGROUND_COLOR, cardView.cardBackgroundColor.defaultColor)
-						putExtra(TEXT_COLOR, cardName.currentTextColor)
-						putExtra(CARD_PARCELABLE, card)
-						contextActivity.startActivity(this)
-					}
-				}
+				itemView.setOnClickListener { onCLick(card) }
 			}
 		}
 	}

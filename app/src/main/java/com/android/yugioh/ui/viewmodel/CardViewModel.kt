@@ -15,14 +15,17 @@ import javax.inject.Inject
 class CardViewModel @Inject constructor(private val service: CardProvider) : ViewModel() {
 	
 	private val currentList: MutableList<Card> = mutableListOf()
-	
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
+	
 	val searchCache: Map<String, List<Card>>
 		get() = searchData
 	
 	private val cardListModel: MutableLiveData<List<Card>> = MutableLiveData()
 	val mainList: LiveData<List<Card>>
 		get() = cardListModel
+	
+	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
+		val currentCard: LiveData<Card> get() = clickedCard
 	
 	private val filterListModel: MutableLiveData<List<Card>> = MutableLiveData()
 	val filterList: LiveData<List<Card>>
@@ -67,6 +70,8 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 			modelProgressBar.postValue(true)
 		}
 	}
+	
+	fun onClickCard(card: Card) = clickedCard.postValue(card)
 	
 	fun getFilterList(query: String) {
 		currentList.run {

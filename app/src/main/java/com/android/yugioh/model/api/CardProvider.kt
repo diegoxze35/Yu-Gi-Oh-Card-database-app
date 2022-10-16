@@ -127,5 +127,4 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 	private fun getCards(list: List<JsonElement>): List<Card> = list.map {
 		gson.fromJson(it, Card::class.java)
 	}
-	
 }

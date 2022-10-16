@@ -16,9 +16,6 @@
 		android:theme="@style/Theme.YuGiOh"
 		tools:targetApi="31">
 		<activity
-			android:name=".ui.view.CardInfoActivity"
-			android:exported="false" />
-		<activity
 			android:name=".ui.view.MainCardActivity"
 			android:exported="true">
 			<intent-filter>

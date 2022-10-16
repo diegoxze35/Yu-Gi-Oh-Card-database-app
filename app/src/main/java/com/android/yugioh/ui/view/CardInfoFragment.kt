@@ -2,32 +2,33 @@ package com.android.yugioh.ui.view
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import com.android.yugioh.R
 import com.android.yugioh.model.data.Card
-import com.android.yugioh.model.data.Enum
 import com.android.yugioh.model.data.MonsterCard
-import com.android.yugioh.model.data.MonsterCard.CREATOR.MonsterType
 import com.android.yugioh.model.data.SkillCard
 import com.android.yugioh.model.data.SpellTrapCard
-import com.android.yugioh.ui.view.CardAdapter.Companion.BACKGROUND_COLOR
-import com.android.yugioh.ui.view.CardAdapter.Companion.CARD_PARCELABLE
-import com.android.yugioh.ui.view.CardAdapter.Companion.TEXT_COLOR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
+import com.android.yugioh.model.data.Enum
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.net.URL
 
-class CardInfoActivity : AppCompatActivity() {
+class CardInfoFragment(private val card: Card) : Fragment() {
 	
 	private lateinit var atkText: TextView
 	private lateinit var defText: TextView
@@ -42,38 +43,50 @@ class CardInfoActivity : AppCompatActivity() {
 	
 	private lateinit var layout: ConstraintLayout
 	
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_card_info)
+	override fun onCreateView(
+		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+	): View? {
+		return inflater.inflate(R.layout.fragment_card_info, container, false)
+	}
+	
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		
-		atkText = findViewById(R.id.textViewAtk)
-		defText = findViewById(R.id.textViewDef)
-		levelText = findViewById(R.id.textViewLevelMonster)
+		super.onViewCreated(view, savedInstanceState)
 		
-		imageCard = findViewById(R.id.imageViewFullCard)
-		cardName = findViewById(R.id.textViewNameCard)
-		textAttribute = findViewById(R.id.textViewAttribute)
-		textArchetype = findViewById(R.id.textViewArchetype)
+		atkText = view.findViewById(R.id.textViewAtk)
+		defText = view.findViewById(R.id.textViewDef)
+		levelText = view.findViewById(R.id.textViewLevelMonster)
 		
-		textBanOCG = findViewById(R.id.textViewBanListOCG)
-		textBanTCG = findViewById(R.id.textViewBanListTCG)
-		textScalePendulum = findViewById(R.id.textViewScale)
+		imageCard = view.findViewById(R.id.imageViewFullCard)
+		cardName = view.findViewById(R.id.textViewNameCard)
+		textAttribute = view.findViewById(R.id.textViewAttribute)
+		textArchetype = view.findViewById(R.id.textViewArchetype)
+		
+		textBanOCG = view.findViewById(R.id.textViewBanListOCG)
+		textBanTCG = view.findViewById(R.id.textViewBanListTCG)
+		textScalePendulum = view.findViewById(R.id.textViewScale)
 		
 		lateinit var bitmap: Deferred<Bitmap>
 		
-		with((intent.extras!!).run {
-			findViewById<ScrollView>(R.id.mainScroll).setBackgroundColor(getInt(BACKGROUND_COLOR))
-			cardName.setTextColor(getInt(TEXT_COLOR))
-			(getParcelable<Card>(CARD_PARCELABLE)!!.also {
-				val url = URL(it.card_images[0].imageUrl)
-				bitmap = CoroutineScope(Dispatchers.IO).async {
-					getBitmapFromURL(url)
-				}
-			})
-		}) {
-			cardName.text = name
-			findViewById<TextView>(R.id.textViewId).text = "$id"
-			findViewById<TextView>(R.id.textViewDescription).text = description
+		with(card) {
+			bitmap = CoroutineScope(Dispatchers.IO).async {
+				URL(card_images[0].imageUrl).getBitmap()
+			}
+			view.findViewById<ScrollView>(R.id.mainScroll).setBackgroundColor(
+				ContextCompat.getColor(requireContext(), type.color.also {
+					view.findViewById<TextView>(R.id.textViewNameCard).apply {
+						text = name
+						setTextColor(
+							if (it == R.color.colorSynchronyMonster)
+								Color.BLACK
+							else
+								Color.WHITE
+						)
+					}
+				})
+			)
+			view.findViewById<TextView>(R.id.textViewId).text = "$id"
+			view.findViewById<TextView>(R.id.textViewDescription).text = description
 			
 			archetype?.let {
 				textArchetype.text = it
@@ -81,7 +94,7 @@ class CardInfoActivity : AppCompatActivity() {
 				textArchetype.isGone = true
 				if (this@with is SpellTrapCard) {
 					(ConstraintSet()).run {
-						layout = findViewById(R.id.constraintLayoutInfoCard)
+						layout = view.findViewById(R.id.constraintLayoutInfoCard)
 						clone(layout)
 						val idGuideline = R.id.guidelineDivider1
 						connect(textBanOCG.id, ConstraintSet.TOP, idGuideline, ConstraintSet.BOTTOM)
@@ -91,8 +104,8 @@ class CardInfoActivity : AppCompatActivity() {
 				}
 			}
 			
-			findViewById<TextView>(R.id.textViewType).setIconAndText(type)
-			findViewById<TextView>(R.id.textViewRace).setIconAndText(race)
+			view.findViewById<TextView>(R.id.textViewType).setIconAndText(type)
+			view.findViewById<TextView>(R.id.textViewRace).setIconAndText(race)
 			format?.let {
 				it.banTCG?.let { TCG -> textBanTCG.setIconAndText(TCG) } ?: textBanTCG.apply {
 					isGone = true
@@ -104,7 +117,7 @@ class CardInfoActivity : AppCompatActivity() {
 				textBanOCG.isGone = true
 				textBanTCG.isGone = true
 				(ConstraintSet()).run {
-					layout = findViewById(R.id.constraintLayoutInfoCard)
+					layout = view.findViewById(R.id.constraintLayoutInfoCard)
 					clone(layout)
 					connect(
 						R.id.textViewDescription,
@@ -129,12 +142,12 @@ class CardInfoActivity : AppCompatActivity() {
 						lateinit var text: String
 						setCompoundDrawablesWithIntrinsicBounds(
 							0, 0, 0, when (type) {
-								MonsterType.XYZ_MONSTER,
-								MonsterType.XYZ_PENDULUM_EFFECT_MONSTER -> {
+								MonsterCard.CREATOR.MonsterType.XYZ_MONSTER,
+								MonsterCard.CREATOR.MonsterType.XYZ_PENDULUM_EFFECT_MONSTER -> {
 									text = getString(R.string.level_info, it)
 									R.drawable.level_xyz_monster_s
 								}
-								MonsterType.LINK_MONSTER -> {
+								MonsterCard.CREATOR.MonsterType.LINK_MONSTER -> {
 									text = getString(R.string.linkval_info, it)
 									R.drawable.linkval_s
 								}
@@ -147,7 +160,7 @@ class CardInfoActivity : AppCompatActivity() {
 						this.text = text
 					}
 				}
-				findViewById<TextView>(R.id.textViewAttribute).setIconAndText(attribute)
+				view.findViewById<TextView>(R.id.textViewAttribute).setIconAndText(attribute)
 				
 				scaleOfPendulum?.let {
 					textScalePendulum.text = getString(R.string.pendulum_scale, it)
@@ -178,6 +191,5 @@ class CardInfoActivity : AppCompatActivity() {
 		}
 	}
 	
-	private fun getBitmapFromURL(url: URL): Bitmap = BitmapFactory.decodeStream(url.openStream())
-	
+	private fun URL.getBitmap(): Bitmap = BitmapFactory.decodeStream(openStream())
 }
