@@ -7,91 +7,83 @@ import androidx.lifecycle.viewModelScope
 import com.android.yugioh.model.api.CardProvider
 import com.android.yugioh.model.data.Card
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CardViewModel @Inject constructor(private val service: CardProvider) : ViewModel() {
 	
-	private var loading =
-		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
-	
 	private val currentList: MutableList<Card> = mutableListOf()
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
 	
-	private val mainCardListLiveData: MutableLiveData<List<Card>> = MutableLiveData()
-	val mainList: LiveData<List<Card>>
-		get() = mainCardListLiveData
+	val searchCache: Map<String, List<Card>>
+		get() = searchData
 	
-	private val filterListLiveData: MutableLiveData<List<Card>> = MutableLiveData()
-	val filterList: LiveData<List<Card>>
-		get() = filterListLiveData
+	private val cardListModel: MutableLiveData<List<Card>> = MutableLiveData()
+	val mainList: LiveData<List<Card>>
+		get() = cardListModel
 	
 	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
-	val currentCard: LiveData<Card> get() = clickedCard
+		val currentCard: LiveData<Card> get() = clickedCard
 	
-	private val isLoadingState: MutableLiveData<Boolean> = MutableLiveData()
+	private val filterListModel: MutableLiveData<List<Card>> = MutableLiveData()
+	val filterList: LiveData<List<Card>>
+		get() = filterListModel
+	
+	private val modelProgressBar: MutableLiveData<Boolean> = MutableLiveData()
 	val isLoading: LiveData<Boolean>
-		get() = isLoadingState
+		get() = modelProgressBar
 	
-	private val isSearchingState: MutableLiveData<Boolean> = MutableLiveData()
+	private val modelMessageLoading: MutableLiveData<Boolean> = MutableLiveData()
 	val isSearching: LiveData<Boolean>
-		get() = isSearchingState
+		get() = modelMessageLoading
 	
-	fun getListRandomCards() {
-		if (loading.isActive) return
-		loading = viewModelScope.launch {
-			isLoadingState.postValue(false)
+	
+	fun getListRandomCards(): Job {
+		return viewModelScope.launch {
+			modelProgressBar.postValue(false)
 			service.getListRandomCards()?.let {
 				with(currentList) {
 					addAll(it)
-					mainCardListLiveData.postValue(this)
-					filterListLiveData.postValue(this)
+					cardListModel.postValue(this)
+					filterListModel.postValue(this)
 				}
 			}
-			isLoadingState.postValue(true)
+			modelProgressBar.postValue(true)
 		}
 	}
 	
 	fun searchCard(query: String) {
-		if (loading.isActive) return
-		loading = viewModelScope.launch {
-			isLoadingState.postValue(/*filterListLiveData.value!!.isEmpty()*/false)
-			filterListLiveData.value = (
+		viewModelScope.launch {
+			modelProgressBar.postValue(filterListModel.value!!.isEmpty())
+			filterListModel.value = (
 				searchData[query]?.also {
-					isSearchingState.postValue(true)
+					modelMessageLoading.postValue(true)
 				} ?: service.searchCard(query)?.let {
-					isSearchingState.postValue(true)
+					modelMessageLoading.postValue(true)
 					if (it.isNotEmpty())
 						searchData[query] = it
 					it
 				}
 			)
-			isLoadingState.postValue(true)
+			modelProgressBar.postValue(true)
 		}
 	}
 	
 	fun onClickCard(card: Card) = clickedCard.postValue(card)
 	
 	fun getFilterList(query: String) {
-		if (loading.isActive) return
-		searchData[query]?.let {
-			filterListLiveData.postValue(it) //restore to memory
-			return
-		}
 		currentList.run {
-			filterListLiveData.postValue(this)
+			filterListModel.postValue(this)
 			if (query.isBlank()) { //User´s click x button //this can replace with isEmpty()
-				isSearchingState.postValue(true)
+				modelMessageLoading.postValue(true)
 				return
 			}
-			filterListLiveData.postValue(filter {
+			filterListModel.postValue(filter {
 				it.name.contains(query, true)
 			}.also {
-				isSearchingState.postValue(it.isNotEmpty())
+				modelMessageLoading.postValue(it.isNotEmpty())
 			})
 		}
 	}

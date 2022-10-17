@@ -73,6 +73,9 @@ dependencies {
 
     //picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //fragment
+    implementation "androidx.fragment:fragment-ktx:1.5.3"
 }
 
 kapt {

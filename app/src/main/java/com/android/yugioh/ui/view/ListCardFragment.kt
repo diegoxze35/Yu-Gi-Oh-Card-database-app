@@ -6,12 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.SearchView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
-import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,11 +18,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.yugioh.R
 import com.android.yugioh.model.data.Card
 import com.android.yugioh.ui.viewmodel.CardViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ListCardFragment : Fragment() {
 	
+	private var loading =
+		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
 	private lateinit var recyclerView: RecyclerView
-	
 	private lateinit var toolbar: Toolbar
 	private lateinit var searchView: SearchView
 	private lateinit var adapter: CardAdapter
@@ -37,17 +41,17 @@ class ListCardFragment : Fragment() {
 		container: ViewGroup?, savedInstanceState: Bundle?
 	): View? = inflater.inflate(R.layout.fragment_list_card, container, false)
 	
+	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		
 		messageSearch = view.findViewById(R.id.textViewSearch)
-		with(view.findViewById<FragmentContainerView>(R.id.fragment_container_1)) {
-			val fragment = this.getFragment<FragmentToolbar>()
-			toolbar = fragment.requireView().findViewById(R.id.toolbar)
-		}
+		toolbar = view.findViewById(R.id.include)
 		(activity as AppCompatActivity).setSupportActionBar(toolbar.also {
 			searchView = it.findViewById(R.id.searchView)
 		})
 		searchView.apply {
+			isSubmitButtonEnabled = true
 			setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 				
 				override fun onQueryTextSubmit(query: String): Boolean {
@@ -57,7 +61,13 @@ class ListCardFragment : Fragment() {
 				}
 				
 				override fun onQueryTextChange(newText: String): Boolean {
+					if (loading.isActive) return false
 					val sendText = newText.trim().lowercase()
+					viewModel.searchCache[sendText]?.let { list -> //restore to memory
+						messageSearch.isGone = true
+						adapter.addFilterList(list)
+						return true
+					}
 					viewModel.getFilterList(sendText)
 					return true
 				}
@@ -68,17 +78,19 @@ class ListCardFragment : Fragment() {
 		recyclerView.apply {
 			this@ListCardFragment.adapter =
 				CardAdapter(viewModel.mainList.value?.toMutableList() ?: kotlin.run {
-					viewModel.getListRandomCards()
+					loading = viewModel.getListRandomCards()
 					mutableListOf()
 				}, this@ListCardFragment::onClickCard).also {
 					this.adapter = it
 				}
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-					searchView.clearFocus()
-					if (searchView.query.isNotEmpty()) return
-					if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL))
-						viewModel.getListRandomCards()
+					if (!loading.isActive) {
+						searchView.clearFocus()
+						if (searchView.query.isNotEmpty()) return
+						if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL))
+							loading = viewModel.getListRandomCards()
+					}
 				}
 			})
 		}

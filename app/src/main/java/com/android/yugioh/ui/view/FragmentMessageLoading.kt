@@ -16,7 +16,6 @@ class FragmentMessageLoading : Fragment() {
 	
 	private lateinit var progressBar: ProgressBar
 	private lateinit var messageLoading: TextView
-	
 	private val viewModel: CardViewModel by activityViewModels()
 	
 	override fun onCreateView(

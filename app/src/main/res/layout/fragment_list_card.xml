@@ -9,7 +9,7 @@
 	
 	<include
 		android:id="@+id/include"
-		layout="@layout/fragment_toolbar"/>
+		layout="@layout/toolbar_main_activity"/>
 	
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recyclerViewCard"

@@ -8,68 +8,27 @@
 	android:focusableInTouchMode="true"
 	tools:context=".ui.view.MainCardActivity">
 	
-	<include
-		android:id="@+id/include"
-		layout="@layout/toolbar_main_activity"
+	<androidx.fragment.app.FragmentContainerView
+		android:id="@+id/fragment_container_1"
+		android:name="com.android.yugioh.ui.view.ListCardFragment"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:layout_constraintBottom_toTopOf="@id/fragment_bottom_bar"
 		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.0"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintBottom_toTopOf="@id/recyclerViewCard"/>
+		tools:layout="@layout/fragment_list_card" />
 	
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/recyclerViewCard"
-		android:layout_width="0dp"
-		android:layout_height="0dp"
-		app:layout_constraintBottom_toTopOf="@+id/guideline"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/include" />
-	
-	<androidx.constraintlayout.widget.Guideline
-		android:id="@+id/guideline"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		app:layout_constraintGuide_percent="0.92" />
-	
-	<ProgressBar
-		android:id="@+id/progressBar"
-		style="?android:attr/progressBarStyle"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+	<androidx.fragment.app.FragmentContainerView
+		android:id="@+id/fragment_bottom_bar"
+		android:name="com.android.yugioh.ui.view.FragmentMessageLoading"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@id/textViewLoading"
-		app:layout_constraintTop_toBottomOf="@+id/guideline" />
-	
-	<TextView
-		android:id="@+id/textViewLoading"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		tools:text="@string/loading_message"
-		android:textColor="@color/black"
-		android:textSize="20sp"
-		android:textStyle="bold"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@+id/progressBar"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/guideline" />
+		app:layout_constraintTop_toBottomOf="@id/fragment_container_1"
+		tools:layout="@layout/fragment_message_loading" />
 	
-	<TextView
-		android:id="@+id/textViewSearch"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textColor="@color/black"
-		android:textSize="20sp"
-		android:textStyle="bold"
-		android:visibility="gone"
-		android:gravity="center"
-		app:drawableBottomCompat="@drawable/database_icon"
-		app:layout_constraintBottom_toTopOf="@+id/guideline"
-		app:layout_constraintEnd_toEndOf="@+id/recyclerViewCard"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/include"
-		tools:text="@string/search_message"
-		tools:visibility="visible" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
