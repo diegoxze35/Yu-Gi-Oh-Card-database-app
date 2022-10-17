@@ -4,18 +4,19 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	tools:context=".ui.view.ListCardFragment">
+	tools:context=".ui.view.ListCardFragment"
+	android:focusableInTouchMode="true">
 	
 	<include
 		android:id="@+id/include"
-		layout="@layout/toolbar_main_activity"/>
+		layout="@layout/fragment_toolbar"/>
 	
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recyclerViewCard"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_marginTop="?attr/actionBarSize"
 		tools:listitem="@layout/layout_item_card"
+		android:layout_marginTop="?attr/actionBarSize"
 		tools:itemCount="1"/>
 	
 	<TextView

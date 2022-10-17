@@ -1,5 +1,4 @@
 package com.android.yugioh.model.data
-
 import android.os.Parcel
 import android.os.Parcelable
 import com.android.yugioh.R

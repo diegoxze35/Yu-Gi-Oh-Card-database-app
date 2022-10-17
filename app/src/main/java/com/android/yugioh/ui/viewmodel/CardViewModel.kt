@@ -7,83 +7,91 @@ import androidx.lifecycle.viewModelScope
 import com.android.yugioh.model.api.CardProvider
 import com.android.yugioh.model.data.Card
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CardViewModel @Inject constructor(private val service: CardProvider) : ViewModel() {
 	
+	private var loading =
+		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
+	
 	private val currentList: MutableList<Card> = mutableListOf()
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
 	
-	val searchCache: Map<String, List<Card>>
-		get() = searchData
-	
-	private val cardListModel: MutableLiveData<List<Card>> = MutableLiveData()
+	private val mainCardListLiveData: MutableLiveData<List<Card>> = MutableLiveData()
 	val mainList: LiveData<List<Card>>
-		get() = cardListModel
+		get() = mainCardListLiveData
+	
+	private val filterListLiveData: MutableLiveData<List<Card>> = MutableLiveData()
+	val filterList: LiveData<List<Card>>
+		get() = filterListLiveData
 	
 	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
-		val currentCard: LiveData<Card> get() = clickedCard
+	val currentCard: LiveData<Card> get() = clickedCard
 	
-	private val filterListModel: MutableLiveData<List<Card>> = MutableLiveData()
-	val filterList: LiveData<List<Card>>
-		get() = filterListModel
-	
-	private val modelProgressBar: MutableLiveData<Boolean> = MutableLiveData()
+	private val isLoadingState: MutableLiveData<Boolean> = MutableLiveData()
 	val isLoading: LiveData<Boolean>
-		get() = modelProgressBar
+		get() = isLoadingState
 	
-	private val modelMessageLoading: MutableLiveData<Boolean> = MutableLiveData()
+	private val isSearchingState: MutableLiveData<Boolean> = MutableLiveData()
 	val isSearching: LiveData<Boolean>
-		get() = modelMessageLoading
+		get() = isSearchingState
 	
-	
-	fun getListRandomCards(): Job {
-		return viewModelScope.launch {
-			modelProgressBar.postValue(false)
+	fun getListRandomCards() {
+		if (loading.isActive) return
+		loading = viewModelScope.launch {
+			isLoadingState.postValue(false)
 			service.getListRandomCards()?.let {
 				with(currentList) {
 					addAll(it)
-					cardListModel.postValue(this)
-					filterListModel.postValue(this)
+					mainCardListLiveData.postValue(this)
+					filterListLiveData.postValue(this)
 				}
 			}
-			modelProgressBar.postValue(true)
+			isLoadingState.postValue(true)
 		}
 	}
 	
 	fun searchCard(query: String) {
-		viewModelScope.launch {
-			modelProgressBar.postValue(filterListModel.value!!.isEmpty())
-			filterListModel.value = (
+		if (loading.isActive) return
+		loading = viewModelScope.launch {
+			isLoadingState.postValue(/*filterListLiveData.value!!.isEmpty()*/false)
+			filterListLiveData.value = (
 				searchData[query]?.also {
-					modelMessageLoading.postValue(true)
+					isSearchingState.postValue(true)
 				} ?: service.searchCard(query)?.let {
-					modelMessageLoading.postValue(true)
+					isSearchingState.postValue(true)
 					if (it.isNotEmpty())
 						searchData[query] = it
 					it
 				}
 			)
-			modelProgressBar.postValue(true)
+			isLoadingState.postValue(true)
 		}
 	}
 	
 	fun onClickCard(card: Card) = clickedCard.postValue(card)
 	
 	fun getFilterList(query: String) {
+		if (loading.isActive) return
+		searchData[query]?.let {
+			filterListLiveData.postValue(it) //restore to memory
+			return
+		}
 		currentList.run {
-			filterListModel.postValue(this)
+			filterListLiveData.postValue(this)
 			if (query.isBlank()) { //User´s click x button //this can replace with isEmpty()
-				modelMessageLoading.postValue(true)
+				isSearchingState.postValue(true)
 				return
 			}
-			filterListModel.postValue(filter {
+			filterListLiveData.postValue(filter {
 				it.name.contains(query, true)
 			}.also {
-				modelMessageLoading.postValue(it.isNotEmpty())
+				isSearchingState.postValue(it.isNotEmpty())
 			})
 		}
 	}

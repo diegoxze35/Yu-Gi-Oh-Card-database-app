@@ -8,6 +8,10 @@
 		<!-- Customize your theme here. -->
 		<item name="android:textColorHint"> #C3C3C3 </item>
 		<item name="android:editTextColor"> @color/white </item>
+		<item name="android:actionOverflowButtonStyle"> @style/Theme_menu </item>
 	</style>
 	
+	<style name="Theme_menu" parent="android:style/Widget.Holo.ActionButton.Overflow">
+		<item name="android:src"> @drawable/ic_baseline_more_vert_24 </item>
+	</style>
 </resources>

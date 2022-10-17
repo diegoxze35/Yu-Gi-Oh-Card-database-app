@@ -23,6 +23,7 @@ class FragmentMessageLoading : Fragment() {
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
+		
 		return inflater.inflate(R.layout.fragment_message_loading, container, false)
 	}
 	
@@ -30,6 +31,7 @@ class FragmentMessageLoading : Fragment() {
 		super.onViewCreated(view, savedInstanceState)
 		progressBar = view.findViewById(R.id.progressBar)
 		messageLoading = view.findViewById(R.id.textViewLoading)
+		
 		viewModel.isLoading.observe(viewLifecycleOwner) {
 			progressBar.isGone = it
 			messageLoading.isGone = it

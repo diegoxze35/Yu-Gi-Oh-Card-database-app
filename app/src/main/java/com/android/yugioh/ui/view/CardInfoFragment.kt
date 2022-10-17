@@ -20,6 +20,7 @@ import com.android.yugioh.model.data.Card
 import com.android.yugioh.model.data.MonsterCard
 import com.android.yugioh.model.data.SkillCard
 import com.android.yugioh.model.data.SpellTrapCard
+import com.android.yugioh.model.data.MonsterCard.CREATOR.MonsterType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import com.android.yugioh.model.data.Enum
@@ -142,12 +143,12 @@ class CardInfoFragment(private val card: Card) : Fragment() {
 						lateinit var text: String
 						setCompoundDrawablesWithIntrinsicBounds(
 							0, 0, 0, when (type) {
-								MonsterCard.CREATOR.MonsterType.XYZ_MONSTER,
-								MonsterCard.CREATOR.MonsterType.XYZ_PENDULUM_EFFECT_MONSTER -> {
+								MonsterType.XYZ_MONSTER,
+								MonsterType.XYZ_PENDULUM_EFFECT_MONSTER -> {
 									text = getString(R.string.level_info, it)
 									R.drawable.level_xyz_monster_s
 								}
-								MonsterCard.CREATOR.MonsterType.LINK_MONSTER -> {
+								MonsterType.LINK_MONSTER -> {
 									text = getString(R.string.linkval_info, it)
 									R.drawable.linkval_s
 								}

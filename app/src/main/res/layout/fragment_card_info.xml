@@ -246,6 +246,7 @@
 					android:layout_height="wrap_content"
 					android:orientation="horizontal"
 					app:layout_constrainedHeight="true" />
+					<!--app:layout_constraintGuide_percent="0.02" />-->
 				
 				<androidx.constraintlayout.widget.Guideline
 					android:id="@+id/guidelineDivider2"
@@ -253,6 +254,7 @@
 					android:layout_height="wrap_content"
 					android:orientation="horizontal"
 					app:layout_constrainedHeight="true" />
+					<!--app:layout_constraintGuide_percent="0.05" />-->
 				
 				<androidx.constraintlayout.widget.Guideline
 					android:id="@+id/guidelineDivider3"
@@ -260,6 +262,8 @@
 					android:layout_height="0dp"
 					android:orientation="horizontal"
 					app:layout_constrainedHeight="true" />
+					<!--app:layout_constraintGuide_percent="0.08"/>-->
+			
 			
 			</androidx.constraintlayout.widget.ConstraintLayout>
 		</androidx.cardview.widget.CardView>

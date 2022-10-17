@@ -18,5 +18,4 @@
 				android:title="@string/menu_main_activity_my_decks"/>
 		</menu>
 	</item>
-	
 </menu>

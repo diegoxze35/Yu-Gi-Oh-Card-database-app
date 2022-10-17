@@ -9,6 +9,19 @@
 	tools:context=".ui.view.MainCardActivity">
 	
 	<androidx.fragment.app.FragmentContainerView
+		android:id="@+id/fragment_toolbar"
+		android:name="com.android.yugioh.ui.view.FragmentToolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		tools:layout="@layout/fragment_toolbar"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintBottom_toTopOf="@id/fragment_container_1">
+		
+	</androidx.fragment.app.FragmentContainerView>
+	
+	<androidx.fragment.app.FragmentContainerView
 		android:id="@+id/fragment_container_1"
 		android:name="com.android.yugioh.ui.view.ListCardFragment"
 		android:layout_width="match_parent"
@@ -17,7 +30,7 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/fragment_toolbar"
 		tools:layout="@layout/fragment_list_card" />
 	
 	<androidx.fragment.app.FragmentContainerView
