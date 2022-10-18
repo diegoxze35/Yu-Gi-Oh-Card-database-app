@@ -21,7 +21,7 @@ class MainCardActivity : AppCompatActivity() {
 		viewModel.currentCard.observe(this) {
 			supportFragmentManager.commit {
 				setReorderingAllowed(true)
-				setCustomAnimations(R.anim.scale_enter_anim, 0)
+				setCustomAnimations(R.anim.scale_enter_anim, R.anim.alpha_out)
 				replace(R.id.fragment_container_1, CardInfoFragment(it))
 			}
 		}
