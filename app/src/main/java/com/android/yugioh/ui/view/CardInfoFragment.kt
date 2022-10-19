@@ -29,7 +29,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.net.URL
 
-class CardInfoFragment(private val card: Card) : Fragment() {
+class CardInfoFragment : Fragment() {
+	
+	lateinit var card: Card
 	
 	private lateinit var atkText: TextView
 	private lateinit var defText: TextView

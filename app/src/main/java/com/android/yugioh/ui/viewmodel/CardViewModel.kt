@@ -2,7 +2,9 @@ package com.android.yugioh.ui.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.android.yugioh.model.api.CardProvider
 import com.android.yugioh.model.data.Card
@@ -14,79 +16,68 @@ import javax.inject.Inject
 @HiltViewModel
 class CardViewModel @Inject constructor(private val service: CardProvider) : ViewModel() {
 	
-	private val currentList: MutableList<Card> = mutableListOf()
+	private var userSearch = false
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
 	
-	val searchCache: Map<String, List<Card>>
-		get() = searchData
-	
-	private val cardListModel: MutableLiveData<List<Card>> = MutableLiveData()
-	val mainList: LiveData<List<Card>>
-		get() = cardListModel
+	private val mainListLiveData: MutableLiveData<List<Card>> = MutableLiveData(listOf())
+	val mainList: LiveData<List<Card>> get() = mainListLiveData
 	
 	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
-		val currentCard: LiveData<Card> get() = clickedCard
+	val currentCard: LiveData<Card> get() = clickedCard
 	
-	private val filterListModel: MutableLiveData<List<Card>> = MutableLiveData()
-	val filterList: LiveData<List<Card>>
-		get() = filterListModel
+	private val currentQueryLiveData: MutableLiveData<String> = MutableLiveData()
 	
-	private val modelProgressBar: MutableLiveData<Boolean> = MutableLiveData()
-	val isLoading: LiveData<Boolean>
-		get() = modelProgressBar
+	fun setQuerySearch(query: String, onQuery: Boolean) {
+		userSearch = onQuery
+		currentQueryLiveData.value = query
+	}
 	
-	private val modelMessageLoading: MutableLiveData<Boolean> = MutableLiveData()
-	val isSearching: LiveData<Boolean>
-		get() = modelMessageLoading
+	val filterListLiveData: LiveData<List<Card>> =
+		Transformations.switchMap(currentQueryLiveData) { query ->
+			liveData<List<Card>> {
+				if (!userSearch) {
+					mainList.value?.filter {
+						it.name.contains(query, true)
+					}?.also {
+						isSearchingLiveData.postValue(it.isNotEmpty())
+						emit(it)
+						return@liveData
+					}
+				}
+				isLoadingLiveData.postValue(false)
+				isSearchingLiveData.postValue(true)
+				searchData[query]?.let {
+					isLoadingLiveData.postValue(true)
+					emit(it)
+					return@liveData
+				}
+				service.searchCard(query)?.let {
+					if (it.isNotEmpty())
+						searchData[query] = it
+					isLoadingLiveData.postValue(true)
+					emit(it)
+				}
+			}
+		}
+	
+	private val isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
+	val isLoading: LiveData<Boolean> get() = isLoadingLiveData
+	
+	private val isSearchingLiveData: MutableLiveData<Boolean> = MutableLiveData()
+	val isSearching: LiveData<Boolean> get() = isSearchingLiveData
 	
 	
 	fun getListRandomCards(): Job {
 		return viewModelScope.launch {
-			modelProgressBar.postValue(false)
+			isLoadingLiveData.postValue(false)
 			service.getListRandomCards()?.let {
-				with(currentList) {
-					addAll(it)
-					cardListModel.postValue(this)
-					filterListModel.postValue(this)
-				}
+				mainListLiveData.postValue(mainListLiveData.value!!.plus(it))
 			}
-			modelProgressBar.postValue(true)
-		}
-	}
-	
-	fun searchCard(query: String) {
-		viewModelScope.launch {
-			modelProgressBar.postValue(filterListModel.value!!.isEmpty())
-			filterListModel.value = (
-				searchData[query]?.also {
-					modelMessageLoading.postValue(true)
-				} ?: service.searchCard(query)?.let {
-					modelMessageLoading.postValue(true)
-					if (it.isNotEmpty())
-						searchData[query] = it
-					it
-				}
-			)
-			modelProgressBar.postValue(true)
+			isLoadingLiveData.postValue(true)
 		}
 	}
 	
 	fun onClickCard(card: Card) = clickedCard.postValue(card)
-	
-	fun getFilterList(query: String) {
-		currentList.run {
-			filterListModel.postValue(this)
-			if (query.isBlank()) { //User´s click x button //this can replace with isEmpty()
-				modelMessageLoading.postValue(true)
-				return
-			}
-			filterListModel.postValue(filter {
-				it.name.contains(query, true)
-			}.also {
-				modelMessageLoading.postValue(it.isNotEmpty())
-			})
-		}
-	}
 	
 	override fun onCleared() {
 		CardProvider.isInit = false

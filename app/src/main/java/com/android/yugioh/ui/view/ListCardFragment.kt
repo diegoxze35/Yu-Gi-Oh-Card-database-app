@@ -46,7 +46,7 @@ class ListCardFragment : Fragment() {
 		super.onViewCreated(view, savedInstanceState)
 		
 		messageSearch = view.findViewById(R.id.textViewSearch)
-		toolbar = view.findViewById(R.id.include)
+		/*toolbar = view.findViewById(R.id.include)
 		(activity as AppCompatActivity).setSupportActionBar(toolbar.also {
 			searchView = it.findViewById(R.id.searchView)
 		})
@@ -72,12 +72,12 @@ class ListCardFragment : Fragment() {
 					return true
 				}
 			})
-		}
+		}*/
 		
 		recyclerView = view.findViewById(R.id.recyclerViewCard)
 		recyclerView.apply {
 			this@ListCardFragment.adapter =
-				CardAdapter(viewModel.mainList.value?.toMutableList() ?: kotlin.run {
+				CardAdapter(kotlin.run {
 					loading = viewModel.getListRandomCards()
 					mutableListOf()
 				}, this@ListCardFragment::onClickCard).also {
@@ -86,8 +86,8 @@ class ListCardFragment : Fragment() {
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 					if (!loading.isActive) {
-						searchView.clearFocus()
-						if (searchView.query.isNotEmpty()) return
+						/*searchView.clearFocus()
+						if (searchView.query.isNotEmpty()) return*/
 						if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL))
 							loading = viewModel.getListRandomCards()
 					}
@@ -98,29 +98,33 @@ class ListCardFragment : Fragment() {
 		viewModel.mainList.observe(viewLifecycleOwner) {
 			adapter.addListCard(it)
 		}
-		viewModel.filterList.observe(viewLifecycleOwner) {
+		
+		viewModel.filterListLiveData.observe(viewLifecycleOwner) {
+			adapter.addFilterList(it)
+		}
+		/*viewModel.filterList.observe(viewLifecycleOwner) {
 			if (viewModel.mainList.value!! == it) {
 				if (searchView.query.isEmpty() && searchView.hasFocus()) //restore original list
 					adapter.addFilterList(it)
 				return@observe
 			}
 			adapter.addFilterList(it)
-		}
+		}*/
 		viewModel.isSearching.observe(viewLifecycleOwner) {
 			messageSearch.apply {
-				isGone = it
-				text = resources.getString(R.string.search_message)
-				if (it && viewModel.filterList.value!!.isEmpty()) {
+				if (/*it && */viewModel.filterListLiveData.value!!.isEmpty()) {
 					isGone = false
 					text = resources.getString(R.string.not_result_search)
 				}
+				isGone = it
+				text = resources.getString(R.string.search_message)
 			}
 		}
 	}
 	
 	override fun onResume() {
 		super.onResume()
-		searchView.clearFocus()
+		/*searchView.clearFocus()*/
 		with(resources.configuration.orientation) {
 			if (this == Configuration.ORIENTATION_LANDSCAPE)
 				recyclerView.layoutManager = gridLayout

@@ -22,7 +22,6 @@ class FragmentMessageLoading : Fragment() {
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		
 		return inflater.inflate(R.layout.fragment_message_loading, container, false)
 	}
 	
@@ -37,7 +36,7 @@ class FragmentMessageLoading : Fragment() {
 			messageLoading.apply {
 				isGone = it
 				text =
-					if ((viewModel.mainList.value == viewModel.filterList.value))
+					if ((/*viewModel.mainList.value == viewModel.filterList.value*/true))
 						resources.getString(R.string.loading_message)
 					else
 						resources.getString(R.string.searching_message)

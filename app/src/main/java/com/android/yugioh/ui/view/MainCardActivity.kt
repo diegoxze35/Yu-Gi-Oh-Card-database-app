@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainCardActivity : AppCompatActivity() {
 	
 	private val viewModel: CardViewModel by viewModels()
+	private val fragmentDetail = CardInfoFragment()
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -22,7 +23,9 @@ class MainCardActivity : AppCompatActivity() {
 			supportFragmentManager.commit {
 				setReorderingAllowed(true)
 				setCustomAnimations(R.anim.scale_enter_anim, R.anim.alpha_out)
-				replace(R.id.fragment_container_1, CardInfoFragment(it))
+				replace(R.id.fragment_container_1, fragmentDetail.also { fragment ->
+					fragment.card = it
+				})
 			}
 		}
 	}
