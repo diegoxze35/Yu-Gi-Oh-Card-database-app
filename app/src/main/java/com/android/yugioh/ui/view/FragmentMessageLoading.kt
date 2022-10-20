@@ -36,7 +36,7 @@ class FragmentMessageLoading : Fragment() {
 			messageLoading.apply {
 				isGone = it
 				text =
-					if ((/*viewModel.mainList.value == viewModel.filterList.value*/true))
+					if (viewModel.currentQuery.isBlank())
 						resources.getString(R.string.loading_message)
 					else
 						resources.getString(R.string.searching_message)

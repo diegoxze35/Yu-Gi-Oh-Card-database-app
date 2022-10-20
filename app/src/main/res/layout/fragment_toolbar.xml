@@ -32,13 +32,10 @@
 			android:layout_centerVertical="true"
 			android:layout_toEndOf="@+id/icon_toolbar"
 			android:closeIcon="@drawable/close_search_icon"
-			android:focusable="false"
-			android:focusableInTouchMode="false"
 			android:goIcon="@drawable/submit_search_icon"
 			android:iconifiedByDefault="false"
 			android:inputType="text"
 			android:queryHint="Search Card"
 			android:searchIcon="@drawable/search_icon" />
-		
 	</RelativeLayout>
 </androidx.appcompat.widget.Toolbar>

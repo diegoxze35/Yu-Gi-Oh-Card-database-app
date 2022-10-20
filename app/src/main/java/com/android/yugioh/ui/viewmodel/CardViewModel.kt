@@ -9,14 +9,18 @@ import androidx.lifecycle.viewModelScope
 import com.android.yugioh.model.api.CardProvider
 import com.android.yugioh.model.data.Card
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CardViewModel @Inject constructor(private val service: CardProvider) : ViewModel() {
 	
-	private var userSearch = false
+	private var loading =
+		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
+	private var isQuery = false
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
 	
 	private val mainListLiveData: MutableLiveData<List<Card>> = MutableLiveData(listOf())
@@ -26,16 +30,21 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 	val currentCard: LiveData<Card> get() = clickedCard
 	
 	private val currentQueryLiveData: MutableLiveData<String> = MutableLiveData()
+	val currentQuery: String
+		get() {
+			return currentQueryLiveData.value.orEmpty()
+		}
 	
 	fun setQuerySearch(query: String, onQuery: Boolean) {
-		userSearch = onQuery
+		isQuery = onQuery
 		currentQueryLiveData.value = query
 	}
 	
 	val filterListLiveData: LiveData<List<Card>> =
 		Transformations.switchMap(currentQueryLiveData) { query ->
 			liveData<List<Card>> {
-				if (!userSearch) {
+				if (loading.isActive) return@liveData
+				if (!isQuery) {
 					mainList.value?.filter {
 						it.name.contains(query, true)
 					}?.also {
@@ -67,8 +76,9 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 	val isSearching: LiveData<Boolean> get() = isSearchingLiveData
 	
 	
-	fun getListRandomCards(): Job {
-		return viewModelScope.launch {
+	fun getListRandomCards() {
+		if (loading.isActive) return
+		loading = viewModelScope.launch {
 			isLoadingLiveData.postValue(false)
 			service.getListRandomCards()?.let {
 				mainListLiveData.postValue(mainListLiveData.value!!.plus(it))
