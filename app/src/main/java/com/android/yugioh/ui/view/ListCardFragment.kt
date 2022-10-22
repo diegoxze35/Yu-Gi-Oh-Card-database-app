@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.yugioh.R
-import com.android.yugioh.model.data.Card
+/*import com.android.yugioh.model.data.Card*/
 import com.android.yugioh.ui.viewmodel.CardViewModel
 
 class ListCardFragment : Fragment() {
@@ -21,8 +21,7 @@ class ListCardFragment : Fragment() {
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var adapter: CardAdapter
 	private lateinit var messageSearch: TextView
-	private val gridLayout = GridLayoutManager(context, 2)
-	private val linearLayout = LinearLayoutManager(context)
+	
 	private val viewModel: CardViewModel by activityViewModels()
 	
 	override fun onCreateView(
@@ -33,15 +32,21 @@ class ListCardFragment : Fragment() {
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		
 		messageSearch = view.findViewById(R.id.textViewSearch)
 		recyclerView = view.findViewById(R.id.recyclerViewCard)
 		recyclerView.apply {
 			this@ListCardFragment.adapter =
-				CardAdapter(kotlin.run {
-					viewModel.getListRandomCards()
-					mutableListOf()
-				}, this@ListCardFragment::onClickCard).also {
+				CardAdapter(
+					with(viewModel.mainList.value!!) {
+						if (isNotEmpty())
+							toMutableList()
+						else {
+							viewModel.getListRandomCards()
+							mutableListOf()
+						}
+					}, (this@ListCardFragment.requireActivity() as MainCardActivity)::startDetailFragment
+					/*this@ListCardFragment::onClickCard*/
+				).also {
 					this.adapter = it
 				}
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -78,12 +83,12 @@ class ListCardFragment : Fragment() {
 		super.onResume()
 		with(resources.configuration.orientation) {
 			if (this == Configuration.ORIENTATION_LANDSCAPE)
-				recyclerView.layoutManager = gridLayout
+				recyclerView.layoutManager = GridLayoutManager(context, 2)
 			else if (this == Configuration.ORIENTATION_PORTRAIT)
-				recyclerView.layoutManager = linearLayout
+				recyclerView.layoutManager = LinearLayoutManager(context)
 		}
 	}
 	
-	private fun onClickCard(card: Card) = viewModel.onClickCard(card)
+	/*private fun onClickCard(card: Card) = viewModel.onClickCard(card)*/
 	
 }

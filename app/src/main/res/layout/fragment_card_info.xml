@@ -28,8 +28,8 @@
 		
 		<ImageView
 			android:id="@+id/imageViewFullCard"
-			android:layout_width="370dp"
-			android:layout_height="540dp"
+			android:layout_width="340dp"
+			android:layout_height="510dp"
 			android:layout_gravity="center"
 			android:layout_margin="12dp"
 			tools:ignore="ContentDescription"

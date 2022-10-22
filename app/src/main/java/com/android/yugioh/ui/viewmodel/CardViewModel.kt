@@ -23,7 +23,7 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 	private var isQuery = false
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
 	
-	private val mainListLiveData: MutableLiveData<List<Card>> = MutableLiveData(listOf())
+	private val mainListLiveData: MutableLiveData<List<Card>> = MutableLiveData(emptyList())
 	val mainList: LiveData<List<Card>> get() = mainListLiveData
 	
 	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
@@ -87,7 +87,9 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 		}
 	}
 	
-	fun onClickCard(card: Card) = clickedCard.postValue(card)
+	fun onClickCard(card: Card) {
+		clickedCard.value = card
+	}
 	
 	override fun onCleared() {
 		CardProvider.isInit = false
