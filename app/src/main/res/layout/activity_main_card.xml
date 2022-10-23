@@ -8,16 +8,49 @@
 	android:focusableInTouchMode="true"
 	tools:context=".ui.view.MainCardActivity">
 	
-	<androidx.fragment.app.FragmentContainerView
-		android:id="@+id/toolbar_container"
-		tools:layout="@layout/fragment_toolbar"
-		android:name="com.android.yugioh.ui.view.ToolbarFragment"
-		android:layout_width="match_parent"
-		android:layout_height="?attr/actionBarSize"
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/toolbar"
 		app:layout_constraintTop_toTopOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintBottom_toTopOf="@id/fragment_container_1"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintBottom_toTopOf="@+id/fragment_container_1"/>
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="@color/main_color_app"
+		app:contentInsetLeft="0dp"
+		app:contentInsetStart="0dp">
+		
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+			
+			<ImageView
+				android:id="@+id/icon_toolbar"
+				android:layout_width="95dp"
+				android:layout_height="match_parent"
+				android:layout_centerVertical="true"
+				android:paddingTop="2dp"
+				android:scaleType="centerInside"
+				android:scaleX="1.7"
+				android:scaleY="1.7"
+				android:src="@drawable/card_database_icon"
+				tools:ignore="ContentDescription" />
+			
+			<android.widget.SearchView
+				android:id="@+id/searchView"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_centerVertical="true"
+				android:layout_toEndOf="@+id/icon_toolbar"
+				android:closeIcon="@drawable/close_search_icon"
+				android:goIcon="@drawable/submit_search_icon"
+				android:iconifiedByDefault="false"
+				android:inputType="text"
+				android:queryHint="Search Card"
+				android:searchIcon="@drawable/search_icon" />
+		</RelativeLayout>
+		
+	</androidx.appcompat.widget.Toolbar>
 	
 	<androidx.fragment.app.FragmentContainerView
 		android:id="@+id/fragment_container_1"
@@ -28,7 +61,7 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/toolbar_container"
+		app:layout_constraintTop_toBottomOf="@id/toolbar"
 		tools:layout="@layout/fragment_list_card" />
 	
 	<androidx.fragment.app.FragmentContainerView
@@ -41,5 +74,5 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/fragment_container_1"
 		tools:layout="@layout/fragment_message_loading" />
-	
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.yugioh.R
-/*import com.android.yugioh.model.data.Card*/
 import com.android.yugioh.ui.viewmodel.CardViewModel
 
 class ListCardFragment : Fragment() {
@@ -21,6 +20,9 @@ class ListCardFragment : Fragment() {
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var adapter: CardAdapter
 	private lateinit var messageSearch: TextView
+	private val activity by lazy {
+		requireActivity() as MainCardActivity
+	}
 	
 	private val viewModel: CardViewModel by activityViewModels()
 	
@@ -44,14 +46,13 @@ class ListCardFragment : Fragment() {
 							viewModel.getListRandomCards()
 							mutableListOf()
 						}
-					}, (this@ListCardFragment.requireActivity() as MainCardActivity)::startDetailFragment
-					/*this@ListCardFragment::onClickCard*/
+					}, activity::startDetailFragment
 				).also {
 					this.adapter = it
 				}
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-					recyclerView.requestFocus()
+					activity.clearFocus()
 					if (viewModel.currentQuery.isNotEmpty()) return
 					if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL))
 						viewModel.getListRandomCards()
@@ -81,6 +82,7 @@ class ListCardFragment : Fragment() {
 	
 	override fun onResume() {
 		super.onResume()
+		activity.clearFocus()
 		with(resources.configuration.orientation) {
 			if (this == Configuration.ORIENTATION_LANDSCAPE)
 				recyclerView.layoutManager = GridLayoutManager(context, 2)
@@ -88,7 +90,5 @@ class ListCardFragment : Fragment() {
 				recyclerView.layoutManager = LinearLayoutManager(context)
 		}
 	}
-	
-	/*private fun onClickCard(card: Card) = viewModel.onClickCard(card)*/
 	
 }
