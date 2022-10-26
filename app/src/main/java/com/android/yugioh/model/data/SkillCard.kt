@@ -1,7 +1,5 @@
 package com.android.yugioh.model.data
 
-import android.os.Parcel
-import android.os.Parcelable
 import com.android.yugioh.R
 import kotlin.Enum
 
@@ -18,38 +16,7 @@ data class SkillCard(
 	race, archetype, card_images, null
 ) {
 	
-	constructor(parcel: Parcel) : this(
-		parcel.readInt(),
-		parcel.readString()!!,
-		parcel.readString()!!,
-		RaceSkill.valueOf(parcel.readString()!!),
-		parcel.readString(),
-		with(mutableListOf<Image>()) {
-			parcel.readTypedList(this, Image.CREATOR)
-			this
-		}
-	)
-	
-	override fun writeToParcel(dest: Parcel, flags: Int) {
-		with(dest) {
-			writeInt(id)
-			writeString(name)
-			writeString(description)
-			writeString(race.name)
-			writeString(archetype)
-			writeTypedList(card_images)
-		}
-	}
-	
-	companion object CREATOR : Parcelable.Creator<SkillCard> {
-		
-		override fun createFromParcel(source: Parcel): SkillCard {
-			return SkillCard(source)
-		}
-		
-		override fun newArray(size: Int): Array<SkillCard?> {
-			return arrayOfNulls(size)
-		}
+	companion object {
 		
 		enum class TypeSkill(override val type: String) : Type {
 			

@@ -17,6 +17,10 @@ import com.android.yugioh.ui.viewmodel.CardViewModel
 
 class ListCardFragment : Fragment() {
 	
+	companion object {
+		private const val SPAN_COUNT = 2
+	}
+	private val viewModel: CardViewModel by activityViewModels()
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var adapter: CardAdapter
 	private lateinit var messageSearch: TextView
@@ -24,31 +28,25 @@ class ListCardFragment : Fragment() {
 		requireActivity() as MainCardActivity
 	}
 	
-	private val viewModel: CardViewModel by activityViewModels()
-	
 	override fun onCreateView(
 		inflater: LayoutInflater,
 		container: ViewGroup?, savedInstanceState: Bundle?
 	): View? = inflater.inflate(R.layout.fragment_list_card, container, false)
 	
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		if (viewModel.mainList.value!!.isEmpty())
+			viewModel.getListRandomCards()
+	}
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		messageSearch = view.findViewById(R.id.textViewSearch)
 		recyclerView = view.findViewById(R.id.recyclerViewCard)
 		recyclerView.apply {
-			this@ListCardFragment.adapter =
-				CardAdapter(
-					with(viewModel.mainList.value!!) {
-						if (isNotEmpty())
-							toMutableList()
-						else {
-							viewModel.getListRandomCards()
-							mutableListOf()
-						}
-					}, activity::startDetailFragment
-				).also {
-					this.adapter = it
+			this.adapter =
+				CardAdapter(activity::startDetailFragment).also {
+					this@ListCardFragment.adapter = it
 				}
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -60,20 +58,12 @@ class ListCardFragment : Fragment() {
 			})
 		}
 		
-		viewModel.mainList.observe(viewLifecycleOwner) {
-			adapter.addListCard(it)
-		}
+		viewModel.mainList.observe(viewLifecycleOwner) { adapter.addListCard(it) }
 		
-		viewModel.filterListLiveData.observe(viewLifecycleOwner) {
-			adapter.addFilterList(it)
-		}
+		viewModel.filterListLiveData.observe(viewLifecycleOwner) { adapter.addFilterList(it) }
 		
 		viewModel.isSearching.observe(viewLifecycleOwner) {
 			messageSearch.apply {
-				if (viewModel.filterListLiveData.value!!.isEmpty()) {
-					isGone = false
-					text = resources.getString(R.string.not_result_search)
-				}
 				isGone = it
 				text = resources.getString(R.string.search_message)
 			}
@@ -85,7 +75,7 @@ class ListCardFragment : Fragment() {
 		activity.clearFocus()
 		with(resources.configuration.orientation) {
 			if (this == Configuration.ORIENTATION_LANDSCAPE)
-				recyclerView.layoutManager = GridLayoutManager(context, 2)
+				recyclerView.layoutManager = GridLayoutManager(context, SPAN_COUNT)
 			else if (this == Configuration.ORIENTATION_PORTRAIT)
 				recyclerView.layoutManager = LinearLayoutManager(context)
 		}

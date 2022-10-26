@@ -21,7 +21,7 @@ import com.android.yugioh.model.data.Card
 import com.android.yugioh.model.data.MonsterCard
 import com.android.yugioh.model.data.SkillCard
 import com.android.yugioh.model.data.SpellTrapCard
-import com.android.yugioh.model.data.MonsterCard.CREATOR.MonsterType
+import com.android.yugioh.model.data.MonsterCard.Companion.MonsterType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import com.android.yugioh.model.data.Enum
@@ -34,12 +34,8 @@ import java.net.URL
 
 class CardInfoFragment : Fragment() {
 	
-	private val viewModel: CardViewModel by lazy {
-		val tempViewModel: CardViewModel by activityViewModels()
-		tempViewModel
-	}
+	private val viewModel: CardViewModel by activityViewModels()
 	private lateinit var card: Card
-	
 	private lateinit var atkText: TextView
 	private lateinit var defText: TextView
 	private lateinit var levelText: TextView
@@ -61,9 +57,7 @@ class CardInfoFragment : Fragment() {
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		viewModel.currentCard.value?.let {
-			card = it
-		}
+		card = viewModel.currentCard.value!!
 		bitmap = CoroutineScope(Dispatchers.IO).async {
 			URL(card.card_images[0].imageUrl).getBitmap()
 		}
@@ -71,8 +65,6 @@ class CardInfoFragment : Fragment() {
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		
-		
 		view.findViewById<ScrollView>(R.id.mainScroll).apply {
 			post {
 				scrollTo(0, 0)

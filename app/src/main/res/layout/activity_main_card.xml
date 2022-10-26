@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
@@ -10,15 +9,17 @@
 	
 	<androidx.appcompat.widget.Toolbar
 		android:id="@+id/toolbar"
-		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintBottom_toTopOf="@id/fragment_container_1"
-		app:layout_constraintEnd_toEndOf="parent"
 		android:layout_width="match_parent"
 		android:layout_height="?attr/actionBarSize"
 		android:background="@color/main_color_app"
 		app:contentInsetLeft="0dp"
-		app:contentInsetStart="0dp">
+		app:contentInsetStart="0dp"
+		tools:menu="@menu/menu_main_activity"
+		app:popupTheme="@style/Theme_PopupOverlay"
+		app:layout_constraintBottom_toTopOf="@id/fragment_container_1"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent">
 		
 		<RelativeLayout
 			android:layout_width="match_parent"
@@ -49,19 +50,20 @@
 				android:queryHint="Search Card"
 				android:searchIcon="@drawable/search_icon" />
 		</RelativeLayout>
-		
 	</androidx.appcompat.widget.Toolbar>
 	
 	<androidx.fragment.app.FragmentContainerView
 		android:id="@+id/fragment_container_1"
-		android:name="com.android.yugioh.ui.view.ListCardFragment"
+		android:name="androidx.navigation.fragment.NavHostFragment"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
+		app:defaultNavHost="true"
 		app:layout_constraintBottom_toTopOf="@id/fragment_bottom_bar"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/toolbar"
+		app:navGraph="@navigation/nav_graph"
 		tools:layout="@layout/fragment_list_card" />
 	
 	<androidx.fragment.app.FragmentContainerView

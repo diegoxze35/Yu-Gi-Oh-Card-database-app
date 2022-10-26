@@ -14,4 +14,6 @@
 	<style name="Theme_menu" parent="android:style/Widget.Holo.ActionButton.Overflow">
 		<item name="android:src"> @drawable/ic_baseline_more_vert_24 </item>
 	</style>
+	
+	<style name="Theme_PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

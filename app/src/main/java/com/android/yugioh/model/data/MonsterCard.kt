@@ -1,7 +1,5 @@
 package com.android.yugioh.model.data
 
-import android.os.Parcel
-import android.os.Parcelable
 import com.android.yugioh.R
 
 data class MonsterCard(
@@ -20,45 +18,7 @@ data class MonsterCard(
 	val scaleOfPendulum: Byte?
 ) : Card(id, name, type, description, race, archetype, card_images, format) {
 	
-	constructor(parcel: Parcel) : this(
-		parcel.readInt(),
-		parcel.readString()!!,
-		MonsterType.valueOf(parcel.readString()!!),
-		parcel.readString()!!,
-		RaceMonsterCard.valueOf(parcel.readString()!!),
-		parcel.readString(),
-		with(mutableListOf<Image>()) {
-			parcel.readTypedList(this, Image.CREATOR)
-			this
-		},
-		parcel.readTypedObject(Format.CREATOR),
-		parcel.readValue(Short::class.java.classLoader) as Short,
-		parcel.readValue(Short::class.java.classLoader) as Short?,
-		parcel.readValue(Byte::class.java.classLoader) as Byte,
-		AttributeMonster.valueOf(parcel.readString()!!),
-		parcel.readValue(Byte::class.java.classLoader) as Byte?
-	)
-	
-	override fun writeToParcel(dest: Parcel, flags: Int) {
-		super.writeToParcel(dest, flags)
-		with(dest) {
-			writeValue(attack)
-			writeValue(defense)
-			writeValue(level)
-			writeString(attribute.toString())
-			writeValue(scaleOfPendulum)
-		}
-	}
-	
-	companion object CREATOR : Parcelable.Creator<MonsterCard> {
-		
-		override fun createFromParcel(parcel: Parcel): MonsterCard {
-			return MonsterCard(parcel)
-		}
-		
-		override fun newArray(size: Int): Array<MonsterCard?> {
-			return arrayOfNulls(size)
-		}
+	companion object {
 		
 		enum class MonsterType(
 			override val type: String,

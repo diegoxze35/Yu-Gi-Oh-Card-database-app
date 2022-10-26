@@ -15,10 +15,11 @@ import com.android.yugioh.instances.Picasso
 import com.android.yugioh.instances.Picasso.setImageFromUrlInImageView
 import com.android.yugioh.model.data.Card
 
-class CardAdapter(private val cards: MutableList<Card>, private val onCLick: (Card) -> Unit) :
+class CardAdapter(private val onCLick: (Card) -> Unit) :
 	RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
 	
 	private val picasso = Picasso()
+	private val cards: MutableList<Card> = mutableListOf()
 	
 	fun addListCard(cards: List<Card>) {
 		val position = itemCount
@@ -36,7 +37,7 @@ class CardAdapter(private val cards: MutableList<Card>, private val onCLick: (Ca
 			clear()
 			notifyItemRangeRemoved(0, lastItemCount)
 			val positionStart = itemCount
-			cards.addAll(filterCards)
+			addAll(filterCards)
 			notifyItemRangeInserted(positionStart, itemCount)
 		}
 	}
