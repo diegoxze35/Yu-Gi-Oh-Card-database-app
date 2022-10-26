@@ -20,7 +20,7 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 	
 	private var loading =
 		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
-	private var isQuery = false
+	private var isSubmit = false
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
 	
 	private val mainListLiveData: MutableLiveData<List<Card>> = MutableLiveData(emptyList())
@@ -35,8 +35,8 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 			return currentQueryLiveData.value.orEmpty()
 		}
 	
-	fun setQuerySearch(query: String, onQuery: Boolean) {
-		isQuery = onQuery
+	fun setQuerySearch(query: String, isSubmit: Boolean) {
+		this.isSubmit = isSubmit
 		currentQueryLiveData.value = query
 	}
 	
@@ -44,7 +44,8 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 		Transformations.switchMap(currentQueryLiveData) { query ->
 			liveData<List<Card>> {
 				if (loading.isActive) return@liveData
-				if (!isQuery) {
+				if (!isSubmit) {
+					searchData[query]?.let { emit(it); return@liveData }
 					mainList.value?.filter {
 						it.name.contains(query, true)
 					}?.also {
@@ -81,7 +82,7 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 		loading = viewModelScope.launch {
 			isLoadingLiveData.postValue(false)
 			service.getListRandomCards()?.let {
-				mainListLiveData.postValue(mainListLiveData.value!!.plus(it))
+				mainListLiveData.value = (mainListLiveData.value!!.plus(it))
 			}
 			isLoadingLiveData.postValue(true)
 		}

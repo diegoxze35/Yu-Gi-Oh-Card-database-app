@@ -76,6 +76,10 @@ dependencies {
 
     //fragment
     implementation "androidx.fragment:fragment-ktx:1.5.3"
+
+    //Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:2.5.2"
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.2"
 }
 
 kapt {

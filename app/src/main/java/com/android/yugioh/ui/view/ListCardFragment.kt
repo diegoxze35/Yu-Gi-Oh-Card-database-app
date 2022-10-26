@@ -17,14 +17,13 @@ import com.android.yugioh.ui.viewmodel.CardViewModel
 
 class ListCardFragment : Fragment() {
 	
+	private val viewModel: CardViewModel by activityViewModels()
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var adapter: CardAdapter
 	private lateinit var messageSearch: TextView
 	private val activity by lazy {
 		requireActivity() as MainCardActivity
 	}
-	
-	private val viewModel: CardViewModel by activityViewModels()
 	
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -37,18 +36,14 @@ class ListCardFragment : Fragment() {
 		messageSearch = view.findViewById(R.id.textViewSearch)
 		recyclerView = view.findViewById(R.id.recyclerViewCard)
 		recyclerView.apply {
-			this@ListCardFragment.adapter =
+			this.adapter =
 				CardAdapter(
-					with(viewModel.mainList.value!!) {
-						if (isNotEmpty())
-							toMutableList()
-						else {
-							viewModel.getListRandomCards()
-							mutableListOf()
-						}
-					}, activity::startDetailFragment
+					viewModel.mainList.value!!.ifEmpty {
+						viewModel.getListRandomCards()
+						mutableListOf()
+					}.toMutableList(), activity::startDetailFragment
 				).also {
-					this.adapter = it
+					this@ListCardFragment.adapter = it
 				}
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -60,20 +55,12 @@ class ListCardFragment : Fragment() {
 			})
 		}
 		
-		viewModel.mainList.observe(viewLifecycleOwner) {
-			adapter.addListCard(it)
-		}
+		viewModel.mainList.observe(viewLifecycleOwner) { adapter.addListCard(it) }
 		
-		viewModel.filterListLiveData.observe(viewLifecycleOwner) {
-			adapter.addFilterList(it)
-		}
+		viewModel.filterListLiveData.observe(viewLifecycleOwner) { adapter.addFilterList(it) }
 		
 		viewModel.isSearching.observe(viewLifecycleOwner) {
 			messageSearch.apply {
-				if (viewModel.filterListLiveData.value!!.isEmpty()) {
-					isGone = false
-					text = resources.getString(R.string.not_result_search)
-				}
 				isGone = it
 				text = resources.getString(R.string.search_message)
 			}

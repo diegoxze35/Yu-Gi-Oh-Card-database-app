@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/nav_graph"
+	app:startDestination="@id/listCardFragment">
+	
+	<fragment
+		android:id="@+id/listCardFragment"
+		android:name="com.android.yugioh.ui.view.ListCardFragment"
+		android:label="fragment_list_card"
+		tools:layout="@layout/fragment_list_card" >
+		<action
+			android:id="@+id/action_listCardFragment_to_cardInfoFragment"
+			app:destination="@id/cardInfoFragment"
+			app:enterAnim="@anim/alpha_in"
+			app:exitAnim="@anim/alpha_out"
+			app:popEnterAnim="@anim/alpha_in"
+			app:popExitAnim="@anim/alpha_out"/>
+	</fragment>
+	<fragment
+		android:id="@+id/cardInfoFragment"
+		android:name="com.android.yugioh.ui.view.CardInfoFragment"
+		android:label="fragment_card_info"
+		tools:layout="@layout/fragment_card_info" >
+		<action
+			android:id="@+id/action_cardInfoFragment_to_listCardFragment"
+			app:destination="@id/listCardFragment" />
+	</fragment>
+</navigation>
