@@ -10,9 +10,9 @@ data class SpellTrapCard(
 	override val description: String,
 	override val race: RaceSpellTrap,
 	override val archetype: String?,
-	override val card_images: List<Image>,
+	override val cardImages: List<Image>,
 	override val format: Format?
-) : Card(id, name, type, description, race, archetype, card_images, format) {
+) : Card(id, name, type, description, race, archetype, cardImages, format) {
 	
 	companion object {
 		

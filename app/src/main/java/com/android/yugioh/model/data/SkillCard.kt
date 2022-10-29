@@ -9,11 +9,11 @@ data class SkillCard(
 	override val description: String,
 	override val race: RaceSkill,
 	override val archetype: String?,
-	override val card_images: List<Image>
+	override val cardImages: List<Image>
 ) : Card(
 	id, name, TypeSkill.SKILL_CARD,
 	description,
-	race, archetype, card_images, null
+	race, archetype, cardImages, null
 ) {
 	
 	companion object {

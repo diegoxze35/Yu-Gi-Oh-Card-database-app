@@ -59,7 +59,7 @@ class CardInfoFragment : Fragment() {
 		super.onCreate(savedInstanceState)
 		card = viewModel.currentCard.value!!
 		bitmap = CoroutineScope(Dispatchers.IO).async {
-			URL(card.card_images[0].imageUrl).getBitmap()
+			URL(card.cardImages[0].imageUrl).getBitmap()
 		}
 	}
 	

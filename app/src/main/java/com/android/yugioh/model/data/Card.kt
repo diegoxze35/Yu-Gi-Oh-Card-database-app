@@ -8,7 +8,7 @@ sealed class Card(
 	open val description: String,
 	open val race: Race,
 	open val archetype: String?,
-	open val card_images: List<Image>,
+	open val cardImages: List<Image>,
 	open val format: Format?
 ) {
 	
@@ -43,6 +43,21 @@ sealed class Card(
 		val formats: Array<CardFormat?>,
 		val banTCG: BanListState?,
 		val banOCG: BanListState?
-	)
+	) {
+		override fun equals(other: Any?): Boolean {
+			if (this === other) return true
+			if (javaClass != other?.javaClass) return false
+			
+			other as Format
+			
+			if (!formats.contentEquals(other.formats)) return false
+			
+			return true
+		}
+		
+		override fun hashCode(): Int {
+			return formats.contentHashCode()
+		}
+	}
 	
 }

@@ -20,6 +20,7 @@ class ListCardFragment : Fragment() {
 	companion object {
 		private const val SPAN_COUNT = 2
 	}
+	
 	private val viewModel: CardViewModel by activityViewModels()
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var adapter: CardAdapter
@@ -33,21 +34,14 @@ class ListCardFragment : Fragment() {
 		container: ViewGroup?, savedInstanceState: Bundle?
 	): View? = inflater.inflate(R.layout.fragment_list_card, container, false)
 	
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		if (viewModel.mainList.value!!.isEmpty())
-			viewModel.getListRandomCards()
-	}
-	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		messageSearch = view.findViewById(R.id.textViewSearch)
 		recyclerView = view.findViewById(R.id.recyclerViewCard)
 		recyclerView.apply {
-			this.adapter =
-				CardAdapter(activity::startDetailFragment).also {
-					this@ListCardFragment.adapter = it
-				}
+			adapter = CardAdapter(activity::startDetailFragment).also {
+				this@ListCardFragment.adapter = it
+			}
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 					activity.clearFocus()
@@ -58,10 +52,11 @@ class ListCardFragment : Fragment() {
 			})
 		}
 		
-		viewModel.mainList.observe(viewLifecycleOwner) { adapter.addListCard(it) }
-		
-		viewModel.filterListLiveData.observe(viewLifecycleOwner) { adapter.addFilterList(it) }
-		
+		viewModel.filterListLiveData.observe(viewLifecycleOwner) {
+			if (viewModel.flag)
+				adapter.submitList(it)
+		}
+		viewModel.mainList.observe(viewLifecycleOwner) { adapter.submitList(it) }
 		viewModel.isSearching.observe(viewLifecycleOwner) {
 			messageSearch.apply {
 				isGone = it

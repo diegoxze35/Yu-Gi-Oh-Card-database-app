@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.yugioh.R
 import com.android.yugioh.instances.Picasso
@@ -16,31 +18,9 @@ import com.android.yugioh.instances.Picasso.setImageFromUrlInImageView
 import com.android.yugioh.model.data.Card
 
 class CardAdapter(private val onCLick: (Card) -> Unit) :
-	RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
+	ListAdapter<Card, CardAdapter.CardViewHolder>(DiffCallback) {
 	
 	private val picasso = Picasso()
-	private val cards: MutableList<Card> = mutableListOf()
-	
-	fun addListCard(cards: List<Card>) {
-		val position = itemCount
-		this.cards.run {
-			addAll(cards.filter {
-				!contains(it)
-			})
-		}
-		notifyItemRangeInserted(position, cards.size)
-	}
-	
-	fun addFilterList(filterCards: List<Card>) {
-		cards.run {
-			val lastItemCount = itemCount
-			clear()
-			notifyItemRangeRemoved(0, lastItemCount)
-			val positionStart = itemCount
-			addAll(filterCards)
-			notifyItemRangeInserted(positionStart, itemCount)
-		}
-	}
 	
 	class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 		
@@ -72,12 +52,12 @@ class CardAdapter(private val onCLick: (Card) -> Unit) :
 	
 	override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
 		holder.apply {
-			cards[position].let { card ->
+			getItem(position).also { card ->
 				cardName.text = card.name
 				typeCard.text = card.type.toString()
 				raceCard.text = card.race.toString()
 				picasso.setImageFromUrlInImageView(
-					card.card_images[0].imageUrlSmall,
+					card.cardImages[0].imageUrlSmall,
 					imageCard
 				)
 				var currentColor: Int = Color.WHITE
@@ -96,6 +76,12 @@ class CardAdapter(private val onCLick: (Card) -> Unit) :
 		}
 	}
 	
-	override fun getItemCount(): Int = cards.size
+	private object DiffCallback : DiffUtil.ItemCallback<Card>() {
+		override fun areItemsTheSame(oldItem: Card, newItem: Card): Boolean =
+			(oldItem.id == newItem.id)
+		
+		override fun areContentsTheSame(oldItem: Card, newItem: Card): Boolean =
+			(oldItem == newItem)
+	}
 	
 }

@@ -9,14 +9,14 @@ data class MonsterCard(
 	override val description: String,
 	override val race: RaceMonsterCard,
 	override val archetype: String?,
-	override val card_images: List<Image>,
+	override val cardImages: List<Image>,
 	override val format: Format?,
 	val attack: Short,
 	val defense: Short?, //link monsters defense is null
 	val level: Byte, /*Represents a level monster or link rating value in link monsters*/
 	val attribute: AttributeMonster,
 	val scaleOfPendulum: Byte?
-) : Card(id, name, type, description, race, archetype, card_images, format) {
+) : Card(id, name, type, description, race, archetype, cardImages, format) {
 	
 	companion object {
 		
