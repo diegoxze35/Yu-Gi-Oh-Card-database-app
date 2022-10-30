@@ -52,11 +52,14 @@ class ListCardFragment : Fragment() {
 			})
 		}
 		
-		viewModel.filterListLiveData.observe(viewLifecycleOwner) {
-			if (viewModel.flag)
+		viewModel.mainList.observe(viewLifecycleOwner) {
+			if (!viewModel.canAddFilterList)
 				adapter.submitList(it)
 		}
-		viewModel.mainList.observe(viewLifecycleOwner) { adapter.submitList(it) }
+		viewModel.filterListLiveData.observe(viewLifecycleOwner) {
+			if (viewModel.canAddFilterList)
+				adapter.submitList(it)
+		}
 		viewModel.isSearching.observe(viewLifecycleOwner) {
 			messageSearch.apply {
 				isGone = it

@@ -28,12 +28,12 @@ data class MonsterCard(
 			/*NORMAL*/
 			NORMAL_MONSTER(
 				"Normal Monster",
-				R.color.colorNormalMonster,
+				R.color.color_normal_monster,
 				R.drawable.normal_monster_s
 			),
 			NORMAL_TUNER_MONSTER(
 				"Normal Tuner Monster",
-				R.color.colorNormalMonster,
+				R.color.color_normal_monster,
 				R.drawable.normal_tuner_monster_s
 			),
 			
@@ -115,7 +115,7 @@ data class MonsterCard(
 			/*PENDULUM*/
 			PENDULUM_NORMAL_MONSTER(
 				"Pendulum Normal Monster",
-				R.color.colorNormalMonster,
+				R.color.color_normal_monster,
 				R.drawable.pendulum_normal_monster
 			),
 			PENDULUM_EFFECT_MONSTER(

@@ -4,6 +4,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:animateLayoutChanges="true"
 	android:focusableInTouchMode="true"
 	tools:context=".ui.view.MainCardActivity">
 	
@@ -14,12 +15,12 @@
 		android:background="@color/main_color_app"
 		app:contentInsetLeft="0dp"
 		app:contentInsetStart="0dp"
-		tools:menu="@menu/menu_main_activity"
-		app:popupTheme="@style/Theme_PopupOverlay"
 		app:layout_constraintBottom_toTopOf="@id/fragment_container_1"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent">
+		app:layout_constraintTop_toTopOf="parent"
+		app:popupTheme="@style/Theme_PopupOverlay"
+		tools:menu="@menu/menu_main_activity">
 		
 		<RelativeLayout
 			android:layout_width="match_parent"
@@ -58,7 +59,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		app:defaultNavHost="true"
-		app:layout_constraintBottom_toTopOf="@id/fragment_bottom_bar"
+		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"
 		app:layout_constraintStart_toStartOf="parent"
@@ -66,15 +67,36 @@
 		app:navGraph="@navigation/nav_graph"
 		tools:layout="@layout/fragment_list_card" />
 	
-	<androidx.fragment.app.FragmentContainerView
-		android:id="@+id/fragment_bottom_bar"
-		android:name="com.android.yugioh.ui.view.FragmentMessageLoading"
-		android:layout_width="match_parent"
-		android:layout_height="50dp"
+	<LinearLayout
+		android:id="@+id/linear_layout_container"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="25dp"
+		android:orientation="horizontal"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/fragment_container_1"
-		tools:layout="@layout/fragment_message_loading" />
+		android:background="@drawable/background_text_view"
+		android:padding="10dp"
+		app:layout_constraintStart_toStartOf="parent">
+		
+		<ProgressBar
+			android:indeterminateTint="@color/blue_progress_bar"
+			style="@android:style/Widget.Holo.ProgressBar"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginHorizontal="10dp" />
+		
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom"
+			android:layout_marginVertical="4dp"
+			android:layout_marginHorizontal="10dp"
+			android:textColor="@color/white"
+			android:textSize="20sp"
+			android:textStyle="bold"
+			android:text="@string/loading_message" />
+	
+	</LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

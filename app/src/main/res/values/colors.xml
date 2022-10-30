@@ -11,7 +11,7 @@
 	<color name="white">#FFFFFFFF</color>
 	
 	<!-- Colors for CardView views according to card -->
-	<color name="colorNormalMonster"> #D8973F </color>
+	<color name="color_normal_monster"> #D8973F </color>
 	<color name="colorEffectMonster"> #A55540 </color>
 	<color name="colorFusionMonster"> #813690 </color>
 	<color name="colorXYZMonster"> #272A2C </color>
@@ -30,4 +30,6 @@
 	<!-- Color back card -->
 	<color name="colorBackCard1"> #E97930 </color>
 	<color name="colorBackCard2"> #6B2022 </color>
+	
+	<color name="blue_progress_bar">#008DFF</color>
 </resources>

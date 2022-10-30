@@ -2,7 +2,6 @@ package com.android.yugioh.ui.view
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -40,7 +39,6 @@ class CardInfoFragment : Fragment() {
 	private lateinit var defText: TextView
 	private lateinit var levelText: TextView
 	private lateinit var imageCard: ImageView
-	private lateinit var cardName: TextView
 	private lateinit var textAttribute: TextView
 	private lateinit var textBanOCG: TextView
 	private lateinit var textBanTCG: TextView
@@ -49,11 +47,13 @@ class CardInfoFragment : Fragment() {
 	private lateinit var layout: ConstraintLayout
 	private lateinit var bitmap: Deferred<Bitmap>
 	
+	companion object {
+		private const val START_SCROLL = 0
+	}
+	
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-	): View? {
-		return inflater.inflate(R.layout.fragment_card_info, container, false)
-	}
+	): View? = inflater.inflate(R.layout.fragment_card_info, container, false)
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -65,29 +65,18 @@ class CardInfoFragment : Fragment() {
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		view.findViewById<ScrollView>(R.id.mainScroll).apply {
+		view.findViewById<ScrollView>(R.id.main_scroll).apply {
 			post {
-				scrollTo(0, 0)
+				scrollTo(START_SCROLL, START_SCROLL)
 			}
-			setBackgroundColor(
-				ContextCompat.getColor(requireContext(), card.type.color.also {
-					view.findViewById<TextView>(R.id.textViewNameCard).apply {
-						text = card.name
-						setTextColor(
-							if (it == R.color.colorSynchronyMonster)
-								Color.BLACK
-							else
-								Color.WHITE
-						)
-					}
-				})
-			)
 		}
+		view.findViewById<ConstraintLayout>(R.id.layout_info_card).setBackgroundColor(
+			ContextCompat.getColor(requireContext(), card.type.color)
+		)
 		atkText = view.findViewById(R.id.textViewAtk)
 		defText = view.findViewById(R.id.textViewDef)
 		levelText = view.findViewById(R.id.textViewLevelMonster)
-		imageCard = view.findViewById(R.id.imageViewFullCard)
-		cardName = view.findViewById(R.id.textViewNameCard)
+		imageCard = view.findViewById(R.id.image_view_full_card)
 		textAttribute = view.findViewById(R.id.textViewAttribute)
 		textArchetype = view.findViewById(R.id.textViewArchetype)
 		textBanOCG = view.findViewById(R.id.textViewBanListOCG)
@@ -102,7 +91,7 @@ class CardInfoFragment : Fragment() {
 			textArchetype.isGone = true
 			if (card is SpellTrapCard) {
 				(ConstraintSet()).run {
-					layout = view.findViewById(R.id.constraintLayoutInfoCard)
+					layout = view.findViewById(R.id.layout_data_card)
 					clone(layout)
 					val idGuideline = R.id.guidelineDivider1
 					connect(textBanOCG.id, ConstraintSet.TOP, idGuideline, ConstraintSet.BOTTOM)
@@ -125,7 +114,7 @@ class CardInfoFragment : Fragment() {
 			textBanOCG.isGone = true
 			textBanTCG.isGone = true
 			(ConstraintSet()).run {
-				layout = view.findViewById(R.id.constraintLayoutInfoCard)
+				layout = view.findViewById(R.id.layout_data_card)
 				clone(layout)
 				connect(
 					R.id.textViewDescription,
