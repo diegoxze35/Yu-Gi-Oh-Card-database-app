@@ -19,18 +19,12 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:popupTheme="@style/Theme_PopupOverlay"
 		tools:menu="@menu/menu_main_activity">
 		
-		<RelativeLayout
-			android:layout_width="match_parent"
-			android:layout_height="match_parent">
-			
 			<ImageView
 				android:id="@+id/icon_toolbar"
 				android:layout_width="95dp"
 				android:layout_height="match_parent"
-				android:layout_centerVertical="true"
 				android:paddingTop="2dp"
 				android:scaleType="centerInside"
 				android:scaleX="1.7"
@@ -50,7 +44,7 @@
 				android:inputType="text"
 				android:queryHint="Search Card"
 				android:searchIcon="@drawable/search_icon" />
-		</RelativeLayout>
+		
 	</androidx.appcompat.widget.Toolbar>
 	
 	<androidx.fragment.app.FragmentContainerView
@@ -87,6 +81,7 @@
 			android:layout_marginHorizontal="10dp" />
 		
 		<TextView
+			android:id="@+id/text_view_message"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"

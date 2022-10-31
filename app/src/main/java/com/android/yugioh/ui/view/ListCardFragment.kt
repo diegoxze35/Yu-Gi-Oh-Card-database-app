@@ -36,6 +36,7 @@ class ListCardFragment : Fragment() {
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		activity.updateToolbar(this)
 		messageSearch = view.findViewById(R.id.textViewSearch)
 		recyclerView = view.findViewById(R.id.recyclerViewCard)
 		recyclerView.apply {

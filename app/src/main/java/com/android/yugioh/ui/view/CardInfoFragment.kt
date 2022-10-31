@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -25,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import com.android.yugioh.model.data.Enum
 import com.android.yugioh.ui.viewmodel.CardViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
@@ -65,24 +67,28 @@ class CardInfoFragment : Fragment() {
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		view.findViewById<FloatingActionButton>(R.id.button_add_to_deck).setOnClickListener {
+			Toast.makeText(context, "$it", Toast.LENGTH_SHORT).show()
+		}
+		(requireActivity() as MainCardActivity).updateToolbar(this)
 		view.findViewById<ScrollView>(R.id.main_scroll).apply {
 			post {
 				scrollTo(START_SCROLL, START_SCROLL)
 			}
 		}
-		view.findViewById<ConstraintLayout>(R.id.layout_info_card).setBackgroundColor(
+		view.findViewById<View>(R.id.layout_info_card).setBackgroundColor(
 			ContextCompat.getColor(requireContext(), card.type.color)
 		)
-		atkText = view.findViewById(R.id.textViewAtk)
-		defText = view.findViewById(R.id.textViewDef)
-		levelText = view.findViewById(R.id.textViewLevelMonster)
+		atkText = view.findViewById(R.id.text_view_atk)
+		defText = view.findViewById(R.id.text_view_def)
+		levelText = view.findViewById(R.id.text_view_level_monster)
 		imageCard = view.findViewById(R.id.image_view_full_card)
-		textAttribute = view.findViewById(R.id.textViewAttribute)
-		textArchetype = view.findViewById(R.id.textViewArchetype)
-		textBanOCG = view.findViewById(R.id.textViewBanListOCG)
+		textAttribute = view.findViewById(R.id.text_view_attribute)
+		textArchetype = view.findViewById(R.id.text_view_archetype)
+		textBanOCG = view.findViewById(R.id.text_view_ban_list_OCG)
 		textBanTCG = view.findViewById(R.id.textViewBanListTCG)
-		textScalePendulum = view.findViewById(R.id.textViewScale)
-		view.findViewById<TextView>(R.id.textViewId).text = "$id"
+		textScalePendulum = view.findViewById(R.id.text_view_scale)
+		view.findViewById<TextView>(R.id.text_view_id).text = "$id"
 		view.findViewById<TextView>(R.id.textViewDescription).text = card.description
 		
 		card.archetype?.let {
@@ -101,15 +107,19 @@ class CardInfoFragment : Fragment() {
 			}
 		}
 		
-		view.findViewById<TextView>(R.id.textViewType).setIconAndText(card.type)
-		view.findViewById<TextView>(R.id.textViewRace).setIconAndText(card.race)
+		view.findViewById<TextView>(R.id.text_view_type)
+			.setIconAndText(R.string.any_text, card.type)
+		view.findViewById<TextView>(R.id.text_view_race)
+			.setIconAndText(R.string.any_text, card.race)
 		card.format?.let {
-			it.banTCG?.let { TCG -> textBanTCG.setIconAndText(TCG) } ?: textBanTCG.apply {
-				isGone = true
-			}
-			it.banOCG?.let { OCG -> textBanOCG.setIconAndText(OCG) } ?: textBanOCG.apply {
-				isGone = true
-			}
+			it.banTCG?.let { TCG -> textBanTCG.setIconAndText(R.string.tcg_ban_list, TCG) }
+				?: textBanTCG.apply {
+					isGone = true
+				}
+			it.banOCG?.let { OCG -> textBanOCG.setIconAndText(R.string.ocg_ban_list, OCG) }
+				?: textBanOCG.apply {
+					isGone = true
+				}
 		} ?: kotlin.run {
 			textBanOCG.isGone = true
 			textBanTCG.isGone = true
@@ -154,8 +164,8 @@ class CardInfoFragment : Fragment() {
 				)
 				this.text = text
 			}
-			view.findViewById<TextView>(R.id.textViewAttribute)
-				.setIconAndText(monsterCard.attribute)
+			view.findViewById<TextView>(R.id.text_view_attribute)
+				.setIconAndText(R.string.any_text, monsterCard.attribute)
 			monsterCard.scaleOfPendulum?.let {
 				textScalePendulum.text = getString(R.string.pendulum_scale, it)
 			} ?: textScalePendulum.apply {
@@ -175,13 +185,15 @@ class CardInfoFragment : Fragment() {
 		}
 	}
 	
-	private fun TextView.setIconAndText(value: Enum) {
+	private fun TextView.setIconAndText(stringResource: Int, value: Enum) {
 		this.apply {
 			setCompoundDrawablesWithIntrinsicBounds(
 				0, 0, 0, value.icon
 			)
-			val textToShow = if (text.isEmpty()) "$value" else "$text $value"
-			text = textToShow
+			text = getString(
+				stringResource,
+				"$value"
+			)
 		}
 	}
 	
