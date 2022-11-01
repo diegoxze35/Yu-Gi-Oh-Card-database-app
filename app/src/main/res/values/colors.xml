@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="main_color_app"> #7C5031 </color>
+	<color name="main_color_app">#8C5D3C</color>
 	<color name="main_color_night"> #752A1C </color>
-	<color name="purple_700">#FF3700B3</color>
-	<color name="teal_200">#FF03DAC5</color>
-	<color name="teal_700">#FF018786</color>
+	<color name="teal_200">#EB588A</color>
 	
 	<!-- Text colors -->
 	<color name="black">#FF000000</color>
 	<color name="white">#FFFFFFFF</color>
 	
+	<color name="end_color">#E4AD80</color>
+	
 	<!-- Colors for CardView views according to card -->
-	<color name="color_normal_monster"> #D8973F </color>
-	<color name="colorEffectMonster"> #A55540 </color>
-	<color name="colorFusionMonster"> #813690 </color>
-	<color name="colorXYZMonster"> #272A2C </color>
-	<color name="colorLinkMonster"> #0A69B6 </color>
-	<color name="colorSynchronyMonster"> #E1DBDB </color>
-	<color name="colorRitualMonster"> #577FBF </color>
-	<color name="colorSpellCard"> #00827C </color>
-	<color name="colorTrampCard"> #9D1A6C </color>
-	<color name="colorTokenCard"> #7D7D7C </color>
-	<color name="colorSkillCard"> #3EA8D0 </color>
+	<color name="color_normal_monster">#D9A35B</color>
+	<color name="color_effect_monster">#B96C58</color>
+	<color name="color_fusion_monster">#BE7AD4</color>
+	<color name="color_xyz_monster">#505050</color>
+	<color name="color_link_monster">#318AD3</color>
+	<color name="color_synchrony_monster"> #E1DBDB </color>
+	<color name="color_ritual_monster">#739DE0</color>
+	<color name="color_spell_card">#00B5AD</color>
+	<color name="color_tramp_card">#C63690</color>
+	<color name="color_token_card">#BBBBBB</color>
+	<color name="color_skill_card">#7EC8E4</color>
 	
 	<!-- Colors border card -->
-	<color name="colorBorderCard1"> #51576E  </color>
-	<color name="colorBorderCard2"> #18202E  </color>
+	<color name="color_border_card1"> #51576E  </color>
+	<color name="color_border_card2"> #18202E  </color>
 	
 	<!-- Color back card -->
-	<color name="colorBackCard1"> #E97930 </color>
-	<color name="colorBackCard2"> #6B2022 </color>
+	<color name="color_back_card1"> #E97930 </color>
+	<color name="color_back_card2"> #6B2022 </color>
 	
-	<color name="blue_progress_bar">#008DFF</color>
+	<!-- Progress Bar color -->
+	<color name="blue_progress_bar">#50AEF9</color>
+	
+	<!-- Info Fragment -->
+	<color name="cardBackground">#52B1FF</color>
 </resources>

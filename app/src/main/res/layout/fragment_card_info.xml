@@ -6,7 +6,7 @@
 	android:id="@+id/layout_info_card"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:background="@color/colorXYZMonster"
+	tools:background="@color/color_xyz_monster"
 	tools:context=".ui.view.CardInfoFragment">
 	
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -42,15 +42,14 @@
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent"
 				tools:ignore="ContentDescription"
-				tools:src="@drawable/_90809975" >
-			</ImageView>
+				tools:src="@drawable/_90809975"/>
 			
 			<androidx.cardview.widget.CardView
 				android:id="@+id/card_detail"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_margin="12dp"
-				app:cardBackgroundColor="#002945"
+				app:cardBackgroundColor="@color/cardBackground"
 				app:contentPadding="12dp"
 				app:layout_constraintBottom_toBottomOf="parent"
 				app:layout_constraintEnd_toEndOf="parent"
@@ -68,7 +67,7 @@
 						android:layout_height="wrap_content"
 						android:autoSizeTextType="uniform"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:drawableBottomCompat="@drawable/id_s"
@@ -84,7 +83,7 @@
 						android:layout_height="wrap_content"
 						android:autoSizeTextType="uniform"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:drawableBottomCompat="@drawable/atk_s"
@@ -100,7 +99,7 @@
 						android:layout_height="wrap_content"
 						android:autoSizeTextType="uniform"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:layout_constraintBottom_toTopOf="@+id/guidelineDivider1"
@@ -116,7 +115,7 @@
 						android:layout_height="wrap_content"
 						android:autoSizeTextType="uniform"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:drawableBottomCompat="@drawable/def_s"
@@ -132,7 +131,7 @@
 						android:layout_height="wrap_content"
 						android:autoSizeTextType="uniform"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:layout_constraintBottom_toTopOf="@+id/guidelineDivider1"
@@ -149,7 +148,7 @@
 						android:autoSizeTextType="uniform"
 						android:text="@string/level_info"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:layout_constraintBottom_toTopOf="@+id/guidelineDivider2"
@@ -164,7 +163,7 @@
 						android:layout_height="wrap_content"
 						android:autoSizeTextType="uniform"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:layout_constraintBottom_toTopOf="@+id/guidelineDivider1"
@@ -180,7 +179,7 @@
 						android:layout_height="wrap_content"
 						android:autoSizeTextType="uniform"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:drawableBottomCompat="@drawable/archetype_s"
@@ -197,7 +196,7 @@
 						android:autoSizeTextType="uniform"
 						android:text="@string/pendulum_scale"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:drawableBottomCompat="@drawable/scale_pendulum_s"
@@ -214,7 +213,7 @@
 						android:autoSizeTextType="uniform"
 						android:text="@string/ocg_ban_list"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:layout_constraintBottom_toTopOf="@id/guidelineDivider3"
@@ -230,7 +229,7 @@
 						android:autoSizeTextType="uniform"
 						android:text="@string/tcg_ban_list"
 						android:textAlignment="center"
-						android:textColor="@color/white"
+						
 						android:textSize="17sp"
 						android:textStyle="bold"
 						app:layout_constraintBottom_toTopOf="@id/guidelineDivider3"
@@ -245,7 +244,7 @@
 						android:layout_height="match_parent"
 						android:justificationMode="inter_word"
 						android:padding="10dp"
-						android:textColor="@color/white"
+						
 						android:textSize="18sp"
 						android:textStyle="bold"
 						app:layout_constraintBottom_toBottomOf="parent"
@@ -271,7 +270,7 @@
 					<androidx.constraintlayout.widget.Guideline
 						android:id="@+id/guidelineDivider3"
 						android:layout_width="wrap_content"
-						android:layout_height="0dp"
+						android:layout_height="wrap_content"
 						android:orientation="horizontal"
 						app:layout_constrainedHeight="true" />
 				</androidx.constraintlayout.widget.ConstraintLayout>

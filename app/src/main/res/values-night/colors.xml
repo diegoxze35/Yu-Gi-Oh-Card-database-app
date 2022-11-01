@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<color name="main_color_app">#54341D</color>
+	<color name="teal_200">#EC3474</color>
+	
+	<color name="end_color"> #FF000000 </color>
+	
+	<color name="color_normal_monster">#B98630</color>
+	<color name="color_effect_monster">#964D3A</color>
+	<color name="color_fusion_monster">#633A76</color>
+	<color name="color_xyz_monster">#131416</color>
+	<color name="color_link_monster">#095EA4</color>
+	<color name="color_synchrony_monster">#D6D3D3</color>
+	<color name="color_ritual_monster">#4B6CA0</color>
+	<color name="color_spell_card">#00726D</color>
+	<color name="color_tramp_card">#8D1962</color>
+	<color name="color_token_card"> #7D7D7C </color>
+	<color name="color_skill_card">#3896B9</color>
+	
+	<color name="cardBackground">#002945</color>
+</resources>

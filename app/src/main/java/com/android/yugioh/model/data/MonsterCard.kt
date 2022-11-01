@@ -40,75 +40,75 @@ data class MonsterCard(
 			/*EFFECT*/
 			EFFECT_MONSTER(
 				"Effect Monster",
-				R.color.colorEffectMonster,
+				R.color.color_effect_monster,
 				R.drawable.effect_monster_s
 			),
-			TUNER_MONSTER("Tuner Monster", R.color.colorEffectMonster, R.drawable.tuner_monster_s),
+			TUNER_MONSTER("Tuner Monster", R.color.color_effect_monster, R.drawable.tuner_monster_s),
 			FLIP_EFFECT_MONSTER(
 				"Flip Effect Monster",
-				R.color.colorEffectMonster,
+				R.color.color_effect_monster,
 				R.drawable.flip_effect_monster_s
 			),
 			FLIP_TUNER_EFFECT_MONSTER(
 				"Flip Tuner Effect Monster",
-				R.color.colorEffectMonster,
+				R.color.color_effect_monster,
 				R.drawable.flip_tuner_effect_monster_s
 			),
 			
 			//*FUSION*//*
 			FUSION_MONSTER(
 				"Fusion Monster",
-				R.color.colorFusionMonster,
+				R.color.color_fusion_monster,
 				R.drawable.fusion_monster_s
 			),
 			PENDULUM_EFFECT_FUSION_MONSTER(
 				"Pendulum Effect Fusion Monster",
-				R.color.colorFusionMonster,
+				R.color.color_fusion_monster,
 				R.drawable.pendulum_fusion_monster_s
 			),
 			
 			//*XYZ*//*
-			XYZ_MONSTER("XYZ Monster", R.color.colorXYZMonster, R.drawable.xyz_monster_s),
+			XYZ_MONSTER("XYZ Monster", R.color.color_xyz_monster, R.drawable.xyz_monster_s),
 			XYZ_PENDULUM_EFFECT_MONSTER(
 				"XYZ Pendulum Effect Monster",
-				R.color.colorXYZMonster,
+				R.color.color_xyz_monster,
 				R.drawable.xyz_pendulum_monster_s
 			),
 			
 			//*SYNCHRO*//*
 			SYNCHRO_MONSTER(
 				"Synchro Monster",
-				R.color.colorSynchronyMonster,
+				R.color.color_synchrony_monster,
 				R.drawable.synchro_monster_s
 			),
 			SYNCHRO_TUNER_MONSTER(
 				"Synchro Tuner Monster",
-				R.color.colorSynchronyMonster,
+				R.color.color_synchrony_monster,
 				R.drawable.synchro_tuner_monster_s
 			),
 			SYNCHRO_PENDULUM_EFFECT_MONSTER(
 				"Synchro Pendulum Effect Monster",
-				R.color.colorSynchronyMonster,
+				R.color.color_synchrony_monster,
 				R.drawable.synchro_pendulum_monster_s
 			),
 			
 			/*LINK*/
-			LINK_MONSTER("Link Monster", R.color.colorLinkMonster, R.drawable.link_monster_s),
+			LINK_MONSTER("Link Monster", R.color.color_link_monster, R.drawable.link_monster_s),
 			
 			//*RITUAL*//*
 			RITUAL_MONSTER(
 				"Ritual Monster",
-				R.color.colorRitualMonster,
+				R.color.color_ritual_monster,
 				R.drawable.ritual_monster_s
 			),
 			RITUAL_EFFECT_MONSTER(
 				"Ritual Effect Monster",
-				R.color.colorRitualMonster,
+				R.color.color_ritual_monster,
 				R.drawable.ritual_monster_s
 			),
 			PENDULUM_EFFECT_RITUAL_MONSTER(
 				"Pendulum Effect Ritual Monster",
-				R.color.colorRitualMonster,
+				R.color.color_ritual_monster,
 				R.drawable.pendulum_ritual_monster_s
 			),
 			
@@ -120,38 +120,38 @@ data class MonsterCard(
 			),
 			PENDULUM_EFFECT_MONSTER(
 				"Pendulum Effect Monster",
-				R.color.colorEffectMonster,
+				R.color.color_effect_monster,
 				R.drawable.pendulum_effect_monster_s
 			),
 			PENDULUM_TUNER_EFFECT_MONSTER(
 				"Pendulum Tuner Effect Monster",
-				R.color.colorEffectMonster,
+				R.color.color_effect_monster,
 				R.drawable.pendulum_tuner_effect_monster
 			),
 			PENDULUM_FLIP_EFFECT_MONSTER(
 				"Pendulum Flip Effect Monster",
-				R.color.colorEffectMonster,
+				R.color.color_effect_monster,
 				R.drawable.flip_pendulum_effect_monster_s
 			),
 			
 			//*TOKEN*//*
-			TOKEN("Token", R.color.colorTokenCard, R.drawable.token_s),
+			TOKEN("Token", R.color.color_token_card, R.drawable.token_s),
 			
 			//*Other types*//*
-			TOON_MONSTER("Toon Monster", R.color.colorEffectMonster, R.drawable.effect_monster_s),
+			TOON_MONSTER("Toon Monster", R.color.color_effect_monster, R.drawable.effect_monster_s),
 			SPIRIT_MONSTER(
 				"Spirit Monster",
-				R.color.colorEffectMonster,
+				R.color.color_effect_monster,
 				R.drawable.effect_monster_s
 			),
 			UNION_EFFECT_MONSTER(
 				"Union Effect Monster",
-				R.color.colorEffectMonster,
+				R.color.color_effect_monster,
 				R.drawable.effect_monster_s
 			),
 			GEMINI_MONSTER(
 				"Gemini Monster",
-				R.color.colorEffectMonster,
+				R.color.color_effect_monster,
 				R.drawable.effect_monster_s
 			);
 			

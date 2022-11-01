@@ -64,7 +64,7 @@ class CardAdapter(private val onCLick: (Card) -> Unit) :
 				cardView.setCardBackgroundColor(
 					ContextCompat.getColor(
 						contextActivity, (card.type.color).also {
-							if (it == R.color.colorSynchronyMonster) currentColor = Color.BLACK
+							if (it == R.color.color_synchrony_monster) currentColor = Color.BLACK
 						}
 					)
 				)

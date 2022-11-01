@@ -25,7 +25,7 @@ data class SkillCard(
 			override fun toString(): String = type
 			
 			override val color: Int
-				get() = R.color.colorSkillCard
+				get() = R.color.color_skill_card
 			
 			override val icon: Int
 				get() = R.drawable.skill_s

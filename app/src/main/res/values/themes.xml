@@ -6,8 +6,13 @@
 		<item name="colorPrimaryDark">@color/main_color_night</item>
 		<item name="colorAccent">@color/teal_200</item>
 		<!-- Customize your theme here. -->
-		<item name="android:textColorHint">#C3C3C3</item>
 		<item name="android:editTextColor">@color/white</item>
+		<item name="android:textColor">@color/black</item>
+	</style>
 	
+	<style name="Theme.Toolbar" parent="android:Theme.Holo.Light">
+		<item name="android:homeAsUpIndicator">@drawable/ic_baseline_arrow_back_24</item>
+		<item name="android:textColorHint">#C3C3C3</item>
+		
 	</style>
 </resources>

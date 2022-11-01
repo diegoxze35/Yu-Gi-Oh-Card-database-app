@@ -124,7 +124,10 @@ class MainCardActivity : AppCompatActivity() {
 	
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		return when (item.itemId) {
-			R.id.advanced_search_options -> true
+			R.id.advanced_search_options -> {
+				navController.navigate(R.id.action_listCardFragment_to_dialogAdvancedSearch)
+				true
+			}
 			R.id.my_decks_option -> true
 			else -> super.onOptionsItemSelected(item)
 		}
