@@ -22,8 +22,8 @@ data class SpellTrapCard(
 			override val icon: Int
 		) : Type {
 			
-			SPELL_CARD("Spell Card", R.color.color_spell_card, R.drawable.spell_card_s),
-			TRAP_CARD("Trap Card", R.color.color_tramp_card, R.drawable.trap_card_s);
+			SPELL_CARD("Spell Card", R.color.color_spell_card, R.drawable.spell_card_s_info),
+			TRAP_CARD("Trap Card", R.color.color_tramp_card, R.drawable.trap_card_s_info);
 			
 			override fun toString(): String = type
 			

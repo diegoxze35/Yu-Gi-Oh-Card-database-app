@@ -8,16 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import com.android.yugioh.R
+import com.android.yugioh.databinding.FragmentCardInfoBinding
 import com.android.yugioh.model.data.Card
 import com.android.yugioh.model.data.MonsterCard
 import com.android.yugioh.model.data.SkillCard
@@ -27,7 +25,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import com.android.yugioh.model.data.Enum
 import com.android.yugioh.ui.viewmodel.CardViewModel
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
@@ -37,17 +34,9 @@ import java.net.URL
 class CardInfoFragment : Fragment() {
 	
 	private val viewModel: CardViewModel by activityViewModels()
+	private var _infoBinding: FragmentCardInfoBinding? = null
+	private val infoBinding: FragmentCardInfoBinding get() = _infoBinding!!
 	private lateinit var card: Card
-	private lateinit var atkText: TextView
-	private lateinit var defText: TextView
-	private lateinit var levelText: TextView
-	private lateinit var imageCard: ImageView
-	private lateinit var textAttribute: TextView
-	private lateinit var textBanOCG: TextView
-	private lateinit var textBanTCG: TextView
-	private lateinit var textScalePendulum: TextView
-	private lateinit var textArchetype: TextView
-	private lateinit var layout: ConstraintLayout
 	private lateinit var bitmap: Deferred<Bitmap>
 	
 	companion object {
@@ -56,7 +45,10 @@ class CardInfoFragment : Fragment() {
 	
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-	): View? = inflater.inflate(R.layout.fragment_card_info, container, false)
+	): View? {
+		_infoBinding = FragmentCardInfoBinding.inflate(layoutInflater, container, false)
+		return infoBinding.root
+	}
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -68,125 +60,127 @@ class CardInfoFragment : Fragment() {
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		(requireActivity() as MainCardActivity).updateToolbar(this)
-		view.findViewById<FloatingActionButton>(R.id.button_add_to_deck).setOnClickListener {
-			Toast.makeText(context, "$it", Toast.LENGTH_SHORT).show()
-		}
-		view.findViewById<ScrollView>(R.id.main_scroll).apply {
-			post {
-				scrollTo(START_SCROLL, START_SCROLL)
+		infoBinding.apply {
+			buttonAddToDeck.setOnClickListener {
+				Toast.makeText(context, "$it", Toast.LENGTH_SHORT).show()
 			}
-		}
-		view.findViewById<View>(R.id.layout_info_card).setBackgroundColor(
-			ContextCompat.getColor(requireContext(), card.type.color)
-		)
-		atkText = view.findViewById(R.id.text_view_atk)
-		defText = view.findViewById(R.id.text_view_def)
-		levelText = view.findViewById(R.id.text_view_level_monster)
-		imageCard = view.findViewById(R.id.image_view_full_card)
-		textAttribute = view.findViewById(R.id.text_view_attribute)
-		textArchetype = view.findViewById(R.id.text_view_archetype)
-		textBanOCG = view.findViewById(R.id.text_view_ban_list_OCG)
-		textBanTCG = view.findViewById(R.id.textViewBanListTCG)
-		textScalePendulum = view.findViewById(R.id.text_view_scale)
-		view.findViewById<TextView>(R.id.text_view_id).text = "$id"
-		view.findViewById<TextView>(R.id.textViewDescription).text = card.description
-		
-		card.archetype?.let {
-			textArchetype.text = it
-		} ?: kotlin.run {
-			textArchetype.isGone = true
-			if (card is SpellTrapCard) {
-				(ConstraintSet()).run {
-					layout = view.findViewById(R.id.layout_data_card)
-					clone(layout)
-					val idGuideline = R.id.guidelineDivider1
-					connect(textBanOCG.id, ConstraintSet.TOP, idGuideline, ConstraintSet.BOTTOM)
-					connect(textBanTCG.id, ConstraintSet.TOP, idGuideline, ConstraintSet.BOTTOM)
-					applyTo(layout)
+			mainScroll.apply {
+				post {
+					scrollTo(START_SCROLL, START_SCROLL)
 				}
 			}
-		}
-		
-		view.findViewById<TextView>(R.id.text_view_type)
-			.setIconAndText(R.string.any_text, card.type)
-		view.findViewById<TextView>(R.id.text_view_race)
-			.setIconAndText(R.string.any_text, card.race)
-		card.format?.let {
-			it.banTCG?.let { TCG -> textBanTCG.setIconAndText(R.string.tcg_ban_list, TCG) }
-				?: textBanTCG.apply {
-					isGone = true
-				}
-			it.banOCG?.let { OCG -> textBanOCG.setIconAndText(R.string.ocg_ban_list, OCG) }
-				?: textBanOCG.apply {
-					isGone = true
-				}
-		} ?: kotlin.run {
-			textBanOCG.isGone = true
-			textBanTCG.isGone = true
-			(ConstraintSet()).run {
-				layout = view.findViewById(R.id.layout_data_card)
-				clone(layout)
-				connect(
-					R.id.textViewDescription,
-					ConstraintSet.TOP,
-					if (card is SkillCard)
-						R.id.guidelineDivider1
-					else
-						R.id.guidelineDivider2,
-					ConstraintSet.BOTTOM
-				)
-				applyTo(layout)
-			}
-		}
-		
-		if (card is MonsterCard) {
-			val monsterCard = card as MonsterCard
-			atkText.text = "${monsterCard.attack}"
-			monsterCard.defense?.let { defText.text = "$it" } ?: defText.apply { isGone = true }
-			levelText.apply {
-				lateinit var text: String
-				setCompoundDrawablesWithIntrinsicBounds(
-					0, 0, 0, when (monsterCard.type) {
-						MonsterType.XYZ_MONSTER,
-						MonsterType.XYZ_PENDULUM_EFFECT_MONSTER -> {
-							text = getString(R.string.level_info, monsterCard.level)
-							R.drawable.level_xyz_monster_s
-						}
-						MonsterType.LINK_MONSTER -> {
-							text = getString(R.string.linkval_info, monsterCard.level)
-							R.drawable.linkval_s
-						}
-						else -> {
-							text = getString(R.string.level_info, monsterCard.level)
-							R.drawable.level_monster_s
-						}
+			root.setBackgroundColor(ContextCompat.getColor(requireContext(), card.type.color))
+			textViewId.text = "${card.id}"
+			textViewDescription.text = card.description
+			card.archetype?.let {
+				textViewArchetype.text = it
+			} ?: kotlin.run {
+				textViewArchetype.isGone = true
+				if (card is SpellTrapCard) {
+					(ConstraintSet()).run {
+						clone(layoutDataCard)
+						connect(
+							textViewBanListOCG.id,
+							ConstraintSet.TOP,
+							guidelineDivider1.id,
+							ConstraintSet.BOTTOM
+						)
+						connect(
+							textViewBanListTCG.id,
+							ConstraintSet.TOP,
+							guidelineDivider1.id,
+							ConstraintSet.BOTTOM
+						)
+						applyTo(layoutDataCard)
 					}
-				)
-				this.text = text
+				}
 			}
-			view.findViewById<TextView>(R.id.text_view_attribute)
-				.setIconAndText(R.string.any_text, monsterCard.attribute)
-			monsterCard.scaleOfPendulum?.let {
-				textScalePendulum.text = getString(R.string.pendulum_scale, it)
-			} ?: textScalePendulum.apply {
-				isGone = true
+			textViewType.setIconAndText(R.string.any_text, card.type)
+			textViewRace.setIconAndText(R.string.any_text, card.race)
+			card.format?.let {
+				it.banTCG?.let { TCG ->
+					textViewBanListTCG.setIconAndText(
+						R.string.tcg_ban_list,
+						TCG
+					)
+				}
+					?: textViewBanListTCG.apply {
+						isGone = true
+					}
+				it.banOCG?.let { OCG ->
+					textViewBanListOCG.setIconAndText(
+						R.string.ocg_ban_list,
+						OCG
+					)
+				}
+					?: textViewBanListOCG.apply {
+						isGone = true
+					}
+			} ?: kotlin.run {
+				textViewBanListOCG.isGone = true
+				textViewBanListTCG.isGone = true
+				(ConstraintSet()).run {
+					clone(layoutDataCard)
+					connect(
+						textViewDescription.id,
+						ConstraintSet.TOP,
+						if (card is SkillCard)
+							guidelineDivider1.id
+						else
+							guidelineDivider2.id,
+						ConstraintSet.BOTTOM
+					)
+					applyTo(layoutDataCard)
+				}
+			}
+			if (card is MonsterCard) {
+				val monsterCard = card as MonsterCard
+				textViewAtk.text = "${monsterCard.attack}"
+				monsterCard.defense?.let { textViewDef.text = "$it" }
+					?: textViewDef.apply { isGone = true }
+				textViewLevelMonster.apply {
+					lateinit var text: String
+					setCompoundDrawablesWithIntrinsicBounds(
+						0, 0, 0, when (monsterCard.type) {
+							MonsterType.XYZ_MONSTER,
+							MonsterType.XYZ_PENDULUM_EFFECT_MONSTER -> {
+								text = getString(R.string.level_info, monsterCard.level)
+								R.drawable.level_xyz_monster_s
+							}
+							MonsterType.LINK_MONSTER -> {
+								text = getString(R.string.linkval_info, monsterCard.level)
+								R.drawable.linkval_s
+							}
+							else -> {
+								text = getString(R.string.level_info, monsterCard.level)
+								R.drawable.level_monster_s
+							}
+						}
+					)
+					this.text = text
+				}
+				textViewAttribute.setIconAndText(R.string.any_text, monsterCard.attribute)
+				monsterCard.scaleOfPendulum?.let {
+					textViewScale.text = getString(R.string.pendulum_scale, it)
+				} ?: textViewScale.apply {
+					isGone = true
+				}
+				
+			} else {
+				textViewAtk.isGone = true
+				textViewDef.isGone = true
+				textViewLevelMonster.isGone = true
+				textViewAttribute.isGone = true
+				textViewScale.isGone = true
 			}
 			
-		} else {
-			atkText.isGone = true
-			defText.isGone = true
-			levelText.isGone = true
-			textAttribute.isGone = true
-			textScalePendulum.isGone = true
-		}
-		
-		MainScope().launch {
-			imageCard.apply {
-				setImageBitmap(bitmap.await())
-				startAnimation(
-					AnimationUtils.loadAnimation(context, R.anim.scale_enter_anim)
-				)
+			MainScope().launch {
+				imageViewFullCard.apply {
+					setImageBitmap(bitmap.await())
+					startAnimation(
+						AnimationUtils.loadAnimation(context, R.anim.scale_enter_anim)
+					)
+				}
 			}
 		}
 	}
@@ -204,5 +198,10 @@ class CardInfoFragment : Fragment() {
 	}
 	
 	private fun URL.getBitmap(): Bitmap = BitmapFactory.decodeStream(openStream())
+	
+	override fun onDestroyView() {
+		super.onDestroyView()
+		_infoBinding = null
+	}
 	
 }

@@ -27,7 +27,6 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 	
 	private val mutex = Mutex()
 	
-	
 	private lateinit var list1: List<Long>
 	private lateinit var list2: List<Long>
 	private var listResult: MutableList<Card> = mutableListOf()
@@ -51,13 +50,13 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 				list2 = allNumbers.subList(index, allNumbers.size).shuffled()
 				isInit = true
 			}
-			if (list1.isEmpty() && list2.isEmpty()) {
+			if (list1.isEmpty() || list2.isEmpty()) {
 				isInit = false
 				return@withContext getListRandomCards()
 			}
 			val job1 = async {
 				var index = 0
-				randomCardsList(
+				requestCards(
 					list1.takeWhile {
 						index++ < 5
 					}.also { reduceList ->
@@ -67,7 +66,7 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 			}
 			val job2 = async {
 				var index = 0
-				randomCardsList(
+				requestCards(
 					list2.takeWhile {
 						index++ < 5
 					}.also { reduceList ->
@@ -80,8 +79,8 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 		}
 	}
 	
-	private suspend fun randomCardsList(list: List<Long>) {
-		list.map {
+	private suspend fun requestCards(offsets: List<Long>) {
+		offsets.forEach {
 			val response = service.randomCard(offset = it)
 			if (!response.isSuccessful || response.body() == null) {
 				return
@@ -94,7 +93,7 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 		}
 	}
 	
-	private suspend fun addCardMutex(card: Card) {
+	private suspend inline fun addCardMutex(card: Card) {
 		mutex.withLock {
 			listResult.add(card)
 		}
@@ -103,24 +102,29 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 	suspend fun searchCard(query: String): List<Card>? {
 		return withContext(Dispatchers.IO) {
 			val response = service.searchCard(query)
+			
 			if (response.code() == 400) return@withContext emptyList<Card>()
 			if (!response.isSuccessful || response.body() == null) return@withContext null
-			with(response.body()!!) {
-				val currentArray = get("data").asJsonArray!!
-				val currentListSize = currentArray.size()
-				if (currentListSize == 1) return@withContext listOf<Card>(
-					gson.fromJson(
-						currentArray.get(0), Card::class.java
-					)
+			
+			val currentArray = response.body()!!.get("data").asJsonArray!!
+			val currentListSize = currentArray.size()
+			
+			if (currentListSize == 1) return@withContext listOf<Card>(
+				gson.fromJson(
+					currentArray.get(0), Card::class.java
 				)
-				val currentList = currentArray.toList()
-				val index = (currentListSize / 2) + 1
-				val asyncTask = async {
-					getCards(currentList.subList(0, index))
-				}
-				val result = getCards(currentList.subList(index, currentList.size))
-				return@withContext result.plus(asyncTask.await())
+			)
+			
+			val currentList = currentArray.toList()
+			val index = (currentListSize / 2) + 1
+			
+			val asyncTask = async {
+				getCards(currentList.subList(index, currentListSize))
 			}
+			
+			val result = getCards(currentList.subList(0, index))
+			return@withContext result.plus(asyncTask.await())
+			
 		}
 	}
 	

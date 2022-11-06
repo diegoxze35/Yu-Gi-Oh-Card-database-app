@@ -2,7 +2,10 @@
 <resources>
 	
 	<color name="main_color_app">#54341D</color>
+	<color name="main_color_night"> #54341D </color>
 	<color name="teal_200">#EC3474</color>
+	
+	<color name="myTextColor">#FFFFFFFF</color>
 	
 	<color name="end_color"> #FF000000 </color>
 	

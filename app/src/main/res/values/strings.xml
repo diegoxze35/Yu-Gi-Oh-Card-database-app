@@ -3,6 +3,7 @@
 	<string name="text_button_load_cards">Load more cards</string>
 	<string name="loading_message">Getting more cards</string>
 	<string name="searching_message"> searching… </string>
+	<string name="search_card"> Search Card </string>
 	<string name="not_result_search"> Not found </string>
 	<string name="search_message">Press Enter to search in Database</string>
 	<string name="menu_main_activity_my_decks">My Decks</string>
@@ -20,4 +21,14 @@
 	<string name="monster_card">Monster</string>
 	<string name="spell_card">Spell</string>
 	<string name="trap_card">Trap</string>
+	<string name="skill_card">Skill</string>
+	
+	<!-- Options to advanced search -->
+	<string name="card_type">Type </string>
+	<string name="card_race">Race </string>
+	<string name="card_attribute">Attribute </string>
+	<string name="card_level">Level </string>
+	<string name="card_atk">Attack </string>
+	<string name="card_def">Defense </string>
+	<string name="card_scale">Scale</string>
 </resources>

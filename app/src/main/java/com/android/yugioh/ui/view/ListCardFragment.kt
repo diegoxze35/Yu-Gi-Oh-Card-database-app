@@ -6,13 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.yugioh.R
+import com.android.yugioh.databinding.FragmentListCardBinding
 import com.android.yugioh.ui.viewmodel.CardViewModel
 
 class ListCardFragment : Fragment() {
@@ -22,9 +22,9 @@ class ListCardFragment : Fragment() {
 	}
 	
 	private val viewModel: CardViewModel by activityViewModels()
-	private lateinit var recyclerView: RecyclerView
+	private var _listFragmentBinding: FragmentListCardBinding? = null
+	private val listFragmentBinding: FragmentListCardBinding get() = _listFragmentBinding!!
 	private lateinit var adapter: CardAdapter
-	private lateinit var messageSearch: TextView
 	private val activity by lazy {
 		requireActivity() as MainCardActivity
 	}
@@ -32,14 +32,15 @@ class ListCardFragment : Fragment() {
 	override fun onCreateView(
 		inflater: LayoutInflater,
 		container: ViewGroup?, savedInstanceState: Bundle?
-	): View? = inflater.inflate(R.layout.fragment_list_card, container, false)
+	): View? {
+		_listFragmentBinding = FragmentListCardBinding.inflate(inflater, container, false)
+		return listFragmentBinding.root
+	}
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		activity.updateToolbar(this)
-		messageSearch = view.findViewById(R.id.textViewSearch)
-		recyclerView = view.findViewById(R.id.recyclerViewCard)
-		recyclerView.apply {
+		/*activity.updateToolbar(this)*/
+		listFragmentBinding.recyclerViewCard.apply {
 			adapter = CardAdapter(activity::startDetailFragment).also {
 				this@ListCardFragment.adapter = it
 			}
@@ -62,7 +63,7 @@ class ListCardFragment : Fragment() {
 				adapter.submitList(it)
 		}
 		viewModel.isSearching.observe(viewLifecycleOwner) {
-			messageSearch.apply {
+			listFragmentBinding.textViewSearch.apply {
 				isGone = it
 				text = resources.getString(R.string.search_message)
 			}
@@ -74,10 +75,15 @@ class ListCardFragment : Fragment() {
 		activity.clearFocus()
 		with(resources.configuration.orientation) {
 			if (this == Configuration.ORIENTATION_LANDSCAPE)
-				recyclerView.layoutManager = GridLayoutManager(context, SPAN_COUNT)
+				listFragmentBinding.recyclerViewCard.layoutManager = GridLayoutManager(context, SPAN_COUNT)
 			else if (this == Configuration.ORIENTATION_PORTRAIT)
-				recyclerView.layoutManager = LinearLayoutManager(context)
+				listFragmentBinding.recyclerViewCard.layoutManager = LinearLayoutManager(context)
 		}
+	}
+	
+	override fun onDestroyView() {
+		super.onDestroyView()
+		_listFragmentBinding = null
 	}
 	
 }

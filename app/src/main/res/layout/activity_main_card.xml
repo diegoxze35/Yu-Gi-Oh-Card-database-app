@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+	android:id="@+id/root"
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:animateLayoutChanges="true"
+	android:animateLayoutChanges="false"
 	android:focusableInTouchMode="true"
 	tools:context=".ui.view.MainCardActivity">
 	
@@ -19,7 +21,6 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		android:theme="@style/Theme.Toolbar"
 		tools:menu="@menu/menu_main_activity">
 		
 			<ImageView
@@ -43,7 +44,7 @@
 				android:goIcon="@drawable/submit_search_icon"
 				android:iconifiedByDefault="false"
 				android:inputType="text"
-				android:queryHint="Search Card"
+				android:queryHint="@string/search_card"
 				android:searchIcon="@drawable/search_icon" />
 		
 	</androidx.appcompat.widget.Toolbar>

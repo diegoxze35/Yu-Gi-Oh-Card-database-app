@@ -8,15 +8,14 @@
 	<fragment
 		android:id="@+id/listCardFragment"
 		android:name="com.android.yugioh.ui.view.ListCardFragment"
-		
-		tools:layout="@layout/fragment_list_card" >
+		tools:layout="@layout/fragment_list_card">
 		<action
 			android:id="@+id/action_listCardFragment_to_cardInfoFragment"
 			app:destination="@id/cardInfoFragment"
 			app:enterAnim="@anim/alpha_in"
 			app:exitAnim="@anim/alpha_out"
 			app:popEnterAnim="@anim/alpha_in"
-			app:popExitAnim="@anim/alpha_out"/>
+			app:popExitAnim="@anim/alpha_out" />
 		<action
 			android:id="@+id/action_listCardFragment_to_dialogAdvancedSearch"
 			app:destination="@id/dialogAdvancedSearch" />
@@ -24,7 +23,6 @@
 	<fragment
 		android:id="@+id/cardInfoFragment"
 		android:name="com.android.yugioh.ui.view.CardInfoFragment"
-		
 		tools:layout="@layout/fragment_card_info" >
 		<action
 			android:id="@+id/action_cardInfoFragment_to_listCardFragment"
@@ -33,5 +31,5 @@
 	<dialog
 		android:id="@+id/dialogAdvancedSearch"
 		android:name="com.android.yugioh.ui.view.dialog.DialogAdvancedSearch"
-		android:label="DialogAdvancedSearch" />
+		tools:layout="@layout/dialog_advanced_search" />
 </navigation>

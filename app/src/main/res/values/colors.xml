@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<color name="main_color_app">#8C5D3C</color>
-	<color name="main_color_night"> #752A1C </color>
+	<color name="main_color_night">#8C5D3C</color>
 	<color name="teal_200">#EB588A</color>
 	
 	<!-- Text colors -->
 	<color name="black">#FF000000</color>
 	<color name="white">#FFFFFFFF</color>
-	
+	<color name="myTextColor">#FF000000</color>
 	<color name="end_color">#E4AD80</color>
 	
 	<!-- Colors for CardView views according to card -->

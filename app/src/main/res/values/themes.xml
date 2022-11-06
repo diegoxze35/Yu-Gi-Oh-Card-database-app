@@ -1,18 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 	<!-- Base application theme. -->
-	<style name="Theme.YuGiOh" parent="Theme.AppCompat.Light.NoActionBar">
+	<style name="Theme.YuGiOh" parent="Theme.MaterialComponents.Light.NoActionBar">
 		<!-- Primary brand color. -->
-		<item name="colorPrimary">@color/white</item>
+		<item name="colorPrimary">@color/main_color_app</item>
 		<item name="colorPrimaryDark">@color/main_color_night</item>
 		<item name="colorAccent">@color/teal_200</item>
+		
 		<!-- Customize your theme here. -->
 		<item name="android:editTextColor">@color/white</item>
+		<item name="colorSecondary">@color/teal_200</item>
 		<item name="android:textColor">@color/black</item>
-	</style>
-	
-	<style name="Theme.Toolbar" parent="android:Theme.Holo.Light">
-		<item name="android:homeAsUpIndicator">@drawable/ic_baseline_arrow_back_24</item>
 		<item name="android:textColorHint">#C3C3C3</item>
 		
+	</style>
+	
+	<style name="DropDownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
+		<item name="android:textColorHint">@color/black</item>
+		<item name="hintAnimationEnabled">true</item>
 	</style>
 </resources>

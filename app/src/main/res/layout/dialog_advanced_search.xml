@@ -1,101 +1,348 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	
 	<ImageButton
-		android:id="@+id/image_button_close"
+		android:id="@+id/imageButtonClose"
 		android:layout_width="48dp"
 		android:layout_height="48dp"
-		android:layout_margin="16dp"
 		android:background="@color/black"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@+id/text_view_title"
 		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintBottom_toTopOf="@id/guideline_divider_option"
 		app:srcCompat="@drawable/close_search_icon"
 		tools:ignore="contentDescription,SpeakableTextPresentCheck" />
 	
 	<TextView
-		android:id="@+id/text_view_title"
+		android:id="@+id/textViewTitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:maxLines="2"
 		android:layout_margin="16dp"
 		android:gravity="center"
+		android:maxLines="2"
 		android:text="@string/menu_main_activity_advanced_search"
 		android:textSize="24sp"
 		android:textStyle="bold"
 		app:drawableStartCompat="@drawable/advanced_search"
-		app:layout_constraintEnd_toStartOf="@+id/image_button_close"
+		app:layout_constraintBottom_toTopOf="@+id/guidelineDividerOptions2"
+		app:layout_constraintEnd_toStartOf="@+id/imageButtonClose"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintBottom_toTopOf="@id/guideline_divider_option"
 		app:layout_constraintTop_toTopOf="parent" />
 	
 	<androidx.constraintlayout.widget.Guideline
-		android:id="@+id/guideline_divider_option"
+		android:id="@+id/guidelineDividerOption1"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		app:layout_constraintGuide_percent="0.12" />
+		app:layout_constraintGuide_percent="0.30" />
+	
+	<TextView
+		android:id="@+id/textViewRadioGroup"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/type"
+		android:textSize="20sp"
+		android:textStyle="bold"
+		app:layout_constraintBottom_toTopOf="@+id/radioGroup"
+		app:layout_constraintEnd_toEndOf="@+id/radioGroup"
+		app:layout_constraintStart_toStartOf="@+id/radioGroup"
+		app:layout_constraintTop_toBottomOf="@+id/guidelineDividerOptions2" />
+	
+	<RadioGroup
+		android:id="@+id/radioGroup"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		app:layout_constraintBottom_toTopOf="@+id/guidelineDividerOption1"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/textViewRadioGroup">
+		
+		<RadioButton
+			android:id="@+id/radioButtonMonster"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:drawableBottom="@drawable/monster_card_s"
+			android:text="@string/monster_card"
+			android:textSize="18sp"
+			android:textStyle="bold"
+			tools:checked="true" />
+		
+		<RadioButton
+			android:id="@+id/radioButtonSpell"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:drawableBottom="@drawable/spell_card_s"
+			android:text="@string/spell_card"
+			android:textSize="18sp"
+			android:textStyle="bold" />
+		
+		<RadioButton
+			android:id="@+id/radioButtonTrap"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:drawableBottom="@drawable/trap_card_s"
+			android:text="@string/trap_card"
+			android:textSize="18sp"
+			android:textStyle="bold" />
+		
+		<RadioButton
+			android:id="@+id/radioButtonSkill"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:drawableBottom="@drawable/skill_card_s"
+			android:text="@string/skill_card"
+			android:textSize="18sp"
+			android:textStyle="bold" />
+	
+	</RadioGroup>
+	
+	<androidx.constraintlayout.widget.Guideline
+		android:id="@+id/guidelineDividerOptions2"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		app:layout_constraintGuide_percent="0.10" />
+	
 	
 	<ScrollView
-		android:id="@+id/scroll_options"
-		app:layout_constraintTop_toBottomOf="@id/guideline_divider_option"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
+		android:id="@+id/scrollOptions"
 		android:layout_width="match_parent"
-		android:layout_height="0dp">
-		<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_height="0dp"
+		app:layout_constraintBottom_toTopOf="@+id/buttonSubmit"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.0"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/guidelineDividerOption1"
+		app:layout_constraintVertical_bias="1.0">
+		
+		<LinearLayout
+			android:orientation="vertical"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 			
-			<TextView
-				android:id="@+id/text_view_radio_group"
-				android:layout_width="wrap_content"
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/textInputLayoutType"
+				style="@style/DropDownMenu"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_margin="5dp"
-				android:text="@string/type"
-				android:textSize="24sp"
-				android:textStyle="bold"
-				app:layout_constraintBottom_toTopOf="@+id/radio_group"
+				android:layout_margin="8dp"
+				android:layout_weight="1"
+				android:hint="@string/card_type"
+				android:visibility="gone"
+				app:layout_constraintBottom_toTopOf="@+id/textInputLayoutRace"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent" />
-			
-			<RadioGroup
-				android:id="@+id/radio_group"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:padding="16dp"
-				app:layout_constraintTop_toBottomOf="@+id/text_view_radio_group"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				android:orientation="vertical">
+				app:layout_constraintTop_toTopOf="parent"
+				tools:visibility="visible">
 				
-				<RadioButton
-					android:id="@+id/radioButton"
+				<AutoCompleteTextView
+					android:id="@+id/autoCompleteTextViewTypes"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:inputType="none"
+					android:textColor="@color/myTextColor"
+					android:textSize="12sp"
 					android:textStyle="bold"
-					android:drawableBottom="@drawable/monster_card_s"
-					android:text="@string/monster_card"
-					android:textSize="20sp" />
-				
-				<RadioButton
-					android:id="@+id/radio_button_spell"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:textStyle="bold"
-					android:drawableBottom="@drawable/spell_card_s"
-					android:text="@string/spell_card"
-					android:textSize="20sp" />
+					tools:ignore="LabelFor"
+					tools:text="Ritual Effect Monster" />
 			
-			</RadioGroup>
-		</androidx.constraintlayout.widget.ConstraintLayout>
+			</com.google.android.material.textfield.TextInputLayout>
+			
+			
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/textInputLayoutRace"
+				style="@style/DropDownMenu"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="8dp"
+				android:layout_weight="1"
+				android:hint="@string/card_race"
+				android:visibility="gone"
+				app:layout_constraintBottom_toTopOf="@+id/textInputLayoutAttribute"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/textInputLayoutType"
+				tools:visibility="visible">
+				
+				<AutoCompleteTextView
+					android:id="@+id/autoCompleteTextViewRaces"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:inputType="none"
+					android:textColor="@color/myTextColor"
+					android:textSize="12sp"
+					android:textStyle="bold"
+					tools:ignore="LabelFor"
+					tools:text="Fairy" />
+			</com.google.android.material.textfield.TextInputLayout>
+			
+			
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/textInputLayoutAttribute"
+				style="@style/DropDownMenu"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="8dp"
+				android:layout_weight="1"
+				android:hint="@string/card_attribute"
+				android:visibility="gone"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/textInputLayoutRace"
+				tools:visibility="visible">
+				
+				<AutoCompleteTextView
+					android:id="@+id/autoCompleteTextViewAttribute"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:inputType="none"
+					android:textColor="@color/myTextColor"
+					android:textSize="12sp"
+					android:textStyle="bold"
+					tools:ignore="LabelFor"
+					tools:text="LIGHT" />
+			</com.google.android.material.textfield.TextInputLayout>
+			
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:baselineAligned="false">
+				
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/textInputLayoutLevelMonster"
+					style="@style/DropDownMenu"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_margin="8dp"
+					android:layout_weight="1"
+					android:hint="@string/card_level"
+					android:visibility="gone"
+					app:layout_constraintBottom_toTopOf="@+id/textInputLayoutDefMonster"
+					app:layout_constraintEnd_toStartOf="@+id/textInputLayoutAtkMonster"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/textInputLayoutAttribute"
+					app:startIconDrawable="@drawable/ic_baseline_stars_24"
+					tools:visibility="visible">
+					
+					<AutoCompleteTextView
+						android:id="@+id/autoCompleteTextViewLevelMonster"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="none"
+						android:textColor="@color/myTextColor"
+						android:textSize="12sp"
+						android:textStyle="bold"
+						tools:ignore="LabelFor"
+						tools:text="12" />
+				</com.google.android.material.textfield.TextInputLayout>
+				
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/textInputLayoutAtkMonster"
+					style="@style/DropDownMenu"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_margin="8dp"
+					android:layout_weight="1"
+					android:hint="@string/card_atk"
+					android:visibility="gone"
+					app:layout_constraintBottom_toTopOf="@+id/textInputLayoutScaleMonster"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@+id/textInputLayoutLevelMonster"
+					app:layout_constraintTop_toBottomOf="@+id/textInputLayoutAttribute"
+					app:startIconDrawable="@drawable/atk_s_i1"
+					tools:visibility="visible">
+					
+					<AutoCompleteTextView
+						android:id="@+id/autoCompleteTextViewAtkMonster"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="none"
+						android:textColor="@color/myTextColor"
+						android:textSize="12sp"
+						android:textStyle="bold"
+						tools:ignore="LabelFor"
+						tools:text="2000" />
+				</com.google.android.material.textfield.TextInputLayout>
+			</LinearLayout>
+			
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:baselineAligned="false">
+				
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/textInputLayoutDefMonster"
+					style="@style/DropDownMenu"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_margin="8dp"
+					android:layout_weight="1"
+					android:hint="@string/card_def"
+					android:visibility="gone"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toStartOf="@+id/textInputLayoutScaleMonster"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/textInputLayoutLevelMonster"
+					app:startIconDrawable="@drawable/def_s_i1"
+					tools:visibility="visible">
+					
+					<AutoCompleteTextView
+						android:id="@+id/autoCompleteTextViewDefMonster"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="none"
+						android:textColor="@color/myTextColor"
+						android:textSize="12sp"
+						android:textStyle="bold"
+						tools:ignore="LabelFor"
+						tools:text="3000" />
+				</com.google.android.material.textfield.TextInputLayout>
+				
+				<com.google.android.material.textfield.TextInputLayout
+					android:id="@+id/textInputLayoutScaleMonster"
+					style="@style/DropDownMenu"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_margin="8dp"
+					android:layout_weight="1"
+					android:hint="@string/card_scale"
+					android:visibility="gone"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@+id/textInputLayoutDefMonster"
+					app:layout_constraintTop_toBottomOf="@+id/textInputLayoutAtkMonster"
+					app:startIconDrawable="@drawable/pendulum_s_i"
+					tools:visibility="visible">
+					
+					<AutoCompleteTextView
+						android:id="@+id/autoCompleteTextViewScaleMonster"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:inputType="none"
+						android:textColor="@color/myTextColor"
+						android:textSize="12sp"
+						android:textStyle="bold"
+						tools:ignore="LabelFor"
+						tools:text="0" />
+				</com.google.android.material.textfield.TextInputLayout>
+			</LinearLayout>
+		</LinearLayout>
 	</ScrollView>
+	
+	<Button
+		android:id="@+id/buttonSubmit"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/search_card"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/scrollOptions" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
