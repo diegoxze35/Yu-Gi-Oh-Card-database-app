@@ -17,7 +17,7 @@
 		android:background="@color/main_color_app"
 		app:contentInsetLeft="0dp"
 		app:contentInsetStart="0dp"
-		app:layout_constraintBottom_toTopOf="@id/fragment_container_1"
+		app:layout_constraintBottom_toTopOf="@id/mainFragmentContainer"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
@@ -50,8 +50,8 @@
 	</androidx.appcompat.widget.Toolbar>
 	
 	<androidx.fragment.app.FragmentContainerView
-		android:id="@+id/fragment_container_1"
-		android:name="androidx.navigation.fragment.NavHostFragment"
+		android:id="@+id/mainFragmentContainer"
+		android:name="com.android.yugioh.ui.view.MainNavHostFragment"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		app:defaultNavHost="true"

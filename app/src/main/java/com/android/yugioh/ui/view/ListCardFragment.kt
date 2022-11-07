@@ -14,8 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.yugioh.R
 import com.android.yugioh.databinding.FragmentListCardBinding
 import com.android.yugioh.ui.viewmodel.CardViewModel
+import com.squareup.picasso.Picasso
 
-class ListCardFragment : Fragment() {
+class ListCardFragment(private val picasso: Picasso) : Fragment() {
 	
 	companion object {
 		private const val SPAN_COUNT = 2
@@ -39,9 +40,8 @@ class ListCardFragment : Fragment() {
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		/*activity.updateToolbar(this)*/
 		listFragmentBinding.recyclerViewCard.apply {
-			adapter = CardAdapter(activity::startDetailFragment).also {
+			adapter = CardAdapter(picasso, activity::startDetailFragment).also {
 				this@ListCardFragment.adapter = it
 			}
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -75,7 +75,8 @@ class ListCardFragment : Fragment() {
 		activity.clearFocus()
 		with(resources.configuration.orientation) {
 			if (this == Configuration.ORIENTATION_LANDSCAPE)
-				listFragmentBinding.recyclerViewCard.layoutManager = GridLayoutManager(context, SPAN_COUNT)
+				listFragmentBinding.recyclerViewCard.layoutManager =
+					GridLayoutManager(context, SPAN_COUNT)
 			else if (this == Configuration.ORIENTATION_PORTRAIT)
 				listFragmentBinding.recyclerViewCard.layoutManager = LinearLayoutManager(context)
 		}

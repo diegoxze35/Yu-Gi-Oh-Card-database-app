@@ -5,20 +5,21 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.yugioh.R
 import com.android.yugioh.databinding.LayoutItemCardBinding
-import com.android.yugioh.instances.Picasso
-import com.android.yugioh.instances.Picasso.setImageFromUrlInImageView
 import com.android.yugioh.model.data.Card
+import com.squareup.picasso.Picasso
 
-class CardAdapter(private val onCLick: (Card) -> Unit) :
+class CardAdapter(
+	private val picasso: Picasso,
+	private val onCLick: (Card) -> Unit
+) :
 	ListAdapter<Card, CardAdapter.CardViewHolder>(DiffCallback) {
-	
-	private val picasso = Picasso()
 	
 	class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 		val bindingItemCard = LayoutItemCardBinding.bind(view)
@@ -60,6 +61,8 @@ class CardAdapter(private val onCLick: (Card) -> Unit) :
 			}
 		}
 	}
+	
+	private fun Picasso.setImageFromUrlInImageView(url: String, img: ImageView) = load(url).into(img)
 	
 	private object DiffCallback : DiffUtil.ItemCallback<Card>() {
 		override fun areItemsTheSame(oldItem: Card, newItem: Card): Boolean =

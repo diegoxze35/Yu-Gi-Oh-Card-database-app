@@ -37,7 +37,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		app:layout_constraintGuide_percent="0.30" />
+		app:layout_constraintGuide_percent="0.40" />
 	
 	<TextView
 		android:id="@+id/textViewRadioGroup"
@@ -105,12 +105,12 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		app:layout_constraintGuide_percent="0.10" />
+		app:layout_constraintGuide_percent="0.15" />
 	
 	
 	<ScrollView
 		android:id="@+id/scrollOptions"
-		android:layout_width="match_parent"
+		android:layout_width="0dp"
 		android:layout_height="0dp"
 		app:layout_constraintBottom_toTopOf="@+id/buttonSubmit"
 		app:layout_constraintEnd_toEndOf="parent"

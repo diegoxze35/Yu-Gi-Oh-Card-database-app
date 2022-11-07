@@ -9,13 +9,14 @@ import androidx.core.view.isGone
 import androidx.fragment.app.DialogFragment
 import com.android.yugioh.R
 import com.android.yugioh.databinding.DialogAdvancedSearchBinding
-import com.android.yugioh.model.data.Enum
-import com.android.yugioh.model.data.MonsterCard.Companion.RaceMonsterCard
-import com.android.yugioh.model.data.SpellTrapCard.Companion.RaceSpellTrap
-import com.android.yugioh.model.data.SkillCard.Companion.RaceSkill
 
-class DialogAdvancedSearch(private val adapters: Array<ArrayAdapter<*>>) :
+class DialogAdvancedSearch(private val adapters: Array<Array<ArrayAdapter<*>>>) :
 	DialogFragment(R.layout.dialog_advanced_search) {
+	
+	companion object {
+		const val INDEX_FIRST_ADAPTERS = 0
+		const val INDEX_SECOND_ADAPTERS = 1
+	}
 	
 	private var _dialogBinding: DialogAdvancedSearchBinding? = null
 	private val dialogBinding: DialogAdvancedSearchBinding get() = _dialogBinding!!
@@ -24,7 +25,6 @@ class DialogAdvancedSearch(private val adapters: Array<ArrayAdapter<*>>) :
 		with(dialogBinding) {
 			mapOf(
 				textInputLayoutType to autoCompleteTextViewTypes,
-				textInputLayoutRace to autoCompleteTextViewRaces,
 				textInputLayoutAttribute to autoCompleteTextViewAttribute,
 				textInputLayoutLevelMonster to autoCompleteTextViewLevelMonster,
 				textInputLayoutAtkMonster to autoCompleteTextViewAtkMonster,
@@ -32,12 +32,6 @@ class DialogAdvancedSearch(private val adapters: Array<ArrayAdapter<*>>) :
 				textInputLayoutScaleMonster to autoCompleteTextViewScaleMonster
 			)
 		}
-	}
-	
-	private fun ArrayAdapter<Enum>.updateItems(newItems: List<Enum>) {
-		clear()
-		addAll(newItems)
-		notifyDataSetChanged()
 	}
 	
 	override fun onCreateView(
@@ -49,59 +43,38 @@ class DialogAdvancedSearch(private val adapters: Array<ArrayAdapter<*>>) :
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		for ((index, autoCompleteTextView) in map.values.withIndex()) {
+			autoCompleteTextView.setAdapter(adapters[INDEX_FIRST_ADAPTERS][index])
+		}
 		isCancelable = false
 		dialogBinding.apply {
+			val getIndex = mapOf(
+				radioButtonMonster.id to 0,
+				radioButtonSpell.id to 1,
+				radioButtonTrap.id to 2,
+				radioButtonSkill.id to 3
+			)
 			imageButtonClose.setOnClickListener {
 				dismiss()
 			}
 			radioGroup.setOnCheckedChangeListener { _, radioButtonId ->
-				@Suppress("UNCHECKED_CAST")
+				textInputLayoutRace.isGone = false
+				autoCompleteTextViewRaces.text.clear()
 				applyChanges(
-					when (radioButtonId) {
-						radioButtonMonster.id -> {
-							(adapters[1] as ArrayAdapter<Enum>).updateItems(
-								RaceMonsterCard.values().toMutableList()
-							)
-							Array(map.size) { false }
-						}
-						radioButtonSpell.id -> {
-							(adapters[1] as ArrayAdapter<Enum>).updateItems(
-								RaceSpellTrap.values().toMutableList().also {
-									it.remove(RaceSpellTrap.COUNTER)
-								}
-							)
-							arrayOf(true, false, true, true, true, true, true)
-						}
-						radioButtonTrap.id -> {
-							(adapters[1] as ArrayAdapter<Enum>).updateItems(
-								mutableListOf(
-									RaceSpellTrap.NORMAL,
-									RaceSpellTrap.CONTINUOUS,
-									RaceSpellTrap.COUNTER
-								)
-							)
-							arrayOf(true, false, true, true, true, true, true)
-						}
-						else -> {
-							(adapters[1] as ArrayAdapter<Enum>).updateItems(
-								RaceSkill.values().toMutableList()
-							)
-							arrayOf(true, false, true, true, true, true, true)
-						}
-					}
+					(radioButtonId != radioButtonMonster.id),
+					getIndex[radioButtonId]!!
 				)
 			}
 		}
 	}
 	
-	private fun applyChanges(theyGone: Array<Boolean>) {
-		for ((index, textInputLayout) in map.keys.withIndex()) {
-			textInputLayout.isGone = theyGone[index]
-			map[textInputLayout]!!.apply {
-				text.clear()
-				if (adapter == null) setAdapter(adapters[index])
-			}
+	private fun applyChanges(isGone: Boolean, indexRaceAdapter: Int) {
+		for (textInputLayout in map.keys) {
+			textInputLayout.isGone = isGone
 		}
+		dialogBinding.autoCompleteTextViewRaces.setAdapter(
+			adapters[INDEX_SECOND_ADAPTERS][indexRaceAdapter]
+		)
 	}
 	
 	override fun onDestroyView() {

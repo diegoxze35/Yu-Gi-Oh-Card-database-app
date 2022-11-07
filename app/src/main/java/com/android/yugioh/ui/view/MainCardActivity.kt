@@ -14,7 +14,6 @@ import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.transition.Slide
@@ -24,7 +23,6 @@ import com.android.yugioh.model.data.Card
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainCardActivity : AppCompatActivity() {
@@ -52,9 +50,6 @@ class MainCardActivity : AppCompatActivity() {
 		}
 	}
 	
-	@Inject
-	lateinit var factory: MyFragmentFactory
-	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		mainBinding = ActivityMainCardBinding.inflate(layoutInflater)
@@ -73,8 +68,7 @@ class MainCardActivity : AppCompatActivity() {
 			it.addView(titleBar)
 		})
 		supportActionBar?.let { title = null }
-		(supportFragmentManager.findFragmentById(R.id.fragment_container_1) as NavHostFragment).also {
-			it.childFragmentManager.fragmentFactory = factory
+		mainBinding.mainFragmentContainer.getFragment<MainNavHostFragment>().also {
 			navController = it.navController.apply {
 				addOnDestinationChangedListener { _, destination, _ ->
 					MainScope().launch {
