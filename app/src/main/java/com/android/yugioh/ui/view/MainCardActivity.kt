@@ -31,8 +31,8 @@ class MainCardActivity : AppCompatActivity() {
 		private const val DURATION = 400L
 	}
 	
-	private lateinit var mainBinding: ActivityMainCardBinding
 	private val viewModel: CardViewModel by viewModels()
+	private lateinit var mainBinding: ActivityMainCardBinding
 	private lateinit var navController: NavController
 	private val titleBar by lazy {
 		TextView(this).apply {
@@ -117,7 +117,6 @@ class MainCardActivity : AppCompatActivity() {
 			}
 		)
 		fragmentMap[destinationId]?.invoke()
-		
 	}
 	
 	fun startDetailFragment(card: Card) {

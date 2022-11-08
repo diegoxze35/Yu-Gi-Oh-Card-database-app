@@ -1,12 +1,13 @@
 package com.android.yugioh.model.api
 
+import android.content.Context
 import com.android.yugioh.model.data.Card
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -14,9 +15,14 @@ import javax.inject.Inject
 
 //class using for use case
 
-class CardProvider @Inject constructor(private val service: YuGiOhApi, private val gson: Gson) {
-	
+class CardProvider @Inject constructor(
+	@ApplicationContext context: Context,
+	private val service: YuGiOhApi,
+	private val gson: Gson
+) {
 	companion object {
+		private const val NO_RESULTS_CODE = 400
+		private const val MEMBER_NAME = "data"
 		private const val MIN = 0L
 		var isInit = false
 		private lateinit var jsonObject: JsonObject
@@ -27,86 +33,72 @@ class CardProvider @Inject constructor(private val service: YuGiOhApi, private v
 	
 	private val mutex = Mutex()
 	
-	private lateinit var list1: List<Long>
-	private lateinit var list2: List<Long>
+	private lateinit var offsets: MutableList<Long>
 	private var listResult: MutableList<Card> = mutableListOf()
 	
 	suspend fun getListRandomCards(): List<Card>? {
 		listResult.clear()
 		return withContext(Dispatchers.IO) {
 			if (!isInit) {
-				val sequence by lazy {
-					generateSequence(MIN) {
-						if (it != MAX) return@generateSequence it + 1
-						null
-					}
-				}
 				val response = service.randomCard(offset = MIN)
 				if (!response.isSuccessful || (response.body())?.also { jsonObject = it } == null)
 					return@withContext null
-				val allNumbers = sequence.toList()
-				val index = ((allNumbers.size / 2) + 1)
-				list1 = allNumbers.subList(0, index).shuffled()
-				list2 = allNumbers.subList(index, allNumbers.size).shuffled()
+				generateSequence(MIN) {
+					if (it != MAX) return@generateSequence it + 1
+					null
+				}.toList().also {
+					offsets = it.shuffled().toMutableList()
+				}
 				isInit = true
 			}
-			if (list1.isEmpty() || list2.isEmpty()) {
-				isInit = false
-				return@withContext getListRandomCards()
+			val jobMinOffsets = async {
+				requestCardsFromOffset(offsets::removeFirst)
 			}
-			val job1 = async {
-				var index = 0
-				requestCards(
-					list1.takeWhile {
-						index++ < 5
-					}.also { reduceList ->
-						list1 = list1.filter { it !in reduceList }
-					}
-				)
+			val jobMaxOffsets = async {
+				requestCardsFromOffset(offsets::removeLast)
 			}
-			val job2 = async {
-				var index = 0
-				requestCards(
-					list2.takeWhile {
-						index++ < 5
-					}.also { reduceList ->
-						list2 = list2.filter { it !in reduceList }
-					}
-				)
-			}
-			joinAll(job1, job2)
-			listResult
+			return@withContext jobMinOffsets.await()?.and(jobMaxOffsets.await() ?: false)
+				?.let { success ->
+					if (success) listResult
+					else null
+				} ?: getListRandomCards()
 		}
 	}
 	
-	private suspend fun requestCards(offsets: List<Long>) {
-		offsets.forEach {
-			val response = service.randomCard(offset = it)
-			if (!response.isSuccessful || response.body() == null) {
-				return
+	private suspend fun requestCardsFromOffset(getOffset: () -> Long): Boolean? {
+		var i = 0
+		var offset: Long
+		while (i++ < 5) {
+			mutex.withLock {
+				if (offsets.isEmpty()) {
+					isInit = false
+					return null
+				}
+				offset = getOffset.invoke()
 			}
-			val card = gson.fromJson(
-				response.body()!!.getAsJsonArray("data")[0],
-				Card::class.java
-			)
-			addCardMutex(card)
+			val response = service.randomCard(offset = offset)
+			if (!response.isSuccessful || response.body() == null) return false
+			mutex.withLock {
+				listResult.add(
+					gson.fromJson(
+						response.body()!!.getAsJsonArray(MEMBER_NAME)[0],
+						Card::class.java
+					)
+				)
+			}
 		}
-	}
-	
-	private suspend inline fun addCardMutex(card: Card) {
-		mutex.withLock {
-			listResult.add(card)
-		}
+		return true
 	}
 	
 	suspend fun searchCard(query: String): List<Card>? {
 		return withContext(Dispatchers.IO) {
+			
 			val response = service.searchCard(query)
 			
-			if (response.code() == 400) return@withContext emptyList<Card>()
+			if (response.code() == NO_RESULTS_CODE) return@withContext emptyList<Card>()
 			if (!response.isSuccessful || response.body() == null) return@withContext null
 			
-			val currentArray = response.body()!!.get("data").asJsonArray!!
+			val currentArray = response.body()!!.get(MEMBER_NAME).asJsonArray!!
 			val currentListSize = currentArray.size()
 			
 			if (currentListSize == 1) return@withContext listOf<Card>(
