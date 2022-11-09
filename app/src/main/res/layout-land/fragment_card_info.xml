@@ -9,7 +9,7 @@
 	tools:context=".ui.view.CardInfoFragment">
 	
 	<ImageView
-		android:id="@+id/image_view_full_card"
+		android:id="@+id/imageViewFullCard"
 		android:layout_height="match_parent"
 		android:layout_width="0dp"
 		android:layout_marginVertical="12dp"
@@ -21,7 +21,7 @@
 		tools:src="@drawable/_90809975" />
 	
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
-		android:id="@+id/button_add_to_deck"
+		android:id="@+id/buttonAddToDeck"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_margin="16dp"
@@ -47,12 +47,12 @@
 			app:contentPadding="12dp">
 			
 			<androidx.constraintlayout.widget.ConstraintLayout
-				android:id="@+id/layout_data_card"
+				android:id="@+id/layoutDataCard"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent">
 				
 				<TextView
-					android:id="@+id/text_view_id"
+					android:id="@+id/textViewId"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -61,13 +61,13 @@
 					android:textStyle="bold"
 					app:drawableBottomCompat="@drawable/id_s"
 					app:layout_constraintBottom_toTopOf="@+id/guidelineDivider1"
-					app:layout_constraintEnd_toStartOf="@+id/text_view_type"
+					app:layout_constraintEnd_toStartOf="@+id/textViewType"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toTopOf="parent"
 					tools:text="90809975" />
 				
 				<TextView
-					android:id="@+id/text_view_atk"
+					android:id="@+id/textViewAtk"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -76,13 +76,13 @@
 					android:textStyle="bold"
 					app:drawableBottomCompat="@drawable/atk_s"
 					app:layout_constraintBottom_toTopOf="@+id/guidelineDivider2"
-					app:layout_constraintEnd_toStartOf="@+id/text_view_def"
+					app:layout_constraintEnd_toStartOf="@+id/textViewDef"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toBottomOf="@+id/guidelineDivider1"
 					tools:text="2200" />
 				
 				<TextView
-					android:id="@+id/text_view_type"
+					android:id="@+id/textViewType"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -90,14 +90,14 @@
 					android:textSize="17sp"
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@+id/guidelineDivider1"
-					app:layout_constraintEnd_toStartOf="@+id/text_view_race"
-					app:layout_constraintStart_toEndOf="@+id/text_view_id"
+					app:layout_constraintEnd_toStartOf="@+id/textViewRace"
+					app:layout_constraintStart_toEndOf="@+id/textViewId"
 					app:layout_constraintTop_toTopOf="parent"
 					tools:drawableBottomCompat="@drawable/xyz_monster_s"
 					tools:text="XYZ Monster" />
 				
 				<TextView
-					android:id="@+id/text_view_def"
+					android:id="@+id/textViewDef"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -106,13 +106,13 @@
 					android:textStyle="bold"
 					app:drawableBottomCompat="@drawable/def_s"
 					app:layout_constraintBottom_toTopOf="@+id/guidelineDivider2"
-					app:layout_constraintEnd_toStartOf="@id/text_view_level_monster"
-					app:layout_constraintStart_toEndOf="@+id/text_view_atk"
+					app:layout_constraintEnd_toStartOf="@id/textViewLevelMonster"
+					app:layout_constraintStart_toEndOf="@+id/textViewAtk"
 					app:layout_constraintTop_toBottomOf="@+id/guidelineDivider1"
 					tools:text="0" />
 				
 				<TextView
-					android:id="@+id/text_view_race"
+					android:id="@+id/textViewRace"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -120,14 +120,14 @@
 					android:textSize="17sp"
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@+id/guidelineDivider1"
-					app:layout_constraintEnd_toStartOf="@+id/text_view_attribute"
-					app:layout_constraintStart_toEndOf="@+id/text_view_type"
+					app:layout_constraintEnd_toStartOf="@+id/textViewAttribute"
+					app:layout_constraintStart_toEndOf="@+id/textViewType"
 					app:layout_constraintTop_toTopOf="parent"
 					tools:drawableBottomCompat="@drawable/aqua_s"
 					tools:text="Aqua" />
 				
 				<TextView
-					android:id="@+id/text_view_level_monster"
+					android:id="@+id/textViewLevelMonster"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -136,13 +136,13 @@
 					android:textSize="17sp"
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@+id/guidelineDivider2"
-					app:layout_constraintEnd_toStartOf="@id/text_view_archetype"
-					app:layout_constraintStart_toEndOf="@+id/text_view_def"
+					app:layout_constraintEnd_toStartOf="@id/textViewArchetype"
+					app:layout_constraintStart_toEndOf="@+id/textViewDef"
 					app:layout_constraintTop_toBottomOf="@+id/guidelineDivider1"
 					tools:drawableBottomCompat="@drawable/level_xyz_monster_s" />
 				
 				<TextView
-					android:id="@+id/text_view_attribute"
+					android:id="@+id/textViewAttribute"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -151,13 +151,13 @@
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@+id/guidelineDivider1"
 					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toEndOf="@+id/text_view_race"
+					app:layout_constraintStart_toEndOf="@+id/textViewRace"
 					app:layout_constraintTop_toTopOf="parent"
 					tools:drawableBottomCompat="@drawable/water_s"
 					tools:text="WATER" />
 				
 				<TextView
-					android:id="@+id/text_view_archetype"
+					android:id="@+id/textViewArchetype"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -167,12 +167,12 @@
 					app:drawableBottomCompat="@drawable/archetype_s"
 					app:layout_constraintBottom_toTopOf="@+id/guidelineDivider2"
 					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toEndOf="@id/text_view_level_monster"
+					app:layout_constraintStart_toEndOf="@id/textViewLevelMonster"
 					app:layout_constraintTop_toBottomOf="@+id/guidelineDivider1"
 					tools:text="Frog" />
 				
 				<TextView
-					android:id="@+id/text_view_scale"
+					android:id="@+id/textViewScale"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -182,13 +182,13 @@
 					android:textStyle="bold"
 					app:drawableBottomCompat="@drawable/scale_pendulum_s"
 					app:layout_constraintBottom_toTopOf="@id/guidelineDivider3"
-					app:layout_constraintEnd_toStartOf="@id/text_view_ban_list_OCG"
+					app:layout_constraintEnd_toStartOf="@id/textViewBanListOCG"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toBottomOf="@id/guidelineDivider2"
 					tools:visibility="gone" />
 				
 				<TextView
-					android:id="@+id/text_view_ban_list_OCG"
+					android:id="@+id/textViewBanListOCG"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:autoSizeTextType="uniform"
@@ -198,7 +198,7 @@
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@id/guidelineDivider3"
 					app:layout_constraintEnd_toStartOf="@+id/textViewBanListTCG"
-					app:layout_constraintStart_toEndOf="@+id/text_view_scale"
+					app:layout_constraintStart_toEndOf="@+id/textViewScale"
 					app:layout_constraintTop_toBottomOf="@id/guidelineDivider2"
 					tools:drawableBottomCompat="@drawable/banlist_banned_s" />
 				
@@ -213,7 +213,7 @@
 					android:textStyle="bold"
 					app:layout_constraintBottom_toTopOf="@id/guidelineDivider3"
 					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toEndOf="@id/text_view_ban_list_OCG"
+					app:layout_constraintStart_toEndOf="@id/textViewBanListOCG"
 					app:layout_constraintTop_toBottomOf="@id/guidelineDivider2"
 					tools:drawableBottomCompat="@drawable/banlist_unlimited_s" />
 				

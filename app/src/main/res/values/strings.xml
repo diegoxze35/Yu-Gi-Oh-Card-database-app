@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Yu-Gi-Oh!</string>
+	<string name="app_name">Yu-Gi-Oh! Card Database</string>
 	<string name="text_button_load_cards">Load more cards</string>
 	<string name="loading_message">Getting more cards</string>
 	<string name="searching_message"> searching… </string>

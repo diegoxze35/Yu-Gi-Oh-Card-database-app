@@ -13,6 +13,7 @@ import com.android.yugioh.ui.viewmodel.CardViewModel
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -64,17 +65,13 @@ class MainCardActivity : AppCompatActivity() {
 	}
 	
 	private fun initToolbar() {
-		setSupportActionBar(mainBinding.toolbar.also {
-			it.addView(titleBar)
-		})
+		setSupportActionBar(mainBinding.toolbar.also { it.addView(titleBar) })
 		supportActionBar?.let { title = null }
 		mainBinding.mainFragmentContainer.getFragment<MainNavHostFragment>().also {
 			navController = it.navController.apply {
 				addOnDestinationChangedListener { _, destination, _ ->
 					MainScope().launch {
-						updateToolbar(
-							destination.id
-						)
+						updateToolbar(destination.id)
 					}
 				}
 			}

@@ -36,6 +36,14 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 	
+	private const val EXTRA = "Any" //should be a string resource
+	private const val LAYOUT_RESOURCE = R.layout.item_auto_complete_text_view
+	private const val INIT = 1u
+	private const val STEP = 50u
+	private const val MAX_LEVEL = 12u
+	private const val MAX_SCALE = 13u
+	private const val MAX_ATK = 5000u
+	
 	@Singleton
 	@Provides
 	fun provideApiService(): YuGiOhApi = Retrofit.Builder().run {
@@ -58,56 +66,46 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 	
 	@Singleton
 	@Provides
-	fun provideAdapters(@ApplicationContext context: Context): Array<Array<ArrayAdapter<*>>> =
-		arrayOf(
+	fun provideAdapters(@ApplicationContext context: Context): Array<Array<ArrayAdapter<*>>> {
+		
+		val firstElement = listOf<Any>(EXTRA)
+		
+		val sequenceLevels = generateSequence(INIT) {
+			return@generateSequence if (it < MAX_LEVEL) it + 1u else null
+		}
+		
+		val sequenceAtkAndDef = generateSequence(STEP) {
+			return@generateSequence if (it != MAX_ATK) it + STEP else null
+		}
+		
+		return arrayOf(
 			arrayOf(
-				ArrayAdapter(
-					context, R.layout.item_auto_complete_text_view, MonsterType.values()
-				),
-				ArrayAdapter(
-					context, R.layout.item_auto_complete_text_view, AttributeMonster.values()
-				),
-				ArrayAdapter(context,
-					R.layout.item_auto_complete_text_view,
-					(1u..12u).map { "$it" }
-				),
-				ArrayAdapter(context,
-					R.layout.item_auto_complete_text_view,
-					((50u..5000u)).step(50).map { "$it" }
-				),
-				ArrayAdapter(context,
-					R.layout.item_auto_complete_text_view,
-					((50u..5000u)).step(50).map { "$it" }
-				),
+				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(MonsterType.values())),
+				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(AttributeMonster.values())),
+				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(sequenceLevels)),
+				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(sequenceAtkAndDef)),
+				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(sequenceAtkAndDef)),
 				ArrayAdapter(
 					context,
-					R.layout.item_auto_complete_text_view,
-					(1u..13u).map { "$it" }
+					LAYOUT_RESOURCE,
+					firstElement.plus(sequenceLevels).plus(MAX_SCALE)
 				)
 			),
 			arrayOf(
-				ArrayAdapter(
-					context, R.layout.item_auto_complete_text_view, RaceMonsterCard.values()
+				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(RaceMonsterCard.values())),
+				ArrayAdapter(context, LAYOUT_RESOURCE,
+					firstElement.plus(RaceSpellTrap.values().also {
+						it.toMutableList().remove(RaceSpellTrap.COUNTER)
+					})
 				),
-				ArrayAdapter(
-					context, R.layout.item_auto_complete_text_view, RaceSpellTrap.values().run {
-						toMutableList().also { it.remove(RaceSpellTrap.COUNTER) }
-					}
-				),
-				ArrayAdapter(
-					context,
-					R.layout.item_auto_complete_text_view,
-					arrayOf(
-						RaceSpellTrap.NORMAL,
-						RaceSpellTrap.CONTINUOUS,
-						RaceSpellTrap.COUNTER
+				ArrayAdapter(context, LAYOUT_RESOURCE, arrayOf(
+						EXTRA, RaceSpellTrap.NORMAL, RaceSpellTrap.CONTINUOUS, RaceSpellTrap.COUNTER
 					)
 				),
-				ArrayAdapter(
-					context, R.layout.item_auto_complete_text_view, RaceSkill.values()
-				)
+				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(RaceSkill.values()))
 			)
 		)
+	}
 	
 	override fun deserialize(
 		json: JsonElement, typeOfT: Type, context: JsonDeserializationContext

@@ -9,9 +9,9 @@
 		android:name=".YuGiOhCardDatabase"
 		android:dataExtractionRules="@xml/data_extraction_rules"
 		android:fullBackupContent="@xml/backup_rules"
-		android:icon="@mipmap/ic_launcher"
+		android:icon="@mipmap/ic_launcher_definitive"
 		android:label="@string/app_name"
-		android:roundIcon="@mipmap/ic_launcher_round"
+		android:roundIcon="@mipmap/ic_launcher_definitive_round"
 		android:supportsRtl="true"
 		android:theme="@style/Theme.YuGiOh"
 		tools:targetApi="31">

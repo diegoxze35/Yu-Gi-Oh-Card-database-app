@@ -14,7 +14,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 //class using for use case
-
 class CardProvider @Inject constructor(
 	@ApplicationContext context: Context,
 	private val service: YuGiOhApi,
@@ -22,6 +21,7 @@ class CardProvider @Inject constructor(
 ) {
 	companion object {
 		private const val NO_RESULTS_CODE = 400
+		private const val INDEX = 0
 		private const val MEMBER_NAME = "data"
 		private const val MIN = 0L
 		var isInit = false
@@ -46,7 +46,7 @@ class CardProvider @Inject constructor(
 				generateSequence(MIN) {
 					if (it != MAX) return@generateSequence it + 1
 					null
-				}.toList().also {
+				}.also {
 					offsets = it.shuffled().toMutableList()
 				}
 				isInit = true
@@ -81,7 +81,7 @@ class CardProvider @Inject constructor(
 			mutex.withLock {
 				listResult.add(
 					gson.fromJson(
-						response.body()!!.getAsJsonArray(MEMBER_NAME)[0],
+						response.body()!!.getAsJsonArray(MEMBER_NAME)[INDEX],
 						Card::class.java
 					)
 				)
@@ -103,7 +103,7 @@ class CardProvider @Inject constructor(
 			
 			if (currentListSize == 1) return@withContext listOf<Card>(
 				gson.fromJson(
-					currentArray.get(0), Card::class.java
+					currentArray.get(INDEX), Card::class.java
 				)
 			)
 			

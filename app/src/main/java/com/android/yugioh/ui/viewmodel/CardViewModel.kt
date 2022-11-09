@@ -48,7 +48,7 @@ class CardViewModel @Inject constructor(private val service: CardProvider) : Vie
 				
 				if (query.isEmpty()) { //restore original list with query is empty
 					isSearchingLiveData.postValue(true)
-					mainListLiveData.value = mainListLiveData.value
+					mainListLiveData.value = mainListLiveData.value //notify observer
 					return@liveData
 				}
 				
