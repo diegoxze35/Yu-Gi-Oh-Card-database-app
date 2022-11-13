@@ -1,6 +1,7 @@
 package com.android.yugioh.ui.view
 
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -59,6 +60,7 @@ class MainCardActivity : AppCompatActivity() {
 						}, 3000L)
 					}
 				}
+				viewModel.getListRandomCards()
 			}
 			else {
 				mainBinding.apply {
@@ -67,7 +69,6 @@ class MainCardActivity : AppCompatActivity() {
 						setBackgroundColor(colorFailure)
 						isGone = false
 					}
-					//more actions...
 				}
 			}
 		}
@@ -125,9 +126,9 @@ class MainCardActivity : AppCompatActivity() {
 		fragmentMap[destinationId]?.invoke()
 	}
 	
-	fun startDetailFragment(card: Card) {
+	fun startDetailFragment(card: Card, imageCard: Drawable?) {
 		clearFocus()
-		viewModel.onClickCard(card)
+		viewModel.onClickCard(card, imageCard)
 		navController.navigate(R.id.action_listCardFragment_to_cardInfoFragment)
 	}
 	

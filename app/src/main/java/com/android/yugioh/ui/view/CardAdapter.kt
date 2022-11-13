@@ -2,6 +2,7 @@ package com.android.yugioh.ui.view
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,7 @@ import com.squareup.picasso.Picasso
 
 class CardAdapter(
 	private val picasso: Picasso,
-	private val onCLick: (Card) -> Unit
+	private val onCLick: (Card, Drawable?) -> Unit
 ) :
 	ListAdapter<Card, CardAdapter.CardViewHolder>(DiffCallback) {
 	
@@ -41,7 +42,7 @@ class CardAdapter(
 					textViewTypeCard.text = card.type.toString()
 					textViewRaceCard.text = card.race.toString()
 					picasso.setImageFromUrlInImageView(
-						card.cardImages[0].imageUrlSmall,
+						card.cardImages[0].imageUrl,
 						imageViewCard
 					)
 					var currentColor: Int = Color.WHITE
@@ -56,7 +57,9 @@ class CardAdapter(
 					textViewCardName.setTextColor(currentColor)
 					textViewTypeCard.setTextColor(currentColor)
 					textViewRaceCard.setTextColor(currentColor)
-					itemView.setOnClickListener { onCLick(card) }
+					itemView.setOnClickListener {
+						onCLick(card, imageViewCard.drawable)
+					}
 				}
 			}
 		}

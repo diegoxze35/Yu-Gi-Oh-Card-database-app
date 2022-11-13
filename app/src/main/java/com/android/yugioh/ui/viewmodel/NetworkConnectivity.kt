@@ -1,4 +1,4 @@
-package com.android.yugioh.ui.view
+package com.android.yugioh.ui.viewmodel
 
 import android.content.Context
 import android.net.ConnectivityManager

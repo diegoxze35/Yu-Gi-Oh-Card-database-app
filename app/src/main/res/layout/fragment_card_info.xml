@@ -6,6 +6,7 @@
 	android:id="@+id/layout_info_card"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:animateLayoutChanges="true"
 	tools:background="@color/color_xyz_monster"
 	tools:context=".ui.view.CardInfoFragment">
 	

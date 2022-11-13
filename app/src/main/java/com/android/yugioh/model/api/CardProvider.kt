@@ -15,65 +15,56 @@ import kotlin.random.Random
 
 //class using for use case
 class CardProvider @Inject constructor(
-	private val service: YuGiOhApi,
-	private val gson: Gson
+	private val service: YuGiOhApi, private val gson: Gson
 ) {
 	companion object {
-		private const val NO_RESULTS_CODE = 400
-		private const val INDEX = 0
-		private const val MEMBER_NAME = "data"
-		private const val MIN = 0L
 		var isInit = false
+		private const val FIRST_INDEX = 0
+		private const val REPEAT = 5
+		private const val MEMBER_NAME = "data"
+		private const val MIN_OFFSET = 0L
 		private lateinit var jsonObject: JsonObject
-		private val MAX by lazy {
+		private val MAX_OFFSET by lazy {
 			jsonObject.getAsJsonObject("meta").get("total_rows").asLong
 		}
 	}
-	
 	private val mutex = Mutex()
-	
 	private lateinit var offsets: MutableList<Long>
 	private val listResult: MutableList<Card> = mutableListOf()
 	
 	suspend fun getListRandomCards(): List<Card>? {
-		listResult.clear()
 		return withContext(Dispatchers.IO) {
 			if (!isInit) {
-				val response = service.randomCard(offset = MIN)
-				if (!response.onSuccess())
-					return@withContext null
+				val response = service.randomCard(offset = MIN_OFFSET)
+				if (!response.onSuccess()) return@withContext null
 				jsonObject = response.body()!!
-				generateSequence(MIN) {
-					if (it != MAX) return@generateSequence it + 1
+				generateSequence(MIN_OFFSET) {
+					if (it != MAX_OFFSET) return@generateSequence it + 1
 					null
 				}.also {
 					offsets = it.shuffled(Random(System.currentTimeMillis())).toMutableList()
 				}
 				isInit = true
 			}
+			listResult.clear()
 			val jobMinOffsets = async {
 				requestCardsFromOffset(offsets::removeFirst)
 			}
 			val jobMaxOffsets = async {
 				requestCardsFromOffset(offsets::removeLast)
 			}
-			return@withContext (jobMinOffsets.await()?.and(jobMaxOffsets.await() ?: false))
-				?.let { success ->
-					if (success) listResult
-					else null
-			} ?: getListRandomCards()
+			return@withContext if (jobMinOffsets.await() && jobMaxOffsets.await())
+				listResult
+			else
+				null
 		}
 	}
 	
-	private suspend fun requestCardsFromOffset(getOffset: () -> Long): Boolean? {
-		var i = 0
+	private suspend fun requestCardsFromOffset(getOffset: () -> Long): Boolean {
 		var offset: Long
-		while (i++ < 5) {
+		repeat(REPEAT) {
 			mutex.withLock {
-				if (offsets.isEmpty()) {
-					isInit = false
-					return null
-				}
+				if (offsets.isEmpty()) return false
 				offset = getOffset.invoke()
 			}
 			val response = service.randomCard(offset = offset)
@@ -81,8 +72,7 @@ class CardProvider @Inject constructor(
 			mutex.withLock {
 				listResult.add(
 					gson.fromJson(
-						response.body()!!.getAsJsonArray(MEMBER_NAME)[INDEX],
-						Card::class.java
+						response.body()!!.getAsJsonArray(MEMBER_NAME)[FIRST_INDEX], Card::class.java
 					)
 				)
 			}
@@ -90,17 +80,15 @@ class CardProvider @Inject constructor(
 		return true
 	}
 	
-	suspend fun searchCard(query: String): List<Card>? {
+	suspend fun searchCard(query: String): List<Card> {
 		return withContext(Dispatchers.IO) {
 			val response = service.searchCard(query)
-			if (response.code() == NO_RESULTS_CODE) return@withContext emptyList<Card>()
-			if (!response.onSuccess()) return@withContext null
+			if (!response.onSuccess()) return@withContext emptyList()
 			val currentArray = response.body()!!.get(MEMBER_NAME).asJsonArray!!
 			val currentListSize = currentArray.size()
-			if (currentListSize == 1)
-				return@withContext listOf<Card>(
-					gson.fromJson(currentArray.get(INDEX), Card::class.java)
-				)
+			if (currentListSize == 1) return@withContext listOf<Card>(
+				gson.fromJson(currentArray.get(FIRST_INDEX), Card::class.java)
+			)
 			val currentList = currentArray.toList()
 			val index = (currentListSize / 2) + 1
 			val asyncTask = async {

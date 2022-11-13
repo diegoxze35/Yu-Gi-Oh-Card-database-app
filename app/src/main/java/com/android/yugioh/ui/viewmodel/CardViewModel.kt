@@ -1,5 +1,6 @@
 package com.android.yugioh.ui.viewmodel
 
+import android.graphics.drawable.Drawable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -8,11 +9,11 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.android.yugioh.model.api.CardProvider
 import com.android.yugioh.model.data.Card
-import com.android.yugioh.ui.view.NetworkConnectivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +27,7 @@ class CardViewModel @Inject constructor(
 		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
 	private var isSubmit = false
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
+	private val imageData: MutableMap<Card, Drawable> = mutableMapOf()
 	private val mainListLiveData: MutableLiveData<List<Card>> = MutableLiveData(emptyList())
 	val mainList: LiveData<List<Card>> get() = mainListLiveData
 	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
@@ -35,7 +37,7 @@ class CardViewModel @Inject constructor(
 		get() {
 			return currentQueryLiveData.value.orEmpty().isNotEmpty()
 		}
-	private val isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
+	private val isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
 	val isLoading: LiveData<Boolean> get() = isLoadingLiveData
 	
 	data class SearchingState(
@@ -56,8 +58,7 @@ class CardViewModel @Inject constructor(
 	val filterListLiveData: LiveData<List<Card>> =
 		Transformations.switchMap(currentQueryLiveData) { query ->
 			liveData<List<Card>> {
-				if ((networkManager.value == false) && loading.isActive) return@liveData
-				
+				if (loading.isActive) return@liveData
 				if (query.isEmpty()) { //restore original list with query is empty
 					isSearchingLiveData.value = isSearchingLiveData.value?.copy(
 						hideSearchMessage = true,
@@ -66,7 +67,6 @@ class CardViewModel @Inject constructor(
 					mainListLiveData.value = mainListLiveData.value //notify observer
 					return@liveData
 				}
-				
 				if (!isSubmit) {
 					searchData[query]?.let { emit(it); return@liveData }
 					mainList.value?.filter {
@@ -86,36 +86,48 @@ class CardViewModel @Inject constructor(
 					emit(it)
 					return@liveData
 				}
-				service.searchCard(query)?.let {
-					isSearchingLiveData.value = isSearchingLiveData.value?.copy(
-						hideSearchMessage = it.isNotEmpty(),
-						searchNotResult = it.isEmpty()
-					)
-					if (it.isNotEmpty()) searchData[query] = it
+				if (networkManager.value == false) return@liveData
+				try {
+					service.searchCard(query).also {
+						isSearchingLiveData.value = isSearchingLiveData.value?.copy(
+							hideSearchMessage = it.isNotEmpty(),
+							searchNotResult = it.isEmpty()
+						)
+						if (it.isNotEmpty()) searchData[query] = it
+						emit(it)
+					}
+				} catch (e: Exception) {
+					loading.cancelChildren()
+					return@liveData
+				} finally {
 					isLoadingLiveData.value = true
-					emit(it)
 				}
 			}
 		}
 	
-	init {
-		getListRandomCards()
-	}
-	
 	fun getListRandomCards() {
-		if ((networkManager.value == false) && loading.isActive) return
+		if ((networkManager.value == false) || loading.isActive) return
 		loading = viewModelScope.launch {
 			isLoadingLiveData.value = false
-			service.getListRandomCards()?.let {
-				mainListLiveData.value = (mainListLiveData.value!!.plus(it))
+			try {
+				service.getListRandomCards()?.let {
+					mainListLiveData.value = (mainListLiveData.value!!.plus(it))
+				}
+			} catch (e: Exception) {
+				loading.cancelChildren()
+				return@launch
+			} finally {
+				isLoadingLiveData.value = true
 			}
-			isLoadingLiveData.value = true
 		}
 	}
 	
-	fun onClickCard(card: Card) {
+	fun onClickCard(card: Card, imageCard: Drawable?) {
+		imageCard?.let { imageData[card] = it }
 		clickedCard.value = card
 	}
+	
+	fun getImageCurrentCard(card: Card): Drawable? = imageData[card]
 	
 	override fun onCleared() {
 		CardProvider.isInit = false

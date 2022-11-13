@@ -1,7 +1,6 @@
 package com.android.yugioh.ui.view
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,15 +20,10 @@ import com.android.yugioh.model.data.MonsterCard
 import com.android.yugioh.model.data.SkillCard
 import com.android.yugioh.model.data.SpellTrapCard
 import com.android.yugioh.model.data.MonsterCard.Companion.MonsterType
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import com.android.yugioh.model.data.Enum
 import com.android.yugioh.ui.viewmodel.CardViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.net.URL
 
 class CardInfoFragment : Fragment() {
 	
@@ -37,7 +31,7 @@ class CardInfoFragment : Fragment() {
 	private var _infoBinding: FragmentCardInfoBinding? = null
 	private val infoBinding: FragmentCardInfoBinding get() = _infoBinding!!
 	private lateinit var card: Card
-	private lateinit var bitmap: Deferred<Bitmap>
+	private lateinit var image: Drawable
 	
 	companion object {
 		private const val START_SCROLL = 0
@@ -45,7 +39,7 @@ class CardInfoFragment : Fragment() {
 	
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-	): View? {
+	): View {
 		_infoBinding = FragmentCardInfoBinding.inflate(layoutInflater, container, false)
 		return infoBinding.root
 	}
@@ -53,8 +47,8 @@ class CardInfoFragment : Fragment() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		card = viewModel.currentCard.value!!
-		bitmap = CoroutineScope(Dispatchers.IO).async {
-			URL(card.cardImages[0].imageUrl).getBitmap()
+		viewModel.getImageCurrentCard(card)?.let {
+			image = it
 		}
 	}
 	
@@ -176,7 +170,8 @@ class CardInfoFragment : Fragment() {
 			
 			MainScope().launch {
 				imageViewFullCard.apply {
-					setImageBitmap(bitmap.await())
+					if (this@CardInfoFragment::image.isInitialized)
+						setImageDrawable(image)
 					startAnimation(
 						AnimationUtils.loadAnimation(context, R.anim.scale_enter_anim)
 					)
@@ -196,8 +191,6 @@ class CardInfoFragment : Fragment() {
 			)
 		}
 	}
-	
-	private fun URL.getBitmap(): Bitmap = BitmapFactory.decodeStream(openStream())
 	
 	override fun onDestroyView() {
 		super.onDestroyView()
