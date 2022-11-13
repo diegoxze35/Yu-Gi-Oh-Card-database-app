@@ -3,7 +3,6 @@ package com.android.yugioh.ui.view
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
@@ -13,12 +12,9 @@ import com.android.yugioh.ui.viewmodel.CardViewModel
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.transition.Slide
-import androidx.transition.TransitionManager
 import com.android.yugioh.databinding.ActivityMainCardBinding
 import com.android.yugioh.model.data.Card
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,10 +23,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainCardActivity : AppCompatActivity() {
-	
-	companion object {
-		private const val DURATION = 400L
-	}
 	
 	private val viewModel: CardViewModel by viewModels()
 	private lateinit var mainBinding: ActivityMainCardBinding
@@ -44,11 +36,11 @@ class MainCardActivity : AppCompatActivity() {
 			isGone = true
 		}
 	}
-	private val transition by lazy {
-		Slide(Gravity.BOTTOM).apply {
-			duration = DURATION
-			addTarget(mainBinding.linearLayoutContainer)
-		}
+	private val colorOK by lazy {
+		ContextCompat.getColor(this, R.color.internet_OK)
+	}
+	private val colorFailure by lazy {
+		ContextCompat.getColor(this, R.color.internet_not_OK)
 	}
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,11 +48,28 @@ class MainCardActivity : AppCompatActivity() {
 		mainBinding = ActivityMainCardBinding.inflate(layoutInflater)
 		setContentView(mainBinding.root)
 		initToolbar()
-		viewModel.isLoading.observe(this) { isGone ->
-			mainBinding.textViewMessage.text =
-				getString(if (!viewModel.canAddFilterList) R.string.loading_message else R.string.searching_message)
-			TransitionManager.beginDelayedTransition(mainBinding.root, transition)
-			mainBinding.linearLayoutContainer.isGone = isGone
+		viewModel.networkManager.observe(this) { isOnline ->
+			if (isOnline) {
+				mainBinding.apply {
+					textInternetIndicator.text = getString(R.string.connected_to_internet)
+					layoutMessageInternet.apply {
+						setBackgroundColor(colorOK)
+						postDelayed({
+							isGone = true
+						}, 3000L)
+					}
+				}
+			}
+			else {
+				mainBinding.apply {
+					textInternetIndicator.text = getString(R.string.not_connected_to_internet)
+					layoutMessageInternet.apply {
+						setBackgroundColor(colorFailure)
+						isGone = false
+					}
+					//more actions...
+				}
+			}
 		}
 	}
 	

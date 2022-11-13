@@ -2,15 +2,19 @@ package com.android.yugioh.ui.view
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Slide
+import androidx.transition.TransitionManager
 import com.android.yugioh.R
 import com.android.yugioh.databinding.FragmentListCardBinding
 import com.android.yugioh.ui.viewmodel.CardViewModel
@@ -19,6 +23,7 @@ import com.squareup.picasso.Picasso
 class ListCardFragment(private val picasso: Picasso) : Fragment() {
 	
 	companion object {
+		private const val DURATION = 400L
 		private const val SPAN_COUNT = 2
 	}
 	
@@ -47,11 +52,30 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 					activity.clearFocus()
-					if (viewModel.currentQuery.isNotEmpty()) return
+					if (viewModel.canAddFilterList) return
 					if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL))
 						viewModel.getListRandomCards()
 				}
 			})
+		}
+		
+		
+		
+		viewModel.isLoading.observe(viewLifecycleOwner) { isGone ->
+			listFragmentBinding.textViewMessage.text =
+				getString(
+					if (!viewModel.canAddFilterList)
+						R.string.loading_message
+					else
+						R.string.searching_message
+				)
+			TransitionManager.beginDelayedTransition(
+				listFragmentBinding.root,
+				Slide(Gravity.BOTTOM).apply {
+					duration = DURATION
+					addTarget(listFragmentBinding.linearLayoutContainer)
+				})
+			listFragmentBinding.linearLayoutContainer.isGone = isGone
 		}
 		
 		viewModel.mainList.observe(viewLifecycleOwner) {
@@ -64,8 +88,12 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 		}
 		viewModel.isSearching.observe(viewLifecycleOwner) {
 			listFragmentBinding.textViewSearch.apply {
-				isGone = it
+				isGone = it.hideSearchMessage
 				text = resources.getString(R.string.search_message)
+				if (it.searchNotResult) {
+					isGone = false
+					text = resources.getString(R.string.not_result_search)
+				}
 			}
 		}
 	}

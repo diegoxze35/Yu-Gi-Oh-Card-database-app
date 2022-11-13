@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-	android:id="@+id/root"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/root"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:animateLayoutChanges="false"
+	android:animateLayoutChanges="true"
 	android:focusableInTouchMode="true"
 	tools:context=".ui.view.MainCardActivity">
 	
@@ -17,37 +16,56 @@
 		android:background="@color/main_color_app"
 		app:contentInsetLeft="0dp"
 		app:contentInsetStart="0dp"
-		app:layout_constraintBottom_toTopOf="@id/mainFragmentContainer"
+		app:layout_constraintBottom_toTopOf="@id/layoutMessageInternet"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
 		tools:menu="@menu/menu_main_activity">
 		
-			<ImageView
-				android:id="@+id/icon_toolbar"
-				android:layout_width="95dp"
-				android:layout_height="match_parent"
-				android:paddingTop="2dp"
-				android:scaleType="centerInside"
-				android:scaleX="1.7"
-				android:scaleY="1.7"
-				android:src="@drawable/card_database_icon"
-				tools:ignore="ContentDescription" />
-			
-			<android.widget.SearchView
-				android:id="@+id/searchView"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_centerVertical="true"
-				android:layout_toEndOf="@+id/icon_toolbar"
-				android:closeIcon="@drawable/close_search_icon"
-				android:goIcon="@drawable/submit_search_icon"
-				android:iconifiedByDefault="false"
-				android:inputType="text"
-				android:queryHint="@string/search_card"
-				android:searchIcon="@drawable/search_icon" />
+		<ImageView
+			android:id="@+id/icon_toolbar"
+			android:layout_width="95dp"
+			android:layout_height="match_parent"
+			android:paddingTop="2dp"
+			android:scaleType="centerInside"
+			android:scaleX="1.7"
+			android:scaleY="1.7"
+			android:src="@drawable/card_database_icon"
+			tools:ignore="ContentDescription" />
 		
+		<android.widget.SearchView
+			android:id="@+id/searchView"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_centerVertical="true"
+			android:layout_toEndOf="@+id/icon_toolbar"
+			android:closeIcon="@drawable/close_search_icon"
+			android:goIcon="@drawable/submit_search_icon"
+			android:iconifiedByDefault="false"
+			android:inputType="text"
+			android:queryHint="@string/search_card"
+			android:searchIcon="@drawable/search_icon" />
+	
 	</androidx.appcompat.widget.Toolbar>
+	
+	<LinearLayout
+		android:id="@+id/layoutMessageInternet"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		app:layout_constraintBottom_toTopOf="@id/mainFragmentContainer"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/toolbar"
+		tools:background="@color/internet_OK">
+		
+		<TextView
+			android:id="@+id/textInternetIndicator"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			tools:text="@string/connected_to_internet" />
+	</LinearLayout>
 	
 	<androidx.fragment.app.FragmentContainerView
 		android:id="@+id/mainFragmentContainer"
@@ -59,11 +77,11 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/toolbar"
+		app:layout_constraintTop_toBottomOf="@id/layoutMessageInternet"
 		app:navGraph="@navigation/nav_graph"
 		tools:layout="@layout/fragment_list_card" />
 	
-	<LinearLayout
+	<!--<LinearLayout
 		android:id="@+id/linear_layout_container"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -93,6 +111,6 @@
 			android:textStyle="bold"
 			android:text="@string/loading_message" />
 	
-	</LinearLayout>
+	</LinearLayout>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

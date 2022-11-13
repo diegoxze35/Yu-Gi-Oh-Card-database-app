@@ -18,13 +18,44 @@
 		android:id="@+id/textViewSearch"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:gravity="center"
 		android:textSize="20sp"
 		android:textStyle="bold"
 		android:visibility="gone"
-		android:layout_gravity="center"
-		android:gravity="center"
 		app:drawableBottomCompat="@drawable/database_icon"
 		tools:text="@string/search_message"
 		tools:visibility="visible" />
+	
+	<LinearLayout
+		android:id="@+id/linearLayoutContainer"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="25dp"
+		android:orientation="horizontal"
+		android:background="@drawable/background_text_view"
+		android:padding="10dp"
+		android:layout_gravity="bottom|center"
+		app:layout_constraintStart_toStartOf="parent">
+		
+		<ProgressBar
+			android:indeterminateTint="@color/blue_progress_bar"
+			style="@android:style/Widget.Holo.ProgressBar"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginHorizontal="10dp" />
+		
+		<TextView
+			android:id="@+id/textViewMessage"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom"
+			android:layout_marginVertical="4dp"
+			android:layout_marginHorizontal="10dp"
+			android:textSize="20sp"
+			android:textStyle="bold"
+			android:text="@string/loading_message" />
+		
+	</LinearLayout>
 	
 </FrameLayout>

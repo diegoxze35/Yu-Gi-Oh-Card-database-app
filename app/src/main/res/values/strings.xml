@@ -31,4 +31,6 @@
 	<string name="card_atk">Attack </string>
 	<string name="card_def">Defense </string>
 	<string name="card_scale">Scale</string>
+	<string name="connected_to_internet">Connected to internet</string>
+	<string name="not_connected_to_internet">Not connected to the internet</string>
 </resources>

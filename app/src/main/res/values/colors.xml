@@ -9,6 +9,8 @@
 	<color name="white">#FFFFFFFF</color>
 	<color name="myTextColor">#FF000000</color>
 	<color name="end_color">#E4AD80</color>
+	<color name="internet_OK">#7CF680</color>
+	<color name="internet_not_OK">#F67C7C</color>
 	
 	<!-- Colors for CardView views according to card -->
 	<color name="color_normal_monster">#D9A35B</color>

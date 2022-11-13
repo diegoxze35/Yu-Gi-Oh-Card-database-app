@@ -6,7 +6,8 @@
 	<color name="teal_200">#EC3474</color>
 	
 	<color name="myTextColor">#FFFFFFFF</color>
-	
+	<color name="internet_OK">#18A41D</color>
+	<color name="internet_not_OK">#CA1F1F</color>
 	<color name="end_color"> #FF000000 </color>
 	
 	<color name="color_normal_monster">#B98630</color>

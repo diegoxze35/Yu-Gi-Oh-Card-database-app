@@ -81,7 +81,11 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 		return arrayOf(
 			arrayOf(
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(MonsterType.values())),
-				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(AttributeMonster.values())),
+				ArrayAdapter(
+					context,
+					LAYOUT_RESOURCE,
+					firstElement.plus(AttributeMonster.values())
+				),
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(sequenceLevels)),
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(sequenceAtkAndDef)),
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(sequenceAtkAndDef)),
@@ -93,12 +97,14 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 			),
 			arrayOf(
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(RaceMonsterCard.values())),
-				ArrayAdapter(context, LAYOUT_RESOURCE,
+				ArrayAdapter(
+					context, LAYOUT_RESOURCE,
 					firstElement.plus(RaceSpellTrap.values().also {
 						it.toMutableList().remove(RaceSpellTrap.COUNTER)
 					})
 				),
-				ArrayAdapter(context, LAYOUT_RESOURCE, arrayOf(
+				ArrayAdapter(
+					context, LAYOUT_RESOURCE, arrayOf(
 						EXTRA, RaceSpellTrap.NORMAL, RaceSpellTrap.CONTINUOUS, RaceSpellTrap.COUNTER
 					)
 				),
