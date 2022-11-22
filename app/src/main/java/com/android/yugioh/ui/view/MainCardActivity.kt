@@ -1,11 +1,13 @@
 package com.android.yugioh.ui.view
 
+import android.app.Dialog
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ProgressBar
 import android.widget.SearchView
 import android.widget.TextView
 import com.android.yugioh.R
@@ -13,6 +15,7 @@ import com.android.yugioh.ui.viewmodel.CardViewModel
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import androidx.core.view.setPadding
 import androidx.navigation.NavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -61,8 +64,7 @@ class MainCardActivity : AppCompatActivity() {
 					}
 				}
 				viewModel.getListRandomCards()
-			}
-			else {
+			} else {
 				mainBinding.apply {
 					textInternetIndicator.text = getString(R.string.not_connected_to_internet)
 					layoutMessageInternet.apply {
@@ -146,7 +148,20 @@ class MainCardActivity : AppCompatActivity() {
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		return when (item.itemId) {
 			R.id.advanced_search_options -> {
-				navController.navigate(R.id.action_listCardFragment_to_dialogAdvancedSearch)
+				MainScope().launch {
+					val dialog = Dialog(this@MainCardActivity).apply {
+						setCancelable(false)
+						setContentView(
+							ProgressBar(this@MainCardActivity).apply {
+								setPadding(24)
+							}
+						)
+						show()
+					}
+					viewModel.getAllArchetypes().join()
+					dialog.dismiss()
+					navController.navigate(R.id.action_listCardFragment_to_dialogAdvancedSearch)
+				}
 				true
 			}
 			R.id.my_decks_option -> true

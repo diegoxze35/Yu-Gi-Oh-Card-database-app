@@ -5,6 +5,7 @@
 		<item name="colorPrimary">@color/main_color_app</item>
 		<item name="colorPrimaryDark">@color/main_color_night</item>
 		<item name="colorAccent">@color/teal_200</item>
+		<item name="colorOnSecondary">@color/white</item>
 		
 		<!-- Customize your theme here. -->
 		<item name="android:editTextColor">@color/white</item>

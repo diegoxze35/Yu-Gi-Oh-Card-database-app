@@ -99,9 +99,9 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(RaceMonsterCard.values())),
 				ArrayAdapter(
 					context, LAYOUT_RESOURCE,
-					firstElement.plus(RaceSpellTrap.values().also {
-						it.toMutableList().remove(RaceSpellTrap.COUNTER)
-					})
+					firstElement.plus(
+						RaceSpellTrap.values().run { (this.take(size - 1)) }
+					)
 				),
 				ArrayAdapter(
 					context, LAYOUT_RESOURCE, arrayOf(
@@ -109,6 +109,13 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 					)
 				),
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(RaceSkill.values()))
+			),
+			arrayOf(
+				ArrayAdapter(
+					context,
+					LAYOUT_RESOURCE,
+					firstElement.plus(Card.CardFormat.values())
+				),
 			)
 		)
 	}

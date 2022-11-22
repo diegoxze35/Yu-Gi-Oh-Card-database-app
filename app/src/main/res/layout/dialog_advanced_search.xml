@@ -152,7 +152,6 @@
 			
 			</com.google.android.material.textfield.TextInputLayout>
 			
-			
 			<com.google.android.material.textfield.TextInputLayout
 				android:id="@+id/textInputLayoutRace"
 				style="@style/DropDownMenu"
@@ -205,6 +204,62 @@
 					android:textStyle="bold"
 					tools:ignore="LabelFor"
 					tools:text="LIGHT" />
+			</com.google.android.material.textfield.TextInputLayout>
+			
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/textInputLayoutFormatCard"
+				style="@style/DropDownMenu"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="8dp"
+				android:layout_weight="1"
+				android:hint="@string/card_format"
+				android:visibility="gone"
+				app:layout_constraintBottom_toTopOf="@+id/textInputLayoutRace"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent"
+				tools:visibility="visible">
+				
+				<AutoCompleteTextView
+					android:id="@+id/autoCompleteTextFormatCard"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:inputType="none"
+					android:textColor="@color/myTextColor"
+					android:textSize="12sp"
+					android:textStyle="bold"
+					tools:ignore="LabelFor"
+					tools:text="TCG" />
+			
+			</com.google.android.material.textfield.TextInputLayout>
+			
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/textInputLayoutArchetype"
+				style="@style/DropDownMenu"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="8dp"
+				android:layout_weight="1"
+				android:hint="@string/card_archetype"
+				android:visibility="gone"
+				app:layout_constraintBottom_toTopOf="@+id/textInputLayoutRace"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent"
+				tools:visibility="visible">
+				
+				<AutoCompleteTextView
+					android:id="@+id/autoCompleteTextArchetype"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:inputType="none"
+					android:textColor="@color/myTextColor"
+					android:textSize="12sp"
+					android:textStyle="bold"
+					tools:ignore="LabelFor"
+					tools:text="Herald" />
+			
 			</com.google.android.material.textfield.TextInputLayout>
 			
 			<LinearLayout
@@ -337,6 +392,7 @@
 	
 	<Button
 		android:id="@+id/buttonSubmit"
+		android:enabled="false"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="@string/search_card"

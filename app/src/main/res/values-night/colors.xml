@@ -3,7 +3,7 @@
 	
 	<color name="main_color_app">#54341D</color>
 	<color name="main_color_night"> #54341D </color>
-	<color name="teal_200">#EC3474</color>
+	<color name="teal_200">@color/color_border_card1</color>
 	
 	<color name="myTextColor">#FFFFFFFF</color>
 	<color name="internet_OK">#18A41D</color>

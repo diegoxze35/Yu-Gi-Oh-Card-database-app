@@ -45,8 +45,7 @@ class NetworkConnectivity @Inject constructor(@ApplicationContext context: Conte
 	private fun Network.hasInternet(): Boolean {
 		val httpConnection by lazy { openConnection(URL(URL_GOOGLE)) as HttpURLConnection }
 		if (connectivityManager.getNetworkCapabilities(this)
-				?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-		) {
+				?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true) {
 			val ok = try {
 				httpConnection.connect()
 				(httpConnection.responseCode == HttpURLConnection.HTTP_OK)

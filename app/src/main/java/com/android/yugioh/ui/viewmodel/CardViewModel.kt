@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -119,6 +120,26 @@ class CardViewModel @Inject constructor(
 			} finally {
 				isLoadingLiveData.value = true
 			}
+		}
+	}
+	
+	lateinit var archetypes: Array<String>
+		private set
+	val archetypesIsReady: Boolean
+		get() {
+			return this@CardViewModel::archetypes.isInitialized && archetypes.isNotEmpty()
+		}
+	
+	fun getAllArchetypes(): Job {
+		return viewModelScope.launch {
+			if (archetypesIsReady)
+				return@launch
+			if ((networkManager.value == false)) return@launch
+			try {
+				service.getAllArchetypes()?.let {
+					archetypes = it
+				}
+			} catch (e: Exception) { archetypes = emptyArray() }
 		}
 	}
 	

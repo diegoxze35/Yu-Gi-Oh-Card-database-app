@@ -2,7 +2,7 @@
 <resources>
 	<color name="main_color_app">#8C5D3C</color>
 	<color name="main_color_night">#8C5D3C</color>
-	<color name="teal_200">#EB588A</color>
+	<color name="teal_200">@color/color_border_card1</color>
 	
 	<!-- Text colors -->
 	<color name="black">#FF000000</color>
