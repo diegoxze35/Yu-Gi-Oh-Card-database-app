@@ -114,7 +114,7 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 				ArrayAdapter(
 					context,
 					LAYOUT_RESOURCE,
-					firstElement.plus(Card.CardFormat.values())
+					firstElement.plus(Card.FormatCard::class.sealedSubclasses)
 				),
 			)
 		)

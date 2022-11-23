@@ -1,4 +1,6 @@
 package com.android.yugioh.model.data
+
+import androidx.annotation.DrawableRes
 import com.android.yugioh.R
 
 sealed class Card(
@@ -16,48 +18,45 @@ sealed class Card(
 		val imageUrl: String, val imageUrlSmall: String
 	)
 	
-	enum class CardFormat(private val format: String) {
+	sealed interface FormatCard {
+		val format: String
+		var banListState: BanListState?
 		
-		TCG("TCG"),
-		OCG("OCG"),
-		RUSH_DUEL("Rush Duel");
+		object TCG : FormatCard {
+			override val format = "TCG"
+			override var banListState: BanListState? = null
+		}
 		
-		override fun toString(): String = this.format
+		object OCG : FormatCard {
+			override val format = "OCG"
+			override var banListState: BanListState? = null
+		}
+		
+		object RushDuel : FormatCard {
+			override val format = "Rush Duel"
+			override var banListState: BanListState? = null
+		}
 		
 	}
 	
-	enum class BanListState(private val status: String, override val icon: Int) : Enum {
+	data class Format(
+		val tcg: FormatCard.TCG?,
+		val ocg: FormatCard.OCG?,
+		val rushDuel: FormatCard.RushDuel?
+	)
+	
+	enum class BanListState(private val status: String, @DrawableRes override val icon: Int) :
+		DomainEnum {
 		
 		BANNED("Banned", R.drawable.banlist_banned_s),
 		LIMITED("Limited", R.drawable.banlist_limited_s),
 		SEMI_LIMITED("Semi-Limited", R.drawable.banlist_semilimited_s),
 		UNLIMITED("Unlimited", R.drawable.banlist_unlimited_s);
 		
-		override val enum: kotlin.Enum<*>
+		override val enum: Enum<*>
 			get() = this
 		
 		override fun toString(): String = status
-	}
-	
-	data class Format(
-		val formats: Array<CardFormat?>,
-		val banTCG: BanListState?,
-		val banOCG: BanListState?
-	) {
-		override fun equals(other: Any?): Boolean {
-			if (this === other) return true
-			if (javaClass != other?.javaClass) return false
-			
-			other as Format
-			
-			if (!formats.contentEquals(other.formats)) return false
-			
-			return true
-		}
-		
-		override fun hashCode(): Int {
-			return formats.contentHashCode()
-		}
 	}
 	
 }

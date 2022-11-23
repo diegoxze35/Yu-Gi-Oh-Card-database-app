@@ -155,7 +155,7 @@ data class MonsterCard(
 				R.drawable.effect_monster_s
 			);
 			
-			override val enum: kotlin.Enum<*> get() = this
+			override val enum: Enum<*> get() = this
 			
 			override fun toString(): String = type
 		}
@@ -197,13 +197,13 @@ data class MonsterCard(
 			//*OTHER*//*
 			CREATOR_GOD("Creator-God", R.drawable.divine_beast_s);
 			
-			override val enum: kotlin.Enum<*> get() = this
+			override val enum: Enum<*> get() = this
 			
 			override fun toString(): String = race
 			
 		}
 		
-		enum class AttributeMonster(override val icon: Int) : Enum {
+		enum class AttributeMonster(override val icon: Int) : DomainEnum {
 			
 			LIGHT(R.drawable.light_s),
 			DARK(R.drawable.dark_s),
@@ -213,7 +213,7 @@ data class MonsterCard(
 			WIND(R.drawable.wind_s),
 			DIVINE(R.drawable.divine_s);
 			
-			override val enum: kotlin.Enum<*> get() = this
+			override val enum: Enum<*> get() = this
 			
 		}
 	}

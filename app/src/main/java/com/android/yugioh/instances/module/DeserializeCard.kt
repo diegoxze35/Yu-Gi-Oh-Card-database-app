@@ -1,13 +1,21 @@
 package com.android.yugioh.instances.module
 
+import com.android.yugioh.model.data.Card
 import com.android.yugioh.model.data.Card.BanListState
-import com.android.yugioh.model.data.Card.CardFormat
-import com.android.yugioh.model.data.Card.Format
+import com.android.yugioh.model.data.Card.FormatCard
 import com.android.yugioh.model.data.Card.Image
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
 interface DeserializeCard {
+	
+	companion object {
+		const val IMAGE_URL_FIELD = "image_url"
+		const val IMAGE_URL_FIELD_SMALL = "image_url_small"
+		const val BAN_FIELD = "banlist_info"
+		const val MISC_INFO = "misc_info"
+		const val FORMATS_FIELD = "formats"
+	}
 	
 	fun <T : Enum<T>> deserializeStringToEnumValue(value: String, enum: Array<T>): T {
 		return enum.find {
@@ -15,45 +23,44 @@ interface DeserializeCard {
 		}!!
 	}
 	
-	fun deserializeListImage(array: JsonArray): List<Image> {
-		val images = mutableListOf<Image>()
-		array.forEach {
-			with(it.asJsonObject) {
-				images.add(Image(get("image_url").asString, get("image_url_small").asString))
-			}
+	fun deserializeListImage(array: JsonArray): List<Image> = array.map {
+		with(it.asJsonObject) {
+			Image(get(IMAGE_URL_FIELD).asString, get(IMAGE_URL_FIELD_SMALL).asString)
 		}
-		return images
 	}
 	
-	fun deserializeFormatAndBanInfo(info: JsonObject): Format {
+	fun deserializeFormatAndBanInfo(info: JsonObject): Card.Format {
 		
-		/*	formats = [
-				0 - TCG
-				1 - OCG
-				2 - Rush Duel
-			]
-		*/
-		val formats = CardFormat.values()
-		val currentFormats = arrayOfNulls<CardFormat?>(formats.size)
-		val arrayFormats =
-			info.get("misc_info").asJsonArray[0].asJsonObject.getAsJsonArray("formats")
-		for (index in currentFormats.indices) {
-			currentFormats[index] = arrayFormats.find {
-				it.asString == formats[index].toString()
-			}?.let {
-				deserializeStringToEnumValue(it.asString, formats)
+		var formatFinal = Card.Format(null, null, null)
+		val formats = FormatCard::class.sealedSubclasses.map { it.objectInstance!! }
+		formats.forEach { current ->
+			when (current) {
+				FormatCard.TCG -> formatFinal = formatFinal.copy(
+					tcg = current.getFromJson("ban_tcg", info) as FormatCard.TCG?
+				)
+				FormatCard.OCG -> formatFinal = formatFinal.copy(
+					ocg = current.getFromJson("ban_ocg", info) as FormatCard.OCG?
+				)
+				FormatCard.RushDuel -> {
+					info.get(MISC_INFO).asJsonArray[0].asJsonObject.getAsJsonArray(FORMATS_FIELD)
+						.find { it.asString == current.format }?.let {
+							formatFinal =
+								formatFinal.copy(rushDuel = current as FormatCard.RushDuel)
+						}
+				}
 			}
 		}
-		val currentsStatesBan = arrayOfNulls<BanListState?>(formats.size - 1) //[TCG, OCG]
-		val formatsBan = arrayOf("ban_tcg", "ban_ocg")
-		val banListInfo: JsonObject? = info.getAsJsonObject("banlist_info")
-		for (index in formatsBan.indices) {
-			if (currentFormats[index] == null)
-				continue
-			currentsStatesBan[index] = banListInfo?.get(formatsBan[index])?.let {
+		return formatFinal
+	}
+	
+	private fun FormatCard.getFromJson(fieldName: String, json: JsonObject): FormatCard? {
+		val arrayFormats: JsonArray =
+			json.get(MISC_INFO).asJsonArray[0].asJsonObject.getAsJsonArray(FORMATS_FIELD)
+		return arrayFormats.find { it.asString == format }?.let { _ ->
+			banListState = json.getAsJsonObject(BAN_FIELD)?.get(fieldName)?.let {
 				deserializeStringToEnumValue(it.asString, BanListState.values())
 			} ?: BanListState.UNLIMITED
+			this
 		}
-		return Format(currentFormats, currentsStatesBan[0], currentsStatesBan[1])
 	}
 }
