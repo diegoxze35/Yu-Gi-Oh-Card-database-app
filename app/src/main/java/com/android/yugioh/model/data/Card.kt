@@ -1,4 +1,6 @@
 package com.android.yugioh.model.data
+
+import androidx.annotation.DrawableRes
 import com.android.yugioh.R
 
 sealed class Card(
@@ -16,48 +18,58 @@ sealed class Card(
 		val imageUrl: String, val imageUrlSmall: String
 	)
 	
-	enum class CardFormat(private val format: String) {
+	sealed interface FormatCard {
 		
-		TCG("TCG"),
-		OCG("OCG"),
-		RUSH_DUEL("Rush Duel");
+		val format: String
+		var banListState: BanListState?
 		
-		override fun toString(): String = this.format
+		data class TCG(override var banListState: BanListState?) : FormatCard {
+			override val format = "TCG"
+		}
+		
+		data class OCG(override var banListState: BanListState?) : FormatCard {
+			override val format = "OCG"
+		}
+		
+		data class GOAT(override var banListState: BanListState?) : FormatCard {
+			override val format = "Goat"
+		}
+		
+		data class RushDuel(override var banListState: BanListState?) : FormatCard {
+			override val format = "Rush Duel"
+		}
+		
+		data class DuelLinks(override var banListState: BanListState?) : FormatCard {
+			override val format = "Duel Links"
+		}
+		
+		data class SpeedDuel(override var banListState: BanListState?) : FormatCard {
+			override val format = "Speed Duel"
+		}
 		
 	}
 	
-	enum class BanListState(private val status: String, override val icon: Int) : Enum {
+	data class Format(
+		val tcg: FormatCard.TCG?,
+		val ocg: FormatCard.OCG?,
+		val goat: FormatCard.GOAT?,
+		val duelLinks: FormatCard.DuelLinks?,
+		val rushDuel: FormatCard.RushDuel?,
+		val speedDuel: FormatCard.SpeedDuel?
+	)
+	
+	enum class BanListState(private val status: String, @DrawableRes override val icon: Int) :
+		DomainEnum {
 		
 		BANNED("Banned", R.drawable.banlist_banned_s),
 		LIMITED("Limited", R.drawable.banlist_limited_s),
 		SEMI_LIMITED("Semi-Limited", R.drawable.banlist_semilimited_s),
 		UNLIMITED("Unlimited", R.drawable.banlist_unlimited_s);
 		
-		override val enum: kotlin.Enum<*>
+		override val enum: Enum<*>
 			get() = this
 		
 		override fun toString(): String = status
-	}
-	
-	data class Format(
-		val formats: Array<CardFormat?>,
-		val banTCG: BanListState?,
-		val banOCG: BanListState?
-	) {
-		override fun equals(other: Any?): Boolean {
-			if (this === other) return true
-			if (javaClass != other?.javaClass) return false
-			
-			other as Format
-			
-			if (!formats.contentEquals(other.formats)) return false
-			
-			return true
-		}
-		
-		override fun hashCode(): Int {
-			return formats.contentHashCode()
-		}
 	}
 	
 }

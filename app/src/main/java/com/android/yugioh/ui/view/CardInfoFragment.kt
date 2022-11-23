@@ -20,7 +20,7 @@ import com.android.yugioh.model.data.MonsterCard
 import com.android.yugioh.model.data.SkillCard
 import com.android.yugioh.model.data.SpellTrapCard
 import com.android.yugioh.model.data.MonsterCard.Companion.MonsterType
-import com.android.yugioh.model.data.Enum
+import com.android.yugioh.model.data.DomainEnum
 import com.android.yugioh.ui.viewmodel.CardViewModel
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -92,7 +92,7 @@ class CardInfoFragment : Fragment() {
 			textViewType.setIconAndText(R.string.any_text, card.type)
 			textViewRace.setIconAndText(R.string.any_text, card.race)
 			card.format?.let {
-				it.banTCG?.let { TCG ->
+				it.tcg?.banListState?.let { TCG ->
 					textViewBanListTCG.setIconAndText(
 						R.string.tcg_ban_list,
 						TCG
@@ -101,7 +101,7 @@ class CardInfoFragment : Fragment() {
 					?: textViewBanListTCG.apply {
 						isGone = true
 					}
-				it.banOCG?.let { OCG ->
+				it.ocg?.banListState?.let { OCG ->
 					textViewBanListOCG.setIconAndText(
 						R.string.ocg_ban_list,
 						OCG
@@ -180,7 +180,7 @@ class CardInfoFragment : Fragment() {
 		}
 	}
 	
-	private fun TextView.setIconAndText(stringResource: Int, value: Enum) {
+	private fun TextView.setIconAndText(stringResource: Int, value: DomainEnum) {
 		this.apply {
 			setCompoundDrawablesWithIntrinsicBounds(
 				0, 0, 0, value.icon

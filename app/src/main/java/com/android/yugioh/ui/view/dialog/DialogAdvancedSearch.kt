@@ -53,18 +53,13 @@ class DialogAdvancedSearch(private val adapters: Array<Array<ArrayAdapter<*>>>) 
 	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		for ((index, autoCompleteTextView) in map.values.withIndex()) {
+		for ((index, autoCompleteTextView) in map.values.withIndex())
 			autoCompleteTextView.setAdapter(adapters[INDEX_FIRST_ADAPTERS][index])
-		}
 		dialogBinding.apply {
 			if (viewModel.archetypesIsReady) {
 				viewModel.archetypes.also {
 					autoCompleteTextArchetype.setAdapter(
-						ArrayAdapter(
-							requireContext(),
-							R.layout.item_auto_complete_text_view,
-							it
-						)
+						ArrayAdapter(requireContext(), R.layout.item_auto_complete_text_view, it)
 					)
 				}
 			}

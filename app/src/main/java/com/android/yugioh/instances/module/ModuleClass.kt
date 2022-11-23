@@ -5,6 +5,7 @@ import android.widget.ArrayAdapter
 import com.android.yugioh.R
 import com.android.yugioh.model.api.YuGiOhApi
 import com.android.yugioh.model.data.Card
+import com.android.yugioh.model.data.Card.FormatCard
 import com.android.yugioh.model.data.MonsterCard
 import com.android.yugioh.model.data.SkillCard
 import com.android.yugioh.model.data.SpellTrapCard
@@ -64,6 +65,15 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 		create()
 	}
 	
+	override fun getFormatList(): List<FormatCard> { //can not be singleton
+		return listOf(
+			FormatCard.TCG(banListState = null),
+			FormatCard.OCG(banListState = null),
+			FormatCard.RushDuel(banListState = null),
+			FormatCard.DuelLinks(banListState = null)
+		)
+	}
+	
 	@Singleton
 	@Provides
 	fun provideAdapters(@ApplicationContext context: Context): Array<Array<ArrayAdapter<*>>> {
@@ -82,26 +92,25 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 			arrayOf(
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(MonsterType.values())),
 				ArrayAdapter(
-					context,
-					LAYOUT_RESOURCE,
-					firstElement.plus(AttributeMonster.values())
+					context, LAYOUT_RESOURCE, firstElement.plus(AttributeMonster.values())
 				),
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(sequenceLevels)),
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(sequenceAtkAndDef)),
 				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(sequenceAtkAndDef)),
 				ArrayAdapter(
-					context,
-					LAYOUT_RESOURCE,
-					firstElement.plus(sequenceLevels).plus(MAX_SCALE)
+					context, LAYOUT_RESOURCE, firstElement.plus(sequenceLevels).plus(MAX_SCALE)
 				)
 			),
 			arrayOf(
-				ArrayAdapter(context, LAYOUT_RESOURCE, firstElement.plus(RaceMonsterCard.values())),
 				ArrayAdapter(
-					context, LAYOUT_RESOURCE,
-					firstElement.plus(
-						RaceSpellTrap.values().run { (this.take(size - 1)) }
-					)
+					context,
+					LAYOUT_RESOURCE,
+					firstElement.plus(RaceMonsterCard.values())
+				),
+				ArrayAdapter(
+					context,
+					LAYOUT_RESOURCE,
+					firstElement.plus(RaceSpellTrap.values().run { (take(size - 1)) })
 				),
 				ArrayAdapter(
 					context, LAYOUT_RESOURCE, arrayOf(
@@ -114,7 +123,7 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 				ArrayAdapter(
 					context,
 					LAYOUT_RESOURCE,
-					firstElement.plus(Card.CardFormat.values())
+					firstElement.plus(getFormatList().map { it.format })
 				),
 			)
 		)
@@ -177,4 +186,5 @@ object ModuleClass : JsonDeserializer<Card>, DeserializeCard {
 		}
 		
 	}
+	
 }

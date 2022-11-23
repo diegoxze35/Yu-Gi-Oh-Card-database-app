@@ -1,6 +1,6 @@
 package com.android.yugioh.model.data
 
-interface Type : Enum {
+interface Type : DomainEnum {
 	
 	val type: String
 	val color: Int
