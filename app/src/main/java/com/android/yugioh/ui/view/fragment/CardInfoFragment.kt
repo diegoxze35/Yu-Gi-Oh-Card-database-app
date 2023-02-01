@@ -1,4 +1,4 @@
-package com.android.yugioh.ui.view
+package com.android.yugioh.ui.view.fragment
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -15,12 +15,12 @@ import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import com.android.yugioh.R
 import com.android.yugioh.databinding.FragmentCardInfoBinding
-import com.android.yugioh.model.data.Card
-import com.android.yugioh.model.data.MonsterCard
-import com.android.yugioh.model.data.SkillCard
-import com.android.yugioh.model.data.SpellTrapCard
-import com.android.yugioh.model.data.MonsterCard.Companion.MonsterType
-import com.android.yugioh.model.data.DomainEnum
+import com.android.yugioh.domain.data.Card
+import com.android.yugioh.domain.data.MonsterCard
+import com.android.yugioh.domain.data.SkillCard
+import com.android.yugioh.domain.data.SpellTrapCard
+import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
+import com.android.yugioh.domain.data.DomainEnum
 import com.android.yugioh.ui.viewmodel.CardViewModel
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch

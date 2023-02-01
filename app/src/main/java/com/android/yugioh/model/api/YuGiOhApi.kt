@@ -1,6 +1,5 @@
 package com.android.yugioh.model.api
 
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.http.GET
@@ -29,6 +28,6 @@ interface YuGiOhApi {
 	): Response<JsonObject>
 	
 	@GET(GET_ALL_ARCHETYPES)
-	suspend fun getAllArchetypes(): Response<JsonArray>
+	suspend fun getAllArchetypes(): Response<List<JsonObject>>
 	
 }

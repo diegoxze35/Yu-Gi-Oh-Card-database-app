@@ -12,20 +12,23 @@ import com.android.yugioh.R
 import com.android.yugioh.databinding.DialogAdvancedSearchBinding
 import com.android.yugioh.ui.viewmodel.CardViewModel
 
-class DialogAdvancedSearch(private val adapters: Array<Array<ArrayAdapter<*>>>) :
+class DialogAdvancedSearch(
+	private val archetypes: List<String>,
+	private val adapters: Array<Array<ArrayAdapter<*>>>
+) :
 	DialogFragment(R.layout.dialog_advanced_search) {
-	
+
 	companion object {
 		const val INDEX_FIRST_ADAPTERS = 0
 		const val INDEX_SECOND_ADAPTERS = 1
 		const val INDEX_THREE_ADAPTERS = 2
 	}
-	
-	private val viewModel: CardViewModel by activityViewModels()
-	
+
+	//private val viewModel: CardViewModel by activityViewModels()
+
 	private var _dialogBinding: DialogAdvancedSearchBinding? = null
 	private val dialogBinding: DialogAdvancedSearchBinding get() = _dialogBinding!!
-	
+
 	private val map by lazy {
 		with(dialogBinding) {
 			mapOf(
@@ -38,31 +41,34 @@ class DialogAdvancedSearch(private val adapters: Array<Array<ArrayAdapter<*>>>) 
 			)
 		}
 	}
-	
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		isCancelable = false
 	}
-	
+
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 	): View {
 		_dialogBinding = DialogAdvancedSearchBinding.inflate(inflater, container, false)
 		return dialogBinding.root
 	}
-	
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		for ((index, autoCompleteTextView) in map.values.withIndex())
 			autoCompleteTextView.setAdapter(adapters[INDEX_FIRST_ADAPTERS][index])
 		dialogBinding.apply {
-			if (viewModel.archetypesIsReady) {
+			/*if (viewModel.archetypesIsReady) {
 				viewModel.archetypes.also {
 					autoCompleteTextArchetype.setAdapter(
 						ArrayAdapter(requireContext(), R.layout.item_auto_complete_text_view, it)
 					)
 				}
-			}
+			}*/
+			autoCompleteTextArchetype.setAdapter(
+				ArrayAdapter(requireContext(), R.layout.item_auto_complete_text_view, archetypes)
+			)
 			buttonSubmit.setOnClickListener {
 				/*TODO()*/
 			}
@@ -86,7 +92,7 @@ class DialogAdvancedSearch(private val adapters: Array<Array<ArrayAdapter<*>>>) 
 			}
 		}
 	}
-	
+
 	private fun applyChanges(isGone: Boolean, indexRaceAdapter: Int) {
 		for (textInputLayout in map.keys) {
 			textInputLayout.isGone = isGone
@@ -95,7 +101,7 @@ class DialogAdvancedSearch(private val adapters: Array<Array<ArrayAdapter<*>>>) 
 			adapters[INDEX_SECOND_ADAPTERS][indexRaceAdapter]
 		)
 	}
-	
+
 	override fun onDestroyView() {
 		super.onDestroyView()
 		_dialogBinding = null

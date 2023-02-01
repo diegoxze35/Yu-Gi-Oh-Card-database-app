@@ -7,7 +7,7 @@
 	
 	<fragment
 		android:id="@+id/listCardFragment"
-		android:name="com.android.yugioh.ui.view.ListCardFragment"
+		android:name="com.android.yugioh.ui.view.fragment.ListCardFragment"
 		tools:layout="@layout/fragment_list_card">
 		<action
 			android:id="@+id/action_listCardFragment_to_cardInfoFragment"
@@ -22,7 +22,7 @@
 	</fragment>
 	<fragment
 		android:id="@+id/cardInfoFragment"
-		android:name="com.android.yugioh.ui.view.CardInfoFragment"
+		android:name="com.android.yugioh.ui.view.fragment.CardInfoFragment"
 		tools:layout="@layout/fragment_card_info" >
 		<action
 			android:id="@+id/action_cardInfoFragment_to_listCardFragment"

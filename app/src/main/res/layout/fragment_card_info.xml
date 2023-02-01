@@ -8,7 +8,7 @@
 	android:layout_height="match_parent"
 	android:animateLayoutChanges="true"
 	tools:background="@color/color_xyz_monster"
-	tools:context=".ui.view.CardInfoFragment">
+	tools:context=".ui.view.fragment.CardInfoFragment">
 	
 	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 		android:id="@+id/buttonAddToDeck"

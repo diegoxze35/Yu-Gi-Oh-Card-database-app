@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.yugioh.R
 import com.android.yugioh.databinding.LayoutItemCardBinding
-import com.android.yugioh.model.data.Card
+import com.android.yugioh.domain.data.Card
 import com.squareup.picasso.Picasso
 
 class CardAdapter(

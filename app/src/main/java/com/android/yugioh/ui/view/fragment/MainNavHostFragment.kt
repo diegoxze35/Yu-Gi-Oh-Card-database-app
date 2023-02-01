@@ -1,7 +1,8 @@
-package com.android.yugioh.ui.view
+package com.android.yugioh.ui.view.fragment
 
 import android.content.Context
 import androidx.navigation.fragment.NavHostFragment
+import com.android.yugioh.ui.view.MyFragmentFactory
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
