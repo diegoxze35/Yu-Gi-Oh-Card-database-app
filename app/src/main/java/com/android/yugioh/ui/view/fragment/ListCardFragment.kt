@@ -1,4 +1,4 @@
-package com.android.yugioh.ui.view
+package com.android.yugioh.ui.view.fragment
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -16,6 +16,8 @@ import androidx.transition.Slide
 import androidx.transition.TransitionManager
 import com.android.yugioh.R
 import com.android.yugioh.databinding.FragmentListCardBinding
+import com.android.yugioh.ui.view.CardAdapter
+import com.android.yugioh.ui.view.MainCardActivity
 import com.android.yugioh.ui.viewmodel.CardViewModel
 import com.squareup.picasso.Picasso
 
@@ -60,7 +62,7 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 		
 		
 		
-		viewModel.isLoading.observe(viewLifecycleOwner) { isGone ->
+		viewModel.isLoadingGone.observe(viewLifecycleOwner) { isGone ->
 			listFragmentBinding.textViewMessage.text =
 				getString(
 					if (!viewModel.canAddFilterList)

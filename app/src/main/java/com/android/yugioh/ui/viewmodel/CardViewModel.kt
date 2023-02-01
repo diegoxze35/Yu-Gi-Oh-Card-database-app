@@ -1,36 +1,35 @@
 package com.android.yugioh.ui.viewmodel
 
 import android.graphics.drawable.Drawable
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
-import com.android.yugioh.model.api.CardProvider
-import com.android.yugioh.model.data.Card
+import androidx.lifecycle.*
+import com.android.yugioh.domain.GetAllArchetypesUseCase
+import com.android.yugioh.domain.GetRandomCardsUseCase
+import com.android.yugioh.domain.SearchCardByNameUseCase
+import com.android.yugioh.domain.data.Card
+import com.android.yugioh.model.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CardViewModel @Inject constructor(
 	val networkManager: NetworkConnectivity,
-	private val service: CardProvider
+	private val getRandomCardsUseCase: GetRandomCardsUseCase,
+	private val searchCardByNameUseCase: SearchCardByNameUseCase
 ) : ViewModel() {
-	
+
 	private var loading =
 		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
 	private var isSubmit = false
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
-	private val imageData: MutableMap<Card, Drawable> = mutableMapOf()
+	private val cardData: MutableMap<Card, Drawable> = mutableMapOf()
 	private val mainListLiveData: MutableLiveData<List<Card>> = MutableLiveData(emptyList())
 	val mainList: LiveData<List<Card>> get() = mainListLiveData
+
 	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
 	val currentCard: LiveData<Card> get() = clickedCard
 	private val currentQueryLiveData: MutableLiveData<String> = MutableLiveData()
@@ -38,24 +37,24 @@ class CardViewModel @Inject constructor(
 		get() {
 			return currentQueryLiveData.value.orEmpty().isNotEmpty()
 		}
-	private val isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
-	val isLoading: LiveData<Boolean> get() = isLoadingLiveData
-	
+	private val isLoadingGoneLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
+	val isLoadingGone: LiveData<Boolean> get() = isLoadingGoneLiveData
+
 	data class SearchingState(
 		val hideSearchMessage: Boolean = true,
 		val searchNotResult: Boolean = false
 	)
-	
+
 	private val isSearchingLiveData: MutableLiveData<SearchingState> =
 		MutableLiveData(SearchingState())
 	val isSearching: LiveData<SearchingState> get() = isSearchingLiveData
-	
-	
+
+
 	fun setQuerySearch(query: String, isSubmit: Boolean) {
 		this.isSubmit = isSubmit
 		currentQueryLiveData.value = query
 	}
-	
+
 	val filterListLiveData: LiveData<List<Card>> =
 		Transformations.switchMap(currentQueryLiveData) { query ->
 			liveData<List<Card>> {
@@ -81,78 +80,51 @@ class CardViewModel @Inject constructor(
 						return@liveData
 					}
 				}
-				isLoadingLiveData.value = false
+				isLoadingGoneLiveData.value = false
 				searchData[query]?.let {
-					isLoadingLiveData.value = true
+					isLoadingGoneLiveData.value = true
 					emit(it)
 					return@liveData
 				}
 				if (networkManager.value == false) return@liveData
-				try {
-					service.searchCard(query).also {
-						isSearchingLiveData.value = isSearchingLiveData.value?.copy(
-							hideSearchMessage = it.isNotEmpty(),
-							searchNotResult = it.isEmpty()
-						)
-						if (it.isNotEmpty()) searchData[query] = it
-						emit(it)
+				searchCardByNameUseCase(query).also { result ->
+					when (result) {
+						is Result.Success -> {
+							isSearchingLiveData.value = isSearchingLiveData.value?.copy(
+								hideSearchMessage = result.body.isNotEmpty(),
+								searchNotResult = result.body.isEmpty().also {
+									if (it) searchData[query] = result.body
+								}
+							)
+							emit(result.body)
+						}
+						else -> {/*TODO()*/}
 					}
-				} catch (e: Exception) {
-					loading.cancelChildren()
-					return@liveData
-				} finally {
-					isLoadingLiveData.value = true
+					isLoadingGoneLiveData.value = true
 				}
 			}
 		}
-	
+
 	fun getListRandomCards() {
-		if ((networkManager.value == false) || loading.isActive) return
+		if (networkManager.value == false || loading.isActive) return
 		loading = viewModelScope.launch {
-			isLoadingLiveData.value = false
-			try {
-				service.getListRandomCards()?.let {
-					mainListLiveData.value = (mainListLiveData.value!!.plus(it))
+			isLoadingGoneLiveData.value = false
+			when (val cards = getRandomCardsUseCase()) {
+				is Result.Success -> {
+					mainListLiveData.value = mainListLiveData.value!!.plus(cards.body)
+					isLoadingGoneLiveData.value = true
 				}
-			} catch (e: Exception) {
-				loading.cancelChildren()
-				return@launch
-			} finally {
-				isLoadingLiveData.value = true
+				else -> {/*TODO()*/
+				}
 			}
 		}
 	}
-	
-	lateinit var archetypes: Array<String>
-		private set
-	val archetypesIsReady: Boolean
-		get() {
-			return this@CardViewModel::archetypes.isInitialized && archetypes.isNotEmpty()
-		}
-	
-	fun getAllArchetypes(): Job {
-		return viewModelScope.launch {
-			if (archetypesIsReady)
-				return@launch
-			if ((networkManager.value == false)) return@launch
-			try {
-				service.getAllArchetypes()?.let {
-					archetypes = it
-				}
-			} catch (e: Exception) { archetypes = emptyArray() }
-		}
-	}
-	
+
 	fun onClickCard(card: Card, imageCard: Drawable?) {
-		imageCard?.let { imageData[card] = it }
+		imageCard?.let { cardData[card] = it }
 		clickedCard.value = card
 	}
-	
-	fun getImageCurrentCard(card: Card): Drawable? = imageData[card]
-	
-	override fun onCleared() {
-		CardProvider.isInit = false
-		super.onCleared()
-	}
-	
+
+	fun getImageCurrentCard(card: Card): Drawable? = cardData[card]
+
 }

@@ -1,9 +1,9 @@
-package com.android.yugioh.instances.module
+package com.android.yugioh.model.data
 
-import com.android.yugioh.model.data.Card
-import com.android.yugioh.model.data.Card.BanListState
-import com.android.yugioh.model.data.Card.FormatCard
-import com.android.yugioh.model.data.Card.Image
+import com.android.yugioh.domain.data.Card
+import com.android.yugioh.domain.data.Card.BanListState
+import com.android.yugioh.domain.data.Card.FormatCard
+import com.android.yugioh.domain.data.Card.Image
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 

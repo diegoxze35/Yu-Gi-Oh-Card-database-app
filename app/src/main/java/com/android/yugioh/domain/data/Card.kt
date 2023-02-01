@@ -1,4 +1,4 @@
-package com.android.yugioh.model.data
+package com.android.yugioh.domain.data
 
 import androidx.annotation.DrawableRes
 import com.android.yugioh.R
