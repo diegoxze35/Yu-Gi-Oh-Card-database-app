@@ -22,12 +22,12 @@ import com.android.yugioh.ui.viewmodel.CardViewModel
 import com.squareup.picasso.Picasso
 
 class ListCardFragment(private val picasso: Picasso) : Fragment() {
-	
+
 	companion object {
 		private const val DURATION = 400L
 		private const val SPAN_COUNT = 2
 	}
-	
+
 	private val viewModel: CardViewModel by activityViewModels()
 	private var _listFragmentBinding: FragmentListCardBinding? = null
 	private val listFragmentBinding: FragmentListCardBinding get() = _listFragmentBinding!!
@@ -35,15 +35,14 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 	private val activity by lazy {
 		requireActivity() as MainCardActivity
 	}
-	
+
 	override fun onCreateView(
-		inflater: LayoutInflater,
-		container: ViewGroup?, savedInstanceState: Bundle?
+		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 	): View {
 		_listFragmentBinding = FragmentListCardBinding.inflate(inflater, container, false)
 		return listFragmentBinding.root
 	}
-	
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		listFragmentBinding.recyclerViewCard.apply {
@@ -54,66 +53,52 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 					activity.clearFocus()
 					if (viewModel.canAddFilterList) return
-					if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL))
-						viewModel.getListRandomCards()
+					if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL)) viewModel.getListRandomCards()
 				}
 			})
 		}
-		
-		
-		
-		viewModel.isLoadingGone.observe(viewLifecycleOwner) { isGone ->
-			listFragmentBinding.textViewMessage.text =
-				getString(
-					if (!viewModel.canAddFilterList)
-						R.string.loading_message
-					else
-						R.string.searching_message
-				)
+
+		viewModel.fragmentListLiveData.observe(viewLifecycleOwner) {
+			if (!viewModel.canAddFilterList) adapter.submitList(it.loadListState.mainList)
+			listFragmentBinding.textViewMessage.text = getString(
+				if (!viewModel.canAddFilterList) R.string.loading_message
+				else R.string.searching_message
+			)
 			TransitionManager.beginDelayedTransition(
 				listFragmentBinding.root,
 				Slide(Gravity.BOTTOM).apply {
 					duration = DURATION
 					addTarget(listFragmentBinding.linearLayoutContainer)
 				})
-			listFragmentBinding.linearLayoutContainer.isGone = isGone
-		}
-		
-		viewModel.mainList.observe(viewLifecycleOwner) {
-			if (!viewModel.canAddFilterList)
-				adapter.submitList(it)
-		}
-		viewModel.filterListLiveData.observe(viewLifecycleOwner) {
-			if (viewModel.canAddFilterList)
-				adapter.submitList(it)
-		}
-		viewModel.isSearching.observe(viewLifecycleOwner) {
+			listFragmentBinding.linearLayoutContainer.isGone = it.loadListState.isLoadingGone
 			listFragmentBinding.textViewSearch.apply {
-				isGone = it.hideSearchMessage
+				isGone = it.searchingState.hideSearchMessage
 				text = resources.getString(R.string.search_message)
-				if (it.searchNotResult) {
+				if (it.searchingState.searchNotResult) {
 					isGone = false
 					text = resources.getString(R.string.not_result_search)
 				}
 			}
 		}
+		viewModel.filterListLiveData.observe(viewLifecycleOwner) {
+			if (viewModel.canAddFilterList) adapter.submitList(it)
+		}
 	}
-	
+
 	override fun onResume() {
 		super.onResume()
 		activity.clearFocus()
 		with(resources.configuration.orientation) {
-			if (this == Configuration.ORIENTATION_LANDSCAPE)
-				listFragmentBinding.recyclerViewCard.layoutManager =
-					GridLayoutManager(context, SPAN_COUNT)
-			else if (this == Configuration.ORIENTATION_PORTRAIT)
-				listFragmentBinding.recyclerViewCard.layoutManager = LinearLayoutManager(context)
+			if (this == Configuration.ORIENTATION_LANDSCAPE) listFragmentBinding.recyclerViewCard.layoutManager =
+				GridLayoutManager(context, SPAN_COUNT)
+			else if (this == Configuration.ORIENTATION_PORTRAIT) listFragmentBinding.recyclerViewCard.layoutManager =
+				LinearLayoutManager(context)
 		}
 	}
-	
+
 	override fun onDestroyView() {
 		super.onDestroyView()
 		_listFragmentBinding = null
 	}
-	
+
 }

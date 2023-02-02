@@ -2,16 +2,14 @@ package com.android.yugioh.model.api
 
 import com.android.yugioh.domain.data.Card
 import com.google.gson.Gson
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.jvm.Throws
-import kotlin.properties.Delegates
 import kotlin.random.Random
 
 @Singleton
@@ -68,9 +66,11 @@ class CardService @Inject constructor(private val api: YuGiOhApi, private val gs
 		}
 	}
 
-	suspend fun getAllArchetypes(): List<String> = api.getAllArchetypes().body()?.map {
-		it.get(ARCHETYPE_PROPERTY).asString
-	} ?: emptyList()
+	suspend fun getAllArchetypes(): List<String> = withContext(Dispatchers.IO) {
+		api.getAllArchetypes().body()?.map {
+			it.get(ARCHETYPE_PROPERTY).asString
+		} ?: emptyList()
+	}
 
 	suspend fun searchCardByName(query: String): List<Card> = withContext(Dispatchers.IO) {
 		val response = api.searchCard(query)

@@ -18,7 +18,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.FragmentScoped
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 import javax.inject.Named
 
 @Module

@@ -1,17 +1,23 @@
 package com.android.yugioh.ui.viewmodel
 
 import android.graphics.drawable.Drawable
-import androidx.lifecycle.*
-import com.android.yugioh.domain.GetAllArchetypesUseCase
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.MutableLiveData
 import com.android.yugioh.domain.GetRandomCardsUseCase
 import com.android.yugioh.domain.SearchCardByNameUseCase
 import com.android.yugioh.domain.data.Card
 import com.android.yugioh.model.Result
+import com.android.yugioh.ui.ListFragmentState
+import com.android.yugioh.ui.LoadListState
+import com.android.yugioh.ui.SearchingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,9 +33,6 @@ class CardViewModel @Inject constructor(
 	private var isSubmit = false
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
 	private val cardData: MutableMap<Card, Drawable> = mutableMapOf()
-	private val mainListLiveData: MutableLiveData<List<Card>> = MutableLiveData(emptyList())
-	val mainList: LiveData<List<Card>> get() = mainListLiveData
-
 	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
 	val currentCard: LiveData<Card> get() = clickedCard
 	private val currentQueryLiveData: MutableLiveData<String> = MutableLiveData()
@@ -37,20 +40,28 @@ class CardViewModel @Inject constructor(
 		get() {
 			return currentQueryLiveData.value.orEmpty().isNotEmpty()
 		}
-	private val isLoadingGoneLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
-	val isLoadingGone: LiveData<Boolean> get() = isLoadingGoneLiveData
 
-	data class SearchingState(
-		val hideSearchMessage: Boolean = true,
-		val searchNotResult: Boolean = false
+	private val _fragmentListLiveData = MutableLiveData(
+		ListFragmentState(
+			SearchingState(),
+			LoadListState(mainList = emptyList(), isLoadingGone = false)
+		)
 	)
-
-	private val isSearchingLiveData: MutableLiveData<SearchingState> =
-		MutableLiveData(SearchingState())
-	val isSearching: LiveData<SearchingState> get() = isSearchingLiveData
-
+	val fragmentListLiveData: LiveData<ListFragmentState> get() = _fragmentListLiveData
 
 	fun setQuerySearch(query: String, isSubmit: Boolean) {
+		if (loading.isActive) return
+		if (query.isEmpty()) {
+			_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
+				copy(
+					searchingState = searchingState.copy(
+						hideSearchMessage = true,
+						searchNotResult = false
+					),
+					loadListState = loadListState.copy(mainList = loadListState.mainList)
+				)
+			}
+		}
 		this.isSubmit = isSubmit
 		currentQueryLiveData.value = query
 	}
@@ -58,49 +69,48 @@ class CardViewModel @Inject constructor(
 	val filterListLiveData: LiveData<List<Card>> =
 		Transformations.switchMap(currentQueryLiveData) { query ->
 			liveData<List<Card>> {
-				if (loading.isActive) return@liveData
-				if (query.isEmpty()) { //restore original list with query is empty
-					isSearchingLiveData.value = isSearchingLiveData.value?.copy(
-						hideSearchMessage = true,
-						searchNotResult = false
-					)
-					mainListLiveData.value = mainListLiveData.value //notify observer
-					return@liveData
-				}
+				searchData[query]?.let { emit(it); return@liveData }
 				if (!isSubmit) {
-					searchData[query]?.let { emit(it); return@liveData }
-					mainList.value?.filter {
-						it.name.contains(query, true)
-					}?.also {
-						isSearchingLiveData.value = isSearchingLiveData.value?.copy(
-							hideSearchMessage = it.isNotEmpty(),
-							searchNotResult = false
-						)
+					_fragmentListLiveData.value!!.loadListState.mainList.filter {
+						it.name.contains(query, ignoreCase = true)
+					}.also {
+						_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
+							copy(
+								searchingState = searchingState.copy(
+									hideSearchMessage = it.isNotEmpty(),
+									searchNotResult = false
+								)
+							)
+						}
 						emit(it)
 						return@liveData
 					}
 				}
-				isLoadingGoneLiveData.value = false
-				searchData[query]?.let {
-					isLoadingGoneLiveData.value = true
-					emit(it)
-					return@liveData
-				}
 				if (networkManager.value == false) return@liveData
-				searchCardByNameUseCase(query).also { result ->
-					when (result) {
+				_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
+					copy(loadListState = loadListState.copy(isLoadingGone = false))
+				}
+				searchCardByNameUseCase(query).run {
+					when (this) {
 						is Result.Success -> {
-							isSearchingLiveData.value = isSearchingLiveData.value?.copy(
-								hideSearchMessage = result.body.isNotEmpty(),
-								searchNotResult = result.body.isEmpty().also {
-									if (it) searchData[query] = result.body
-								}
-							)
-							emit(result.body)
+							_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
+								copy(
+									searchingState = searchingState.copy(
+										hideSearchMessage = body.isNotEmpty(),
+										searchNotResult = body.isEmpty().also {
+											if (it) searchData[query] = body
+										}
+									)
+								)
+							}
+							emit(body)
 						}
-						else -> {/*TODO()*/}
+						else -> {/*TODO()*/
+						}
 					}
-					isLoadingGoneLiveData.value = true
+					_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
+						copy(loadListState = loadListState.copy(isLoadingGone = true))
+					}
 				}
 			}
 		}
@@ -108,11 +118,19 @@ class CardViewModel @Inject constructor(
 	fun getListRandomCards() {
 		if (networkManager.value == false || loading.isActive) return
 		loading = viewModelScope.launch {
-			isLoadingGoneLiveData.value = false
+			_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
+				copy(loadListState = loadListState.copy(isLoadingGone = false))
+			}
 			when (val cards = getRandomCardsUseCase()) {
 				is Result.Success -> {
-					mainListLiveData.value = mainListLiveData.value!!.plus(cards.body)
-					isLoadingGoneLiveData.value = true
+					_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
+						copy(
+							loadListState = loadListState.copy(
+								isLoadingGone = true,
+								mainList = loadListState.mainList.plus(cards.body)
+							),
+						)
+					}
 				}
 				else -> {/*TODO()*/
 				}
