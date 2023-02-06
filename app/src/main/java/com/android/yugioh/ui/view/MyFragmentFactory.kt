@@ -12,9 +12,11 @@ import javax.inject.Named
 class MyFragmentFactory @Inject constructor(
 	private val picasso: Picasso,
 	@Named("archetypes") private val archetypes: List<String>,
-	private val adapters: Array<Array<ArrayAdapter<*>>>
+	private val adapters: Map<String, @JvmSuppressWildcards(true) ArrayAdapter<@JvmSuppressWildcards(
+		true
+	) Any>>
 ) : FragmentFactory() {
-	
+
 	override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
 		return when (className) {
 			ListCardFragment::class.java.name -> ListCardFragment(picasso)

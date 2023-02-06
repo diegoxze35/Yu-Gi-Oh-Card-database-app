@@ -8,8 +8,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainNavHostFragment : NavHostFragment() {
-	
+
 	@Inject
+	@JvmSuppressWildcards(true)
 	lateinit var factory: MyFragmentFactory
 	
 	override fun onAttach(context: Context) {

@@ -7,40 +7,16 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.view.isGone
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
 import com.android.yugioh.R
 import com.android.yugioh.databinding.DialogAdvancedSearchBinding
-import com.android.yugioh.ui.viewmodel.CardViewModel
+import com.android.yugioh.di.FragmentModule
 
 class DialogAdvancedSearch(
-	private val archetypes: List<String>,
-	private val adapters: Array<Array<ArrayAdapter<*>>>
-) :
-	DialogFragment(R.layout.dialog_advanced_search) {
-
-	companion object {
-		const val INDEX_FIRST_ADAPTERS = 0
-		const val INDEX_SECOND_ADAPTERS = 1
-		const val INDEX_THREE_ADAPTERS = 2
-	}
-
-	//private val viewModel: CardViewModel by activityViewModels()
+	private val archetypes: List<String>, private val adapters: Map<String, ArrayAdapter<*>>
+) : DialogFragment(R.layout.dialog_advanced_search) {
 
 	private var _dialogBinding: DialogAdvancedSearchBinding? = null
 	private val dialogBinding: DialogAdvancedSearchBinding get() = _dialogBinding!!
-
-	private val map by lazy {
-		with(dialogBinding) {
-			mapOf(
-				textInputLayoutType to autoCompleteTextViewTypes,
-				textInputLayoutAttribute to autoCompleteTextViewAttribute,
-				textInputLayoutLevelMonster to autoCompleteTextViewLevelMonster,
-				textInputLayoutAtkMonster to autoCompleteTextViewAtkMonster,
-				textInputLayoutDefMonster to autoCompleteTextViewDefMonster,
-				textInputLayoutScaleMonster to autoCompleteTextViewScaleMonster
-			)
-		}
-	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -50,56 +26,70 @@ class DialogAdvancedSearch(
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 	): View {
-		_dialogBinding = DialogAdvancedSearchBinding.inflate(inflater, container, false)
+		_dialogBinding = DialogAdvancedSearchBinding.inflate(inflater, container, false).also {
+			it.autoCompleteTextViewTypes.setAdapter(
+				adapters.getValue(FragmentModule.MONSTER_TYPE_VALUES)
+			)
+			it.autoCompleteTextViewAttribute.setAdapter(
+				adapters.getValue(FragmentModule.ATTRIBUTE_MONSTER_VALUES)
+			)
+			it.autoCompleteTextViewLevelMonster.setAdapter(
+				adapters.getValue(FragmentModule.LEVEL_MONSTERS_SEQUENCE)
+			)
+			it.autoCompleteTextViewAtkMonster.setAdapter(
+				adapters.getValue(FragmentModule.ATK_AND_DEFENSE_MONSTERS_SEQUENCE)
+			)
+			it.autoCompleteTextViewDefMonster.setAdapter(
+				adapters.getValue(FragmentModule.ATK_AND_DEFENSE_MONSTERS_SEQUENCE)
+			)
+			it.autoCompleteTextViewScaleMonster.setAdapter(
+				adapters.getValue(FragmentModule.SCALE_PENDUMULUM_SEQUENCE)
+			)
+			it.autoCompleteTextArchetype.setAdapter(
+				ArrayAdapter(requireContext(), R.layout.item_auto_complete_text_view, archetypes)
+			)
+			it.autoCompleteTextFormatCard.setAdapter(
+				adapters.getValue(FragmentModule.CARD_FORMATS)
+			)
+		}
 		return dialogBinding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		for ((index, autoCompleteTextView) in map.values.withIndex())
-			autoCompleteTextView.setAdapter(adapters[INDEX_FIRST_ADAPTERS][index])
 		dialogBinding.apply {
-			/*if (viewModel.archetypesIsReady) {
-				viewModel.archetypes.also {
-					autoCompleteTextArchetype.setAdapter(
-						ArrayAdapter(requireContext(), R.layout.item_auto_complete_text_view, it)
-					)
-				}
-			}*/
-			autoCompleteTextArchetype.setAdapter(
-				ArrayAdapter(requireContext(), R.layout.item_auto_complete_text_view, archetypes)
-			)
-			buttonSubmit.setOnClickListener {
-				/*TODO()*/
-			}
-			autoCompleteTextFormatCard.setAdapter(adapters[INDEX_THREE_ADAPTERS][INDEX_FIRST_ADAPTERS])
-			val getIndex = mapOf(
-				radioButtonMonster.id to 0,
-				radioButtonSpell.id to 1,
-				radioButtonTrap.id to 2,
-				radioButtonSkill.id to 3
-			)
 			imageButtonClose.setOnClickListener { dismiss() }
 			radioGroup.setOnCheckedChangeListener { _, radioButtonId ->
+				buttonSubmit.isEnabled = true
 				textInputLayoutRace.isGone = false
 				textInputLayoutFormatCard.isGone = false
 				textInputLayoutArchetype.isGone = false
 				autoCompleteTextViewRaces.text.clear()
-				applyChanges(
-					(radioButtonId != radioButtonMonster.id), getIndex[radioButtonId]!!
+				autoCompleteTextViewRaces.setAdapter(
+					when (radioButtonId) {
+						radioButtonMonster.id -> adapters.getValue(FragmentModule.RACE_MONSTER_CARD_VALUES)
+						radioButtonSpell.id -> adapters.getValue(FragmentModule.RACE_SPELL_CARD_VALUES)
+						radioButtonTrap.id -> adapters.getValue(FragmentModule.RACE_TRAP_CARD_VALUES)
+						else -> adapters.getValue(FragmentModule.RACE_SKILL_CARD_VALUES)
+					}
 				)
-				buttonSubmit.isEnabled = true
+				updateDialog(gone = (radioButtonId != radioButtonMonster.id))
+			}
+			buttonSubmit.setOnClickListener {
+				/*TODO()*/
 			}
 		}
 	}
 
-	private fun applyChanges(isGone: Boolean, indexRaceAdapter: Int) {
-		for (textInputLayout in map.keys) {
-			textInputLayout.isGone = isGone
+	private fun updateDialog(gone: Boolean) {
+		dialogBinding.apply {
+			textInputLayoutType.isGone = gone
+			textInputLayoutAttribute.isGone = gone
+			textInputLayoutLevelMonster.isGone = gone
+			textInputLayoutAtkMonster.isGone = gone
+			textInputLayoutDefMonster.isGone = gone
+			textInputLayoutScaleMonster.isGone = gone
 		}
-		dialogBinding.autoCompleteTextViewRaces.setAdapter(
-			adapters[INDEX_SECOND_ADAPTERS][indexRaceAdapter]
-		)
 	}
 
 	override fun onDestroyView() {
