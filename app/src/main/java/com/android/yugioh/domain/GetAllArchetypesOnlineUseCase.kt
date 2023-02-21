@@ -6,8 +6,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetAllArchetypesUseCase @Inject constructor(override val service: CardService)
-	: UseCase<List<String>> {
+class GetAllArchetypesOnlineUseCase @Inject constructor(override val service: CardService) :
+	OnlineUseCase, UseCase<List<String>> {
 
 	private lateinit var archetypes: List<String>
 
@@ -17,8 +17,10 @@ class GetAllArchetypesUseCase @Inject constructor(override val service: CardServ
 			service.getAllArchetypes().run {
 				when {
 					isNotEmpty() -> {
-						archetypes = this
-						Result.Success(this)
+						with(sorted()) {
+							archetypes = this
+							Result.Success(this)
+						}
 					}
 					else -> {
 						Result.Error(Exception("Can not get archetypes"))

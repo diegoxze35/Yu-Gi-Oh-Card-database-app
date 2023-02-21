@@ -7,8 +7,8 @@ import com.android.yugioh.model.Result.Success
 import com.android.yugioh.model.Result.Error
 import javax.inject.Inject
 
-class GetRandomCardsUseCase @Inject constructor(override val service: CardService) :
-	UseCase<List<Card>> {
+class GetRandomCardsOnlineUseCase @Inject constructor(override val service: CardService) :
+	OnlineUseCase, UseCase<List<Card>> {
 
 	override suspend fun invoke(): Result<List<Card>> {
 		return try {

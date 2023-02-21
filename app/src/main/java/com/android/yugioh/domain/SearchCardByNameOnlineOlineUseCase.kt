@@ -5,8 +5,8 @@ import com.android.yugioh.model.Result
 import com.android.yugioh.model.api.CardService
 import javax.inject.Inject
 
-class SearchCardByNameUseCase @Inject constructor(override val service: CardService) :
-	UseCaseSearchBy<String> {
+class SearchCardByNameOnlineOlineUseCase @Inject constructor(override val service: CardService) :
+	OlineUseCaseSearchBy<String> {
 
 	override suspend fun invoke(query: String): Result<List<Card>> {
 		return try {

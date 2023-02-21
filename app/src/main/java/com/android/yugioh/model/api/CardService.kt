@@ -80,4 +80,9 @@ class CardService @Inject constructor(private val api: YuGiOhApi, private val gs
 		} ?: emptyList()
 	}
 
+	suspend fun advancedSearch(options: Map<String, String>) : List<Card> = withContext(Dispatchers.IO) {
+		api.advancedSearch(options)
+		TODO()
+	}
+
 }

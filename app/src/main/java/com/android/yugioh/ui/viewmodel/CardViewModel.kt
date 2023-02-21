@@ -7,8 +7,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.MutableLiveData
-import com.android.yugioh.domain.GetRandomCardsUseCase
-import com.android.yugioh.domain.SearchCardByNameUseCase
+import com.android.yugioh.domain.GetRandomCardsOnlineUseCase
+import com.android.yugioh.domain.SearchCardByNameOnlineOlineUseCase
+import com.android.yugioh.domain.UseCaseSearchBy
 import com.android.yugioh.domain.data.Card
 import com.android.yugioh.model.Result
 import com.android.yugioh.ui.ListFragmentState
@@ -24,8 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CardViewModel @Inject constructor(
 	val networkManager: NetworkConnectivity,
-	private val getRandomCardsUseCase: GetRandomCardsUseCase,
-	private val searchCardByNameUseCase: SearchCardByNameUseCase
+	private val getRandomCardsUseCase: GetRandomCardsOnlineUseCase,
+	private val searchCardByNameOnlineUseCase: SearchCardByNameOnlineOlineUseCase
 ) : ViewModel() {
 
 	private var loading =
@@ -66,8 +67,22 @@ class CardViewModel @Inject constructor(
 		currentQueryLiveData.value = query
 	}
 
-	val filterListLiveData: LiveData<List<Card>> =
-		Transformations.switchMap(currentQueryLiveData) { query ->
+	private val useCaseLiveData: MutableLiveData<UseCaseSearchBy<*>> = MutableLiveData()
+	/*val canAddFilterList: Boolean
+		get() {
+			return currentQueryLiveData.value.orEmpty().isNotEmpty()
+		}*/
+
+	fun <T> setSearchUseCase(useCase: UseCaseSearchBy<T>) {
+		useCaseLiveData.value = useCase
+	}
+
+	val filterListLiveData: LiveData<List<Card>> = Transformations.switchMap(useCaseLiveData) { useCase ->
+		liveData<List<Card>> {
+
+		}
+	}
+		/*Transformations.switchMap(currentQueryLiveData) { query ->
 			liveData<List<Card>> {
 				searchData[query]?.let { emit(it); return@liveData }
 				if (!isSubmit) {
@@ -90,22 +105,22 @@ class CardViewModel @Inject constructor(
 				_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 					copy(loadListState = loadListState.copy(isLoadingGone = false))
 				}
-				searchCardByNameUseCase(query).run {
+				searchCardByNameOnlineUseCase(query).run {
 					when (this) {
 						is Result.Success -> {
 							_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 								copy(
 									searchingState = searchingState.copy(
 										hideSearchMessage = body.isNotEmpty(),
-										searchNotResult = body.isEmpty().also {
-											if (it) searchData[query] = body
+										searchNotResult = body.isEmpty().also { isEmpty ->
+											if (isEmpty) searchData[query] = body
 										}
 									)
 								)
 							}
 							emit(body)
 						}
-						else -> {/*TODO()*/
+						else -> {*//*TODO()*//*
 						}
 					}
 					_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
@@ -113,7 +128,7 @@ class CardViewModel @Inject constructor(
 					}
 				}
 			}
-		}
+		}*/
 
 	fun getListRandomCards() {
 		if (networkManager.value == false || loading.isActive) return

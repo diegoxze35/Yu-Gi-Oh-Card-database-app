@@ -3,7 +3,7 @@ package com.android.yugioh.di
 import android.content.Context
 import android.widget.ArrayAdapter
 import com.android.yugioh.R
-import com.android.yugioh.domain.GetAllArchetypesUseCase
+import com.android.yugioh.domain.GetAllArchetypesOnlineUseCase
 import com.android.yugioh.domain.data.SpellTrapCard.Companion.RaceSpellTrap
 import com.android.yugioh.domain.data.MonsterCard.Companion.RaceMonsterCard
 import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
@@ -31,7 +31,7 @@ object FragmentModule {
 	private const val MAX_LEVEL = 12u
 	private const val MAX_SCALE = 13u
 	private const val MAX_ATK = 5000u
-	private const val FIRST_ELEMENT_DROP_DOWN_MENU = "Any"  //should be a string resource
+	const val FIRST_ELEMENT_DROP_DOWN_MENU = "Any"  //should be a string resource
 	const val MONSTER_TYPE_VALUES = "MONSTER_TYPE_VALUES"
 	const val ATTRIBUTE_MONSTER_VALUES = "ATTRIBUTE_MONSTER_VALUES"
 	const val LEVEL_MONSTERS_SEQUENCE = "LEVEL_MONSTERS_SEQUENCE"
@@ -50,10 +50,10 @@ object FragmentModule {
 	@Named("archetypes")
 	@Provides
 	@FragmentScoped
-	fun provideArchetypes(getAllArchetypesUseCase: GetAllArchetypesUseCase): List<String> =
+	fun provideArchetypes(getAllArchetypesUseCase: GetAllArchetypesOnlineUseCase): List<String> =
 		runBlocking {
 			when (val archetypes = getAllArchetypesUseCase()) {
-				is Result.Success -> archetypes.body.sorted()
+				is Result.Success -> archetypes.body
 				else -> emptyList()
 			}
 		}

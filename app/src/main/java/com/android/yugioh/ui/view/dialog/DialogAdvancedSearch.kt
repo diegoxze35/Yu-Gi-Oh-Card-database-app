@@ -17,6 +17,12 @@ class DialogAdvancedSearch(
 
 	private var _dialogBinding: DialogAdvancedSearchBinding? = null
 	private val dialogBinding: DialogAdvancedSearchBinding get() = _dialogBinding!!
+	private val options = mutableMapOf<String, String>()
+
+	companion object {
+		const val TYPE = "type"
+		const val CARD = " card"
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -57,9 +63,18 @@ class DialogAdvancedSearch(
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		data class Option(val key: String, val value: String)
+
+		fun addOptions(options: List<Option>) =
+			options.forEach { this@DialogAdvancedSearch.options[it.key] = it.value }
+
+		fun addOptions(option: Option) {
+			this@DialogAdvancedSearch.options[option.key] = option.value
+		}
 		dialogBinding.apply {
 			imageButtonClose.setOnClickListener { dismiss() }
 			radioGroup.setOnCheckedChangeListener { _, radioButtonId ->
+				options.clear()
 				buttonSubmit.isEnabled = true
 				textInputLayoutRace.isGone = false
 				textInputLayoutFormatCard.isGone = false
@@ -68,27 +83,70 @@ class DialogAdvancedSearch(
 				autoCompleteTextViewRaces.setAdapter(
 					when (radioButtonId) {
 						radioButtonMonster.id -> adapters.getValue(FragmentModule.RACE_MONSTER_CARD_VALUES)
-						radioButtonSpell.id -> adapters.getValue(FragmentModule.RACE_SPELL_CARD_VALUES)
-						radioButtonTrap.id -> adapters.getValue(FragmentModule.RACE_TRAP_CARD_VALUES)
-						else -> adapters.getValue(FragmentModule.RACE_SKILL_CARD_VALUES)
+						radioButtonSpell.id -> {
+							addOptions(Option(TYPE, "spell $CARD"))
+							adapters.getValue(FragmentModule.RACE_SPELL_CARD_VALUES)
+						}
+						radioButtonTrap.id -> {
+							addOptions(Option(TYPE, "trap $CARD"))
+							adapters.getValue(FragmentModule.RACE_TRAP_CARD_VALUES)
+						}
+						else -> {
+							addOptions(Option(TYPE, "skill $CARD"))
+							adapters.getValue(FragmentModule.RACE_SKILL_CARD_VALUES)
+						}
 					}
 				)
-				updateDialog(gone = (radioButtonId != radioButtonMonster.id))
+				updateDialog(
+					goneOptions = (radioButtonId != radioButtonMonster.id),
+					goneFormatOptions = (radioButtonId == radioButtonSkill.id)
+				)
 			}
 			buttonSubmit.setOnClickListener {
-				/*TODO()*/
+				addOptions(
+					when (radioGroup.checkedRadioButtonId) {
+						radioButtonMonster.id -> listOf(
+							autoCompleteTextViewTypes,
+							autoCompleteTextViewRaces,
+							autoCompleteTextViewAttribute,
+							autoCompleteTextFormatCard,
+							autoCompleteTextArchetype,
+							autoCompleteTextViewLevelMonster,
+							autoCompleteTextViewAtkMonster,
+							autoCompleteTextViewDefMonster,
+							autoCompleteTextViewScaleMonster
+						)
+						radioButtonSpell.id, radioButtonTrap.id -> listOf(
+							autoCompleteTextViewRaces,
+							autoCompleteTextFormatCard,
+							autoCompleteTextArchetype
+						)
+						else -> listOf(
+							autoCompleteTextViewRaces,
+							autoCompleteTextArchetype
+						)
+					}.filter {
+						it.text.isNotEmpty() && it.text.toString() != FragmentModule.FIRST_ELEMENT_DROP_DOWN_MENU
+					}.map {
+						Option(
+							key = it.hint.toString().lowercase(),
+							value = it.text.toString().lowercase()
+						)
+					}
+				)
 			}
 		}
 	}
 
-	private fun updateDialog(gone: Boolean) {
+	private fun updateDialog(goneOptions: Boolean, goneFormatOptions: Boolean) {
 		dialogBinding.apply {
-			textInputLayoutType.isGone = gone
-			textInputLayoutAttribute.isGone = gone
-			textInputLayoutLevelMonster.isGone = gone
-			textInputLayoutAtkMonster.isGone = gone
-			textInputLayoutDefMonster.isGone = gone
-			textInputLayoutScaleMonster.isGone = gone
+			textInputLayoutType.isGone = goneOptions
+			textInputLayoutAttribute.isGone = goneOptions
+			textInputLayoutLevelMonster.isGone = goneOptions
+			textInputLayoutAtkMonster.isGone = goneOptions
+			textInputLayoutDefMonster.isGone = goneOptions
+			textInputLayoutScaleMonster.isGone = goneOptions
+			textInputLayoutFormatCard.isGone = goneFormatOptions
 		}
 	}
 
