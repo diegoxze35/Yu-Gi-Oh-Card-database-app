@@ -69,7 +69,8 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 				Slide(Gravity.BOTTOM).apply {
 					duration = DURATION
 					addTarget(listFragmentBinding.linearLayoutContainer)
-				})
+				}
+			)
 			listFragmentBinding.linearLayoutContainer.isGone = it.loadListState.isLoadingGone
 			listFragmentBinding.textViewSearch.apply {
 				isGone = it.searchingState.hideSearchMessage

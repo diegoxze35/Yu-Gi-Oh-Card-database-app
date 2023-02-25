@@ -17,14 +17,21 @@ import androidx.navigation.NavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.android.yugioh.databinding.ActivityMainCardBinding
+import com.android.yugioh.domain.SearchCardByNameOfflineOlineUseCase
+import com.android.yugioh.domain.SearchCardByNameOnlineOlineUseCase
+import com.android.yugioh.domain.Searchable
 import com.android.yugioh.domain.data.Card
 import com.android.yugioh.ui.view.fragment.MainNavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainCardActivity : AppCompatActivity() {
+
+	@Inject lateinit var offlineSearchUseCase: SearchCardByNameOfflineOlineUseCase
+	@Inject lateinit var onlineOlineUseCase: SearchCardByNameOnlineOlineUseCase
 
 	private val viewModel: CardViewModel by viewModels()
 	private lateinit var mainBinding: ActivityMainCardBinding
@@ -91,12 +98,16 @@ class MainCardActivity : AppCompatActivity() {
 			isSubmitButtonEnabled = true
 			setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 				override fun onQueryTextSubmit(query: String): Boolean {
-					viewModel.setQuerySearch(query.trim().lowercase(), true)
+					viewModel.setSearchUseCase(onlineOlineUseCase, Searchable(query, options = null))
 					return true
 				}
 
 				override fun onQueryTextChange(newText: String): Boolean {
-					viewModel.setQuerySearch(newText.trim(), false)
+					viewModel.setSearchUseCase(
+						offlineSearchUseCase.apply { from =
+							viewModel.fragmentListLiveData.value!!.loadListState.mainList},
+						Searchable(newText, options = null)
+					)
 					return true
 				}
 			})
