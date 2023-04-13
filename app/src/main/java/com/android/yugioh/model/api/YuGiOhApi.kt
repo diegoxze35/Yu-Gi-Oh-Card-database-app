@@ -29,7 +29,10 @@ interface YuGiOhApi {
 	): Response<JsonObject>
 
 	@GET(GET_CARD_INFO)
-	suspend fun advancedSearch(@QueryMap options: Map<String, String>): Response<JsonObject>
+	suspend fun advancedSearch(
+		@QueryMap options: Map<String, String>,
+		@Query("misc") miscInfo: String = MISC_INFO
+	): Response<JsonObject>
 	
 	@GET(GET_ALL_ARCHETYPES)
 	suspend fun getAllArchetypes(): Response<List<JsonObject>>

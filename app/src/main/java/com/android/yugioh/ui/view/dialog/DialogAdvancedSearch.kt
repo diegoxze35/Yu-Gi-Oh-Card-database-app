@@ -7,21 +7,28 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.view.isGone
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import com.android.yugioh.R
 import com.android.yugioh.databinding.DialogAdvancedSearchBinding
 import com.android.yugioh.di.FragmentModule
+import com.android.yugioh.domain.SearchCardByOptionsOlineUseCase
+import com.android.yugioh.domain.Searchable
+import com.android.yugioh.ui.viewmodel.CardViewModel
 
 class DialogAdvancedSearch(
-	private val archetypes: List<String>, private val adapters: Map<String, ArrayAdapter<*>>
+	private val archetypes: List<String>,
+	private val adapters: Map<String, ArrayAdapter<*>>,
+	private val advancedSearchUseCase: SearchCardByOptionsOlineUseCase
 ) : DialogFragment(R.layout.dialog_advanced_search) {
 
 	private var _dialogBinding: DialogAdvancedSearchBinding? = null
 	private val dialogBinding: DialogAdvancedSearchBinding get() = _dialogBinding!!
 	private val options = mutableMapOf<String, String>()
+	private val viewModel: CardViewModel by activityViewModels()
 
 	companion object {
 		const val TYPE = "type"
-		const val CARD = " card"
+		const val CARD = "card"
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,6 +141,8 @@ class DialogAdvancedSearch(
 						)
 					}
 				)
+				viewModel.setSearchUseCase(advancedSearchUseCase, Searchable(query = null, options))
+				dismiss()
 			}
 		}
 	}

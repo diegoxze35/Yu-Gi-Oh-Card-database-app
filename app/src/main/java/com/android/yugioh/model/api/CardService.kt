@@ -1,7 +1,10 @@
 package com.android.yugioh.model.api
 
+import android.util.Log
 import com.android.yugioh.domain.data.Card
 import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.android.yugioh.model.api.YuGiOhApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.Dispatchers
@@ -75,14 +78,21 @@ class CardService @Inject constructor(private val api: YuGiOhApi, private val gs
 	suspend fun searchCardByName(query: String): List<Card> = withContext(Dispatchers.IO) {
 		val response = api.searchCard(query)
 		if (!response.isSuccessful) return@withContext emptyList()
-		response.body()?.get(MEMBER_NAME)?.asJsonArray?.map {
-			gson.fromJson(it, Card::class.java)
-		} ?: emptyList()
+		return@withContext jsonToCardList(response.body())
 	}
 
-	suspend fun advancedSearch(options: Map<String, String>) : List<Card> = withContext(Dispatchers.IO) {
-		api.advancedSearch(options)
-		TODO()
-	}
+	suspend fun advancedSearch(options: Map<String, String>): List<Card> =
+		withContext(Dispatchers.IO) {
+			Log.i("MAP VALUE: ", options.toString())
+			val response = api.advancedSearch(options)
+			Log.i("RESPONSE TO ", response.toString())//body()!!.asString)
+			if (!response.isSuccessful) return@withContext emptyList()
+			return@withContext jsonToCardList(response.body())
+		}
+
+	private fun jsonToCardList(json: JsonObject?): List<Card> =
+		json?.get(MEMBER_NAME)?.asJsonArray?.map {
+			gson.fromJson(it, Card::class.java)
+		} ?: emptyList()
 
 }

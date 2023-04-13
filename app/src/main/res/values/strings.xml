@@ -24,12 +24,12 @@
 	<string name="skill_card">Skill</string>
 	
 	<!-- Options to advanced search -->
-	<string name="card_type">Type </string>
-	<string name="card_race">Race </string>
-	<string name="card_attribute">Attribute </string>
-	<string name="card_level">Level </string>
-	<string name="card_atk">Atk </string>
-	<string name="card_def">Def </string>
+	<string name="card_type">Type</string>
+	<string name="card_race">Race</string>
+	<string name="card_attribute">Attribute</string>
+	<string name="card_level">Level</string>
+	<string name="card_atk">Atk</string>
+	<string name="card_def">Def</string>
 	<string name="card_scale">Scale</string>
 	<string name="card_archetype">Archetype</string>
 	<string name="card_format">Format</string>

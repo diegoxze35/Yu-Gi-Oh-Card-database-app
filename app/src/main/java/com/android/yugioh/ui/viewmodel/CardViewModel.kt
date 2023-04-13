@@ -7,10 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.MutableLiveData
-import com.android.yugioh.domain.Searchable
-import com.android.yugioh.domain.GetRandomCardsOnlineUseCase
-import com.android.yugioh.domain.UseCaseSearchBy
-import com.android.yugioh.domain.UseCaseOnlineSearchBy
+import com.android.yugioh.domain.*
 import com.android.yugioh.domain.data.Card
 import com.android.yugioh.model.Result
 import com.android.yugioh.ui.ListFragmentState
@@ -46,7 +43,7 @@ class CardViewModel @Inject constructor(
 
 	val canAddFilterList: Boolean
 		get() {
-			return searchable.query.orEmpty().isNotEmpty()
+			return searchable.query.orEmpty().isNotEmpty() || useCaseLiveData.value is SearchCardByOptionsOlineUseCase
 		}
 	private var searchable = Searchable(query = null, options = null)
 	fun setSearchUseCase(useCase: UseCaseSearchBy<*>, query: Searchable) {
@@ -74,7 +71,7 @@ class CardViewModel @Inject constructor(
 						emit(resultList.body)
 					}
 					is Result.Error -> {
-
+						resultList.exception.printStackTrace()
 					}
 				}
 				_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
