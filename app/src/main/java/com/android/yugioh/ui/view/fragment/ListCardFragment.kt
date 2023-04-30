@@ -53,7 +53,8 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 					activity.clearFocus()
 					if (viewModel.canAddFilterList) return
-					if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL)) viewModel.getListRandomCards()
+					if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL))
+						viewModel.getListRandomCards()
 				}
 			})
 		}

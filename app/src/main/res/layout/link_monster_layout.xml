@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	tools:backgroundTint="#000"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+	
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		
+		<ImageView
+			android:id="@+id/topLink"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintHorizontal_chainStyle="spread_inside"
+			app:layout_constraintVertical_chainStyle="spread_inside"
+			android:src="@drawable/link_triangle"
+			app:layout_constraintEnd_toStartOf="@id/topLinkRight"
+			app:layout_constraintStart_toEndOf="@+id/topLinkLeft"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toTopOf="@id/bottomLink"
+			tools:ignore="ContentDescription" />
+		
+		<ImageView
+			android:id="@+id/topLinkLeft"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:scaleX="0.7"
+			android:scaleY="0.7"
+			android:rotation="-45"
+			android:src="@drawable/link_triangle"
+			app:layout_constraintHorizontal_chainStyle="spread_inside"
+			app:layout_constraintEnd_toStartOf="@+id/topLink"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toTopOf="@id/linkLeft"
+			tools:ignore="ContentDescription" />
+		
+		<ImageView
+			android:id="@+id/topLinkRight"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:scaleX="0.7"
+			android:scaleY="0.7"
+			app:layout_constraintHorizontal_chainStyle="spread_inside"
+			android:rotation="45"
+			android:src="@drawable/link_triangle"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@id/topLink"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toTopOf="@id/linkRight"
+			tools:ignore="ContentDescription" />
+		
+		<ImageView
+			android:id="@+id/linkLeft"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginVertical="24dp"
+			app:layout_constraintHorizontal_chainStyle="spread_inside"
+			android:rotation="-90"
+			android:src="@drawable/link_triangle"
+			app:layout_constraintBottom_toTopOf="@id/linkLeftBottom"
+			app:layout_constraintEnd_toStartOf="@id/linkRight"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/topLinkLeft"
+			tools:ignore="ContentDescription" />
+		
+		<ImageView
+			android:id="@+id/linkRight"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginVertical="24dp"
+			app:layout_constraintHorizontal_chainStyle="spread_inside"
+			android:rotation="90"
+			android:src="@drawable/link_triangle"
+			app:layout_constraintBottom_toTopOf="@id/linkRightBottom"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@id/linkLeft"
+			app:layout_constraintTop_toBottomOf="@id/topLinkRight"
+			tools:ignore="ContentDescription" />
+		<ImageView
+			android:id="@+id/linkRightBottom"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:scaleX="0.7"
+			android:scaleY="0.7"
+			app:layout_constraintHorizontal_chainStyle="spread_inside"
+			android:rotation="135"
+			android:src="@drawable/link_triangle"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@id/bottomLink"
+			app:layout_constraintTop_toBottomOf="@id/linkRight"
+			tools:ignore="ContentDescription" />
+		<ImageView
+			android:id="@+id/linkLeftBottom"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:scaleX="0.7"
+			android:scaleY="0.7"
+			app:layout_constraintHorizontal_chainStyle="spread_inside"
+			android:rotation="-135"
+			android:src="@drawable/link_triangle"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toStartOf="@id/bottomLink"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/linkLeft"
+			tools:ignore="ContentDescription" />
+		
+		<ImageView
+			android:id="@+id/bottomLink"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:rotation="180"
+			app:layout_constraintHorizontal_chainStyle="spread_inside"
+			android:src="@drawable/link_triangle"
+			app:layout_constraintEnd_toStartOf="@id/linkRightBottom"
+			app:layout_constraintStart_toEndOf="@+id/linkLeftBottom"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/topLink"
+			
+			tools:ignore="ContentDescription" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

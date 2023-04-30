@@ -9,7 +9,6 @@ import com.android.yugioh.domain.data.MonsterCard.Companion.RaceMonsterCard
 import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
 import com.android.yugioh.domain.data.MonsterCard.Companion.AttributeMonster
 import com.android.yugioh.domain.data.SkillCard.Companion.RaceSkill
-import com.android.yugioh.model.Result
 import com.android.yugioh.model.data.CardDeserializer
 import com.squareup.picasso.Picasso
 import dagger.Module
@@ -52,10 +51,7 @@ object FragmentModule {
 	@FragmentScoped
 	fun provideArchetypes(getAllArchetypesUseCase: GetAllArchetypesOnlineUseCase): List<String> =
 		runBlocking {
-			when (val archetypes = getAllArchetypesUseCase()) {
-				is Result.Success -> archetypes.body
-				else -> emptyList()
-			}
+			getAllArchetypesUseCase().getOrDefault(defaultValue = emptyList())
 		}
 
 	@Provides

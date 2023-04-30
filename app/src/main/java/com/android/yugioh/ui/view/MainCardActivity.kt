@@ -11,14 +11,15 @@ import android.widget.TextView
 import com.android.yugioh.R
 import com.android.yugioh.ui.viewmodel.CardViewModel
 import androidx.activity.viewModels
+import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.navigation.NavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.android.yugioh.databinding.ActivityMainCardBinding
-import com.android.yugioh.domain.SearchCardByNameOfflineOlineUseCase
-import com.android.yugioh.domain.SearchCardByNameOnlineOlineUseCase
+import com.android.yugioh.domain.SearchCardByNameOfflineUseCase
+import com.android.yugioh.domain.SearchCardByNameOnlineUseCase
 import com.android.yugioh.domain.Searchable
 import com.android.yugioh.domain.data.Card
 import com.android.yugioh.ui.view.fragment.MainNavHostFragment
@@ -30,8 +31,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainCardActivity : AppCompatActivity() {
 
-	@Inject lateinit var offlineSearchUseCase: SearchCardByNameOfflineOlineUseCase
-	@Inject lateinit var onlineOlineUseCase: SearchCardByNameOnlineOlineUseCase
+	@Inject
+	lateinit var offlineSearchUseCase: SearchCardByNameOfflineUseCase
+	@Inject
+	lateinit var onlineSearchUseCase: SearchCardByNameOnlineUseCase
 
 	private val viewModel: CardViewModel by viewModels()
 	private lateinit var mainBinding: ActivityMainCardBinding
@@ -98,14 +101,19 @@ class MainCardActivity : AppCompatActivity() {
 			isSubmitButtonEnabled = true
 			setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 				override fun onQueryTextSubmit(query: String): Boolean {
-					viewModel.setSearchUseCase(onlineOlineUseCase, Searchable(query, options = null))
+					viewModel.setSearchUseCase(
+						onlineSearchUseCase,
+						Searchable(query, options = null)
+					)
 					return true
 				}
 
 				override fun onQueryTextChange(newText: String): Boolean {
 					viewModel.setSearchUseCase(
-						offlineSearchUseCase.apply { from =
-							viewModel.fragmentListLiveData.value!!.loadListState.mainList},
+						offlineSearchUseCase.apply {
+							from =
+								viewModel.fragmentListLiveData.value!!.loadListState.mainList
+						},
 						Searchable(newText, options = null)
 					)
 					return true
@@ -114,7 +122,7 @@ class MainCardActivity : AppCompatActivity() {
 		}
 	}
 
-	private fun updateToolbar(destinationId: Int) {
+	private fun updateToolbar(@LayoutRes destinationId: Int) {
 		val fragmentMap = mapOf(
 			R.id.listCardFragment to {
 				mainBinding.apply {
@@ -134,7 +142,7 @@ class MainCardActivity : AppCompatActivity() {
 				}
 			}
 		)
-		fragmentMap[destinationId]?.invoke()
+		fragmentMap.getValue(destinationId).invoke()
 	}
 
 	fun startDetailFragment(card: Card, imageCard: Drawable?) {

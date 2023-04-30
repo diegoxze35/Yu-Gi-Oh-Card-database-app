@@ -1,10 +1,8 @@
 package com.android.yugioh.model.api
 
-import android.util.Log
 import com.android.yugioh.domain.data.Card
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.android.yugioh.model.api.YuGiOhApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.Dispatchers
@@ -70,9 +68,9 @@ class CardService @Inject constructor(private val api: YuGiOhApi, private val gs
 	}
 
 	suspend fun getAllArchetypes(): List<String> = withContext(Dispatchers.IO) {
-		api.getAllArchetypes().body()?.map {
+		api.getAllArchetypes().body()!!.map {
 			it.get(ARCHETYPE_PROPERTY).asString
-		} ?: emptyList()
+		}
 	}
 
 	suspend fun searchCardByName(query: String): List<Card> = withContext(Dispatchers.IO) {
@@ -83,9 +81,7 @@ class CardService @Inject constructor(private val api: YuGiOhApi, private val gs
 
 	suspend fun advancedSearch(options: Map<String, String>): List<Card> =
 		withContext(Dispatchers.IO) {
-			Log.i("MAP VALUE: ", options.toString())
 			val response = api.advancedSearch(options)
-			Log.i("RESPONSE TO ", response.toString())//body()!!.asString)
 			if (!response.isSuccessful) return@withContext emptyList()
 			return@withContext jsonToCardList(response.body())
 		}

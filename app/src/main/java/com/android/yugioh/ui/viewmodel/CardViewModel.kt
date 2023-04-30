@@ -7,9 +7,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.MutableLiveData
-import com.android.yugioh.domain.*
+import com.android.yugioh.domain.GetRandomCardsOnlineUseCase
+import com.android.yugioh.domain.UseCaseSearchBy
+import com.android.yugioh.domain.UseCaseOnlineSearchBy
+import com.android.yugioh.domain.SearchCardByOptionsOlineUseCase
+import com.android.yugioh.domain.Searchable
 import com.android.yugioh.domain.data.Card
-import com.android.yugioh.model.Result
 import com.android.yugioh.ui.ListFragmentState
 import com.android.yugioh.ui.LoadListState
 import com.android.yugioh.ui.SearchingState
@@ -43,7 +46,8 @@ class CardViewModel @Inject constructor(
 
 	val canAddFilterList: Boolean
 		get() {
-			return searchable.query.orEmpty().isNotEmpty() || useCaseLiveData.value is SearchCardByOptionsOlineUseCase
+			return searchable.query.orEmpty()
+				.isNotEmpty() || useCaseLiveData.value is SearchCardByOptionsOlineUseCase
 		}
 	private var searchable = Searchable(query = null, options = null)
 	fun setSearchUseCase(useCase: UseCaseSearchBy<*>, query: Searchable) {
@@ -57,23 +61,21 @@ class CardViewModel @Inject constructor(
 				_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 					copy(loadListState = loadListState.copy(isLoadingGone = useCase !is UseCaseOnlineSearchBy))
 				}
-				when (val resultList = useCase(searchable)) {
-					is Result.Success -> {
+				useCase(searchable)
+					.onSuccess {
 						_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 							copy(
 								searchingState = searchingState.copy(
-									hideSearchMessage = resultList.body.isNotEmpty(),
-									searchNotResult = useCase is UseCaseOnlineSearchBy
-											&& resultList.body.isEmpty()
+									hideSearchMessage = it.isNotEmpty(),
+									searchNotResult = useCase is UseCaseOnlineSearchBy && it.isEmpty()
 								)
 							)
 						}
-						emit(resultList.body)
+						emit(it)
 					}
-					is Result.Error -> {
-						resultList.exception.printStackTrace()
+					.onFailure {
+						/*TODO()*/
 					}
-				}
 				_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 					copy(loadListState = loadListState.copy(isLoadingGone = true))
 				}
@@ -86,23 +88,20 @@ class CardViewModel @Inject constructor(
 			_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 				copy(loadListState = loadListState.copy(isLoadingGone = false))
 			}
-			when (val cards = getRandomCardsUseCase()) {
-				is Result.Success -> {
+			getRandomCardsUseCase()
+				.onSuccess {
 					_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 						copy(
 							loadListState = loadListState.copy(
 								isLoadingGone = true,
-								mainList = loadListState.mainList.plus(cards.body)
+								mainList = loadListState.mainList.plus(it)
 							),
 						)
 					}
 				}
-				is Result.Error -> {/*TODO()*/
-				}
-			}
+				.onFailure { /*TODO()*/ }
 		}
 	}
-
 	fun onClickCard(card: Card, imageCard: Drawable?) {
 		imageCard?.let { cardData[card] = it }
 		clickedCard.value = card
