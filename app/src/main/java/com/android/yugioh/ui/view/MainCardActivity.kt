@@ -33,6 +33,7 @@ class MainCardActivity : AppCompatActivity() {
 
 	@Inject
 	lateinit var offlineSearchUseCase: SearchCardByNameOfflineUseCase
+
 	@Inject
 	lateinit var onlineSearchUseCase: SearchCardByNameOnlineUseCase
 
@@ -61,8 +62,8 @@ class MainCardActivity : AppCompatActivity() {
 		setContentView(mainBinding.root)
 		initToolbar()
 		viewModel.networkManager.observe(this) { isOnline ->
-			if (isOnline) {
-				mainBinding.apply {
+			mainBinding.apply {
+				if (isOnline) {
 					textInternetIndicator.text = getString(R.string.connected_to_internet)
 					layoutMessageInternet.apply {
 						setBackgroundColor(colorOK)
@@ -70,10 +71,7 @@ class MainCardActivity : AppCompatActivity() {
 							isGone = true
 						}, 3000L)
 					}
-				}
-				viewModel.getListRandomCards()
-			} else {
-				mainBinding.apply {
+				} else {
 					textInternetIndicator.text = getString(R.string.not_connected_to_internet)
 					layoutMessageInternet.apply {
 						setBackgroundColor(colorFailure)
@@ -109,6 +107,8 @@ class MainCardActivity : AppCompatActivity() {
 				}
 
 				override fun onQueryTextChange(newText: String): Boolean {
+					if (viewModel.isRemoteSearch && newText.isNotEmpty())
+						return false
 					viewModel.setSearchUseCase(
 						offlineSearchUseCase.apply {
 							from =
