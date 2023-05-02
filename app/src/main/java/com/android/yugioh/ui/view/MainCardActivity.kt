@@ -20,7 +20,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.android.yugioh.databinding.ActivityMainCardBinding
 import com.android.yugioh.domain.SearchCardByNameOfflineUseCase
 import com.android.yugioh.domain.SearchCardByNameOnlineUseCase
-import com.android.yugioh.domain.Searchable
 import com.android.yugioh.domain.data.Card
 import com.android.yugioh.ui.view.fragment.MainNavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -98,23 +97,20 @@ class MainCardActivity : AppCompatActivity() {
 		mainBinding.searchView.apply {
 			isSubmitButtonEnabled = true
 			setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-				override fun onQueryTextSubmit(query: String): Boolean {
-					viewModel.setSearchUseCase(
-						onlineSearchUseCase,
-						Searchable(query, options = null)
-					)
-					return true
+				override fun onQueryTextSubmit(query: String): Boolean = with(viewModel) {
+					querySearch = query
+					setSearchUseCase(onlineSearchUseCase)
+					true
 				}
 
-				override fun onQueryTextChange(newText: String): Boolean {
-					if (viewModel.isRemoteSearch && newText.isNotEmpty())
-						return false
-					viewModel.setSearchUseCase(
+				override fun onQueryTextChange(newText: String): Boolean = with(viewModel){
+					querySearch = newText
+					if (isRemoteSearch && canAddFilterList) return false
+					setSearchUseCase(
 						offlineSearchUseCase.apply {
 							from =
 								viewModel.fragmentListLiveData.value!!.loadListState.mainList
-						},
-						Searchable(newText, options = null)
+						}
 					)
 					return true
 				}
@@ -142,7 +138,7 @@ class MainCardActivity : AppCompatActivity() {
 				}
 			}
 		)
-		fragmentMap.getValue(destinationId).invoke()
+		fragmentMap[destinationId]?.invoke()
 	}
 
 	fun startDetailFragment(card: Card, imageCard: Drawable?) {

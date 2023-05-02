@@ -8,7 +8,10 @@ import javax.inject.Singleton
 @Singleton
 class SearchCardByOptionsOlineUseCase @Inject constructor(override val service: CardService) : UseCaseOnlineSearchBy<Map<String, String>> {
 
-	override suspend fun invoke(query: Searchable): Result<List<Card>> = runCatching {
-		service.advancedSearch(query.options!!)
+	override suspend fun invoke(query: String): Result<List<Card>> = runCatching {
+		service.advancedSearch(query.split(',').associate {
+			val (key, value) = it.lowercase().split('=')
+			(key to value)
+		})
 	}
 }

@@ -8,12 +8,12 @@ class SearchCardByNameOnlineUseCase @Inject constructor(override val service: Ca
 	UseCaseOnlineSearchBy<String> {
 	private val searchData: MutableMap<String, List<Card>> = mutableMapOf()
 
-	override suspend fun invoke(query: Searchable): Result<List<Card>> =
-		searchData[query.query!!]?.let {
+	override suspend fun invoke(query: String): Result<List<Card>> =
+		searchData[query]?.let {
 			Result.success(it)
 		} ?: runCatching {
-			service.searchCardByName(query.query).also { cardList ->
-				if (cardList.isNotEmpty()) searchData[query.query] = cardList
+			service.searchCardByName(query).also { cardList ->
+				if (cardList.isNotEmpty()) searchData[query] = cardList
 			}
 		}
 }

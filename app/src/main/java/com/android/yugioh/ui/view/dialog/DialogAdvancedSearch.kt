@@ -12,7 +12,6 @@ import com.android.yugioh.R
 import com.android.yugioh.databinding.DialogAdvancedSearchBinding
 import com.android.yugioh.di.FragmentModule
 import com.android.yugioh.domain.SearchCardByOptionsOlineUseCase
-import com.android.yugioh.domain.Searchable
 import com.android.yugioh.ui.viewmodel.CardViewModel
 
 class DialogAdvancedSearch(
@@ -23,12 +22,14 @@ class DialogAdvancedSearch(
 
 	private var _dialogBinding: DialogAdvancedSearchBinding? = null
 	private val dialogBinding: DialogAdvancedSearchBinding get() = _dialogBinding!!
-	private val options = mutableMapOf<String, String>()
+	private val options = StringBuilder()
 	private val viewModel: CardViewModel by activityViewModels()
 
 	companion object {
 		const val TYPE = "type"
 		const val CARD = "card"
+		const val SPLIT = ','
+		const val EQ = '='
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,14 +71,6 @@ class DialogAdvancedSearch(
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		data class Option(val key: String, val value: String)
-
-		fun addOptions(options: List<Option>) =
-			options.forEach { this@DialogAdvancedSearch.options[it.key] = it.value }
-
-		fun addOptions(option: Option) {
-			this@DialogAdvancedSearch.options[option.key] = option.value
-		}
 		dialogBinding.apply {
 			imageButtonClose.setOnClickListener { dismiss() }
 			radioGroup.setOnCheckedChangeListener { _, radioButtonId ->
@@ -91,15 +84,15 @@ class DialogAdvancedSearch(
 					when (radioButtonId) {
 						radioButtonMonster.id -> adapters.getValue(FragmentModule.RACE_MONSTER_CARD_VALUES)
 						radioButtonSpell.id -> {
-							addOptions(Option(TYPE, "spell $CARD"))
+							options.append("${TYPE}${EQ}spell ${CARD}$SPLIT")
 							adapters.getValue(FragmentModule.RACE_SPELL_CARD_VALUES)
 						}
 						radioButtonTrap.id -> {
-							addOptions(Option(TYPE, "trap $CARD"))
+							options.append("${TYPE}${EQ}trap ${CARD}$SPLIT")
 							adapters.getValue(FragmentModule.RACE_TRAP_CARD_VALUES)
 						}
 						else -> {
-							addOptions(Option(TYPE, "skill $CARD"))
+							options.append("${TYPE}${EQ}skill ${CARD}$SPLIT")
 							adapters.getValue(FragmentModule.RACE_SKILL_CARD_VALUES)
 						}
 					}
@@ -110,38 +103,34 @@ class DialogAdvancedSearch(
 				)
 			}
 			buttonSubmit.setOnClickListener {
-				addOptions(
-					when (radioGroup.checkedRadioButtonId) {
-						radioButtonMonster.id -> listOf(
-							autoCompleteTextViewTypes,
-							autoCompleteTextViewRaces,
-							autoCompleteTextViewAttribute,
-							autoCompleteTextFormatCard,
-							autoCompleteTextArchetype,
-							autoCompleteTextViewLevelMonster,
-							autoCompleteTextViewAtkMonster,
-							autoCompleteTextViewDefMonster,
-							autoCompleteTextViewScaleMonster
-						)
-						radioButtonSpell.id, radioButtonTrap.id -> listOf(
-							autoCompleteTextViewRaces,
-							autoCompleteTextFormatCard,
-							autoCompleteTextArchetype
-						)
-						else -> listOf(
-							autoCompleteTextViewRaces,
-							autoCompleteTextArchetype
-						)
-					}.filter {
-						it.text.isNotEmpty() && it.text.toString() != FragmentModule.FIRST_ELEMENT_DROP_DOWN_MENU
-					}.map {
-						Option(
-							key = it.hint.toString().lowercase(),
-							value = it.text.toString().lowercase()
-						)
-					}
-				)
-				viewModel.setSearchUseCase(advancedSearchUseCase, Searchable(query = null, options))
+				when (radioGroup.checkedRadioButtonId) {
+					radioButtonMonster.id -> listOf(
+						autoCompleteTextViewTypes,
+						autoCompleteTextViewRaces,
+						autoCompleteTextViewAttribute,
+						autoCompleteTextFormatCard,
+						autoCompleteTextArchetype,
+						autoCompleteTextViewLevelMonster,
+						autoCompleteTextViewAtkMonster,
+						autoCompleteTextViewDefMonster,
+						autoCompleteTextViewScaleMonster
+					)
+					radioButtonSpell.id, radioButtonTrap.id -> listOf(
+						autoCompleteTextViewRaces,
+						autoCompleteTextFormatCard,
+						autoCompleteTextArchetype
+					)
+					else -> listOf(
+						autoCompleteTextViewRaces,
+						autoCompleteTextArchetype
+					)
+				}.forEach {
+					if (it.text.isNotEmpty() && it.text.toString() != FragmentModule.FIRST_ELEMENT_DROP_DOWN_MENU)
+						options.append("${it.hint}${EQ}${it.text}$SPLIT")
+				}
+
+				viewModel.querySearch = "$options".dropLast(1) //delete last ','
+				viewModel.setSearchUseCase(advancedSearchUseCase)
 				dismiss()
 			}
 		}

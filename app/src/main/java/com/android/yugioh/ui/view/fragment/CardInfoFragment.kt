@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -180,7 +181,7 @@ class CardInfoFragment : Fragment() {
 		}
 	}
 	
-	private fun TextView.setIconAndText(stringResource: Int, value: DomainEnum) {
+	private fun TextView.setIconAndText(@StringRes stringResource: Int, value: DomainEnum) {
 		this.apply {
 			setCompoundDrawablesWithIntrinsicBounds(
 				0, 0, 0, value.icon

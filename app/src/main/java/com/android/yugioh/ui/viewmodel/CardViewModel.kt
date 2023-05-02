@@ -8,9 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.MutableLiveData
 import com.android.yugioh.domain.GetRandomCardsOnlineUseCase
-import com.android.yugioh.domain.SearchCardByNameOnlineUseCase
 import com.android.yugioh.domain.SearchCardByOptionsOlineUseCase
-import com.android.yugioh.domain.Searchable
 import com.android.yugioh.domain.UseCaseOnlineSearchBy
 import com.android.yugioh.domain.UseCaseSearchBy
 import com.android.yugioh.domain.data.Card
@@ -32,7 +30,7 @@ class CardViewModel @Inject constructor(
 
 	private var loading =
 		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
-	private var searchable = Searchable(query = null, options = null)
+	var querySearch = String()
 	private val cardData: MutableMap<Card, Drawable> = mutableMapOf()
 	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
 	val currentCard: LiveData<Card> get() = clickedCard
@@ -46,19 +44,17 @@ class CardViewModel @Inject constructor(
 	private val useCaseLiveData: MutableLiveData<UseCaseSearchBy<*>> = MutableLiveData()
 	val canAddFilterList: Boolean
 		get() {
-			return searchable.query.orEmpty()
-				.isNotEmpty() || useCaseLiveData.value is SearchCardByOptionsOlineUseCase
+			return querySearch.isNotEmpty() || useCaseLiveData.value is SearchCardByOptionsOlineUseCase
 		}
 	val isRemoteSearch: Boolean
-		get() = useCaseLiveData.value is SearchCardByNameOnlineUseCase
+		get() = useCaseLiveData.value is UseCaseOnlineSearchBy
 
 	init {
 		getListRandomCards()
 	}
 
 	fun getImageCurrentCard(card: Card): Drawable? = cardData[card]
-	fun setSearchUseCase(useCase: UseCaseSearchBy<*>, query: Searchable) {
-		searchable = query
+	fun setSearchUseCase(useCase: UseCaseSearchBy<*>) {
 		useCaseLiveData.value = useCase
 	}
 
@@ -94,7 +90,7 @@ class CardViewModel @Inject constructor(
 				_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 					copy(loadListState = loadListState.copy(isLoadingGone = useCase !is UseCaseOnlineSearchBy))
 				}
-				useCase(searchable)
+				useCase(querySearch)
 					.onSuccess {
 						_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 							copy(
