@@ -31,9 +31,8 @@ class CardViewModel @Inject constructor(
 	private var loading =
 		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
 	var querySearch = String()
-	private val cardData: MutableMap<Card, Drawable> = mutableMapOf()
-	private val clickedCard: MutableLiveData<Card> = MutableLiveData()
-	val currentCard: LiveData<Card> get() = clickedCard
+	private val cardData: MutableMap<Card, Drawable> by lazy { mutableMapOf() }
+	lateinit var clickedCard: Card
 	private val _fragmentListLiveData = MutableLiveData(
 		ListFragmentState(
 			SearchingState(),
@@ -53,7 +52,7 @@ class CardViewModel @Inject constructor(
 		getListRandomCards()
 	}
 
-	fun getImageCurrentCard(card: Card): Drawable? = cardData[card]
+	fun getImageCurrentCardOrNull(card: Card): Drawable? = cardData[card]
 	fun setSearchUseCase(useCase: UseCaseSearchBy<*>) {
 		useCaseLiveData.value = useCase
 	}
@@ -81,7 +80,7 @@ class CardViewModel @Inject constructor(
 
 	fun onClickCard(card: Card, imageCard: Drawable?) {
 		imageCard?.let { cardData[card] = it }
-		clickedCard.value = card
+		clickedCard = card
 	}
 
 	val filterListLiveData: LiveData<List<Card>> =

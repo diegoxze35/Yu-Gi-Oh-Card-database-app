@@ -129,7 +129,7 @@ class MainCardActivity : AppCompatActivity() {
 			},
 			R.id.cardInfoFragment to {
 				titleBar.apply {
-					text = viewModel.currentCard.value!!.name
+					text = viewModel.clickedCard.name
 					isGone = false
 				}
 				mainBinding.apply {

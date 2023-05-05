@@ -16,7 +16,6 @@ import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import com.android.yugioh.R
 import com.android.yugioh.databinding.FragmentCardInfoBinding
-import com.android.yugioh.domain.data.Card
 import com.android.yugioh.domain.data.MonsterCard
 import com.android.yugioh.domain.data.SkillCard
 import com.android.yugioh.domain.data.SpellTrapCard
@@ -31,7 +30,6 @@ class CardInfoFragment : Fragment() {
 	private val viewModel: CardViewModel by activityViewModels()
 	private var _infoBinding: FragmentCardInfoBinding? = null
 	private val infoBinding: FragmentCardInfoBinding get() = _infoBinding!!
-	private lateinit var card: Card
 	private lateinit var image: Drawable
 	
 	companion object {
@@ -47,8 +45,7 @@ class CardInfoFragment : Fragment() {
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		card = viewModel.currentCard.value!!
-		viewModel.getImageCurrentCard(card)?.let {
+		viewModel.getImageCurrentCardOrNull(viewModel.clickedCard)?.let {
 			image = it
 		}
 	}
@@ -64,14 +61,14 @@ class CardInfoFragment : Fragment() {
 					scrollTo(START_SCROLL, START_SCROLL)
 				}
 			}
-			root.setBackgroundColor(ContextCompat.getColor(requireContext(), card.type.color))
-			textViewId.text = "${card.id}"
-			textViewDescription.text = card.description
-			card.archetype?.let {
+			root.setBackgroundColor(ContextCompat.getColor(requireContext(), viewModel.clickedCard.type.color))
+			textViewId.text = "${viewModel.clickedCard.id}"
+			textViewDescription.text = viewModel.clickedCard.description
+			viewModel.clickedCard.archetype?.let {
 				textViewArchetype.text = it
 			} ?: kotlin.run {
 				textViewArchetype.isGone = true
-				if (card is SpellTrapCard) {
+				if (viewModel.clickedCard is SpellTrapCard) {
 					(ConstraintSet()).run {
 						clone(layoutDataCard)
 						connect(
@@ -90,9 +87,9 @@ class CardInfoFragment : Fragment() {
 					}
 				}
 			}
-			textViewType.setIconAndText(R.string.any_text, card.type)
-			textViewRace.setIconAndText(R.string.any_text, card.race)
-			card.format?.let {
+			textViewType.setIconAndText(R.string.any_text, viewModel.clickedCard.type)
+			textViewRace.setIconAndText(R.string.any_text, viewModel.clickedCard.race)
+			viewModel.clickedCard.format?.let {
 				it.tcg?.banListState?.let { TCG ->
 					textViewBanListTCG.setIconAndText(
 						R.string.tcg_ban_list,
@@ -119,7 +116,7 @@ class CardInfoFragment : Fragment() {
 					connect(
 						textViewDescription.id,
 						ConstraintSet.TOP,
-						if (card is SkillCard)
+						if (viewModel.clickedCard is SkillCard)
 							guidelineDivider1.id
 						else
 							guidelineDivider2.id,
@@ -128,8 +125,8 @@ class CardInfoFragment : Fragment() {
 					applyTo(layoutDataCard)
 				}
 			}
-			if (card is MonsterCard) {
-				val monsterCard = card as MonsterCard
+			if (viewModel.clickedCard is MonsterCard) {
+				val monsterCard = viewModel.clickedCard as MonsterCard
 				textViewAtk.text = "${monsterCard.attack}"
 				monsterCard.defense?.let { textViewDef.text = "$it" }
 					?: textViewDef.apply { isGone = true }
