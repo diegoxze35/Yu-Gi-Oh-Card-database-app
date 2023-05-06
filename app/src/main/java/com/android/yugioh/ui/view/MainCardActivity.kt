@@ -6,12 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageButton
 import android.widget.SearchView
 import android.widget.TextView
 import com.android.yugioh.R
 import com.android.yugioh.ui.viewmodel.CardViewModel
 import androidx.activity.viewModels
-import androidx.annotation.LayoutRes
+import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.navigation.NavController
@@ -48,6 +49,21 @@ class MainCardActivity : AppCompatActivity() {
 			isGone = true
 		}
 	}
+	private val buttonCloseAdvancedSearch by lazy {
+		ImageButton(this).apply {
+			setImageResource(R.drawable.ic_baseline_arrow_back_24)
+			setPadding(24, 0, 24, 0)
+			setBackgroundColor(ContextCompat.getColor(this.context, R.color.main_color_app))
+			setOnClickListener {
+				viewModel.querySearch = ""
+				viewModel.setSearchUseCase(offlineSearchUseCase.apply {
+					from = viewModel.fragmentListLiveData.value!!.loadListState.mainList
+				})
+				this.isGone = true
+				updateToolbar(R.id.listCardFragment)
+			}
+		}
+	}
 	private val colorOK by lazy {
 		ContextCompat.getColor(this, R.color.internet_OK)
 	}
@@ -82,7 +98,10 @@ class MainCardActivity : AppCompatActivity() {
 	}
 
 	private fun initToolbar() {
-		setSupportActionBar(mainBinding.toolbar.also { it.addView(titleBar) })
+		setSupportActionBar(mainBinding.toolbar.also {
+			it.addView(buttonCloseAdvancedSearch)
+			it.addView(titleBar)
+		})
 		supportActionBar?.let { title = null }
 		mainBinding.mainFragmentContainer.getFragment<MainNavHostFragment>().also {
 			navController = it.navController.apply {
@@ -103,7 +122,7 @@ class MainCardActivity : AppCompatActivity() {
 					true
 				}
 
-				override fun onQueryTextChange(newText: String): Boolean = with(viewModel){
+				override fun onQueryTextChange(newText: String): Boolean = with(viewModel) {
 					querySearch = newText
 					if (isRemoteSearch && canAddFilterList) return false
 					setSearchUseCase(
@@ -118,24 +137,40 @@ class MainCardActivity : AppCompatActivity() {
 		}
 	}
 
-	private fun updateToolbar(@LayoutRes destinationId: Int) {
+	private fun updateToolbar(@IdRes destinationId: Int) {
+		val updateTitleBar: (String) -> Unit = { newTitle ->
+			mainBinding.apply {
+				titleBar.apply {
+					text = newTitle
+					isGone = false
+				}
+				searchView.isGone = true
+				iconToolbar.isGone = true
+			}
+		}
 		val fragmentMap = mapOf(
 			R.id.listCardFragment to {
-				mainBinding.apply {
-					titleBar.isGone = true
-					searchView.isGone = false
-					iconToolbar.isGone = false
+				if (!viewModel.isRemoteSearchAdvance)
+					mainBinding.apply {
+						titleBar.isGone = true
+						buttonCloseAdvancedSearch.isGone = true
+						searchView.isGone = false
+						iconToolbar.isGone = false
+						buttonCloseAdvancedSearch.isGone = true
+						/*toolbar.removeView(buttonCloseAdvancedSearch.also { it.isGone = true })*/
+					}
+				else {
+					/*mainBinding.toolbar.addView(
+						buttonCloseAdvancedSearch.also { it.isGone = false }
+					)*/
+					buttonCloseAdvancedSearch.isGone = false
+					updateTitleBar(getString(R.string.results_of_search))
 				}
 			},
 			R.id.cardInfoFragment to {
-				titleBar.apply {
-					text = viewModel.clickedCard.name
-					isGone = false
-				}
-				mainBinding.apply {
-					searchView.isGone = true
-					iconToolbar.isGone = true
-				}
+				updateTitleBar(viewModel.clickedCard.name)
+				buttonCloseAdvancedSearch.isGone = true
+				/*mainBinding.toolbar.removeView(buttonCloseAdvancedSearch.also { it.isGone = true })*/
 			}
 		)
 		fragmentMap[destinationId]?.invoke()
@@ -164,6 +199,7 @@ class MainCardActivity : AppCompatActivity() {
 				navController.navigate(R.id.action_listCardFragment_to_dialogAdvancedSearch)
 				true
 			}
+
 			R.id.my_decks_option -> true
 			else -> super.onOptionsItemSelected(item)
 		}

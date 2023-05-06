@@ -42,11 +42,11 @@ class CardViewModel @Inject constructor(
 	val fragmentListLiveData: LiveData<ListFragmentState> get() = _fragmentListLiveData
 	private val useCaseLiveData: MutableLiveData<UseCaseSearchBy<*>> = MutableLiveData()
 	val canAddFilterList: Boolean
-		get() {
-			return querySearch.isNotEmpty() || useCaseLiveData.value is SearchCardByOptionsOlineUseCase
-		}
+		get() = querySearch.isNotEmpty() || useCaseLiveData.value is SearchCardByOptionsOlineUseCase
 	val isRemoteSearch: Boolean
 		get() = useCaseLiveData.value is UseCaseOnlineSearchBy
+	val isRemoteSearchAdvance: Boolean
+		get() = useCaseLiveData.value is SearchCardByOptionsOlineUseCase
 
 	init {
 		getListRandomCards()
