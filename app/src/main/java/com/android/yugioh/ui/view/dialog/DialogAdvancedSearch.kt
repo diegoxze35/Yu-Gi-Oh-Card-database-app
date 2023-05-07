@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import androidx.core.view.isGone
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.android.yugioh.R
 import com.android.yugioh.databinding.DialogAdvancedSearchBinding
 import com.android.yugioh.di.FragmentModule
@@ -131,7 +132,7 @@ class DialogAdvancedSearch(
 
 				viewModel.querySearch = "$options".dropLast(1) //delete last ','
 				viewModel.setSearchUseCase(advancedSearchUseCase)
-				dismiss()
+				findNavController().navigate(R.id.action_dialogAdvancedSearch_to_listCardFragment)
 			}
 		}
 	}

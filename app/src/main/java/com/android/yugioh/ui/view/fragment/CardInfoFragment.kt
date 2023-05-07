@@ -173,6 +173,9 @@ class CardInfoFragment : Fragment() {
 					startAnimation(
 						AnimationUtils.loadAnimation(context, R.anim.scale_enter_anim)
 					)
+					setOnClickListener {
+
+					}
 				}
 			}
 		}

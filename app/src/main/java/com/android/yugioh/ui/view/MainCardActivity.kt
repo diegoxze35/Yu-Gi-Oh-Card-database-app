@@ -18,6 +18,8 @@ import androidx.core.view.isGone
 import androidx.navigation.NavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
 import com.android.yugioh.databinding.ActivityMainCardBinding
 import com.android.yugioh.domain.SearchCardByNameOfflineUseCase
 import com.android.yugioh.domain.SearchCardByNameOnlineUseCase
@@ -30,6 +32,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainCardActivity : AppCompatActivity() {
+	companion object {
+		private const val DURATION_FADE = 600L
+		private const val DELAY_INTERNET_MESSAGE = 3000L
+	}
 
 	@Inject
 	lateinit var offlineSearchUseCase: SearchCardByNameOfflineUseCase
@@ -84,7 +90,7 @@ class MainCardActivity : AppCompatActivity() {
 						setBackgroundColor(colorOK)
 						postDelayed({
 							isGone = true
-						}, 3000L)
+						}, DELAY_INTERNET_MESSAGE)
 					}
 				} else {
 					textInternetIndicator.text = getString(R.string.not_connected_to_internet)
@@ -148,8 +154,9 @@ class MainCardActivity : AppCompatActivity() {
 				iconToolbar.isGone = true
 			}
 		}
-		val fragmentMap = mapOf(
+		val fragmentMap: Map<Int, () -> Unit> = mapOf(
 			R.id.listCardFragment to {
+				mainBinding.toolbar.isGone = false
 				if (!viewModel.isRemoteSearchAdvance)
 					mainBinding.apply {
 						titleBar.isGone = true
@@ -157,12 +164,8 @@ class MainCardActivity : AppCompatActivity() {
 						searchView.isGone = false
 						iconToolbar.isGone = false
 						buttonCloseAdvancedSearch.isGone = true
-						/*toolbar.removeView(buttonCloseAdvancedSearch.also { it.isGone = true })*/
 					}
 				else {
-					/*mainBinding.toolbar.addView(
-						buttonCloseAdvancedSearch.also { it.isGone = false }
-					)*/
 					buttonCloseAdvancedSearch.isGone = false
 					updateTitleBar(getString(R.string.results_of_search))
 				}
@@ -170,7 +173,14 @@ class MainCardActivity : AppCompatActivity() {
 			R.id.cardInfoFragment to {
 				updateTitleBar(viewModel.clickedCard.name)
 				buttonCloseAdvancedSearch.isGone = true
-				/*mainBinding.toolbar.removeView(buttonCloseAdvancedSearch.also { it.isGone = true })*/
+			},
+			R.id.dialogAdvancedSearch to {
+				TransitionManager.beginDelayedTransition(
+					mainBinding.toolbar, Fade().apply {
+						duration = DURATION_FADE
+					}
+				)
+				mainBinding.toolbar.isGone = true
 			}
 		)
 		fragmentMap[destinationId]?.invoke()

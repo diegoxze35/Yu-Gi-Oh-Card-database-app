@@ -31,5 +31,9 @@
 	<dialog
 		android:id="@+id/dialogAdvancedSearch"
 		android:name="com.android.yugioh.ui.view.dialog.DialogAdvancedSearch"
-		tools:layout="@layout/dialog_advanced_search" />
+		tools:layout="@layout/dialog_advanced_search" >
+		<action
+			android:id="@+id/action_dialogAdvancedSearch_to_listCardFragment"
+			app:destination="@id/listCardFragment" />
+	</dialog>
 </navigation>
