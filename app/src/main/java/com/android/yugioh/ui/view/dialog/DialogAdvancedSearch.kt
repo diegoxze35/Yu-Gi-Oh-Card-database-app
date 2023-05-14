@@ -73,7 +73,7 @@ class DialogAdvancedSearch(
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		dialogBinding.apply {
-			imageButtonClose.setOnClickListener { dismiss() }
+			imageButtonClose.setOnClickListener { findNavController().navigate(R.id.action_dialogAdvancedSearch_to_listCardFragment) }
 			radioGroup.setOnCheckedChangeListener { _, radioButtonId ->
 				options.clear()
 				buttonSubmit.isEnabled = true
@@ -88,10 +88,12 @@ class DialogAdvancedSearch(
 							options.append("${TYPE}${EQ}spell ${CARD}$SPLIT")
 							adapters.getValue(FragmentModule.RACE_SPELL_CARD_VALUES)
 						}
+
 						radioButtonTrap.id -> {
 							options.append("${TYPE}${EQ}trap ${CARD}$SPLIT")
 							adapters.getValue(FragmentModule.RACE_TRAP_CARD_VALUES)
 						}
+
 						else -> {
 							options.append("${TYPE}${EQ}skill ${CARD}$SPLIT")
 							adapters.getValue(FragmentModule.RACE_SKILL_CARD_VALUES)
@@ -116,18 +118,20 @@ class DialogAdvancedSearch(
 						autoCompleteTextViewDefMonster,
 						autoCompleteTextViewScaleMonster
 					)
+
 					radioButtonSpell.id, radioButtonTrap.id -> listOf(
 						autoCompleteTextViewRaces,
 						autoCompleteTextFormatCard,
 						autoCompleteTextArchetype
 					)
+
 					else -> listOf(
-						autoCompleteTextViewRaces,
-						autoCompleteTextArchetype
+						autoCompleteTextViewRaces, autoCompleteTextArchetype
 					)
 				}.forEach {
-					if (it.text.isNotEmpty() && it.text.toString() != FragmentModule.FIRST_ELEMENT_DROP_DOWN_MENU)
-						options.append("${it.hint}${EQ}${it.text}$SPLIT")
+					if (it.text.isNotEmpty() && it.text.toString() != FragmentModule.FIRST_ELEMENT_DROP_DOWN_MENU) options.append(
+						"${it.hint}${EQ}${it.text}$SPLIT"
+					)
 				}
 
 				viewModel.querySearch = "$options".dropLast(1) //delete last ','

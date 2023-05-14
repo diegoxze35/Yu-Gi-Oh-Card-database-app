@@ -10,6 +10,7 @@ import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
 import com.android.yugioh.domain.data.MonsterCard.Companion.AttributeMonster
 import com.android.yugioh.domain.data.SkillCard.Companion.RaceSkill
 import com.android.yugioh.model.data.CardDeserializer
+import com.squareup.picasso.LruCache
 import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
@@ -44,7 +45,9 @@ object FragmentModule {
 
 	@Provides
 	@FragmentScoped
-	fun providePicasso(): Picasso = Picasso.get()
+	fun providePicasso(@ApplicationContext context: Context): Picasso = Picasso.Builder(context)
+		.memoryCache(LruCache(context))
+		.build()
 
 	@Named("archetypes")
 	@Provides

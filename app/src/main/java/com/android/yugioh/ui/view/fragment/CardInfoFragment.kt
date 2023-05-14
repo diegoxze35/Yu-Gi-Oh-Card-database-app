@@ -1,6 +1,5 @@
 package com.android.yugioh.ui.view.fragment
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.android.yugioh.R
 import com.android.yugioh.databinding.FragmentCardInfoBinding
 import com.android.yugioh.domain.data.MonsterCard
@@ -22,34 +22,34 @@ import com.android.yugioh.domain.data.SpellTrapCard
 import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
 import com.android.yugioh.domain.data.DomainEnum
 import com.android.yugioh.ui.viewmodel.CardViewModel
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-class CardInfoFragment : Fragment() {
-	
+class CardInfoFragment(private val picasso: Picasso) : Fragment() {
+
 	private val viewModel: CardViewModel by activityViewModels()
 	private var _infoBinding: FragmentCardInfoBinding? = null
 	private val infoBinding: FragmentCardInfoBinding get() = _infoBinding!!
-	private lateinit var image: Drawable
-	
+
 	companion object {
 		private const val START_SCROLL = 0
 	}
-	
+
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 	): View {
 		_infoBinding = FragmentCardInfoBinding.inflate(layoutInflater, container, false)
+		with(infoBinding.imageViewFullCard) {
+			/*Using Picasso cache*/
+			picasso.load(viewModel.clickedCard.cardImages[0].imageUrl).noFade().into(this)
+			startAnimation(
+				AnimationUtils.loadAnimation(context, R.anim.scale_enter_anim)
+			)
+		}
 		return infoBinding.root
 	}
-	
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		viewModel.getImageCurrentCardOrNull(viewModel.clickedCard)?.let {
-			image = it
-		}
-	}
-	
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		infoBinding.apply {
@@ -61,7 +61,12 @@ class CardInfoFragment : Fragment() {
 					scrollTo(START_SCROLL, START_SCROLL)
 				}
 			}
-			root.setBackgroundColor(ContextCompat.getColor(requireContext(), viewModel.clickedCard.type.color))
+			root.setBackgroundColor(
+				ContextCompat.getColor(
+					requireContext(),
+					viewModel.clickedCard.type.color
+				)
+			)
 			textViewId.text = "${viewModel.clickedCard.id}"
 			textViewDescription.text = viewModel.clickedCard.description
 			viewModel.clickedCard.archetype?.let {
@@ -139,10 +144,12 @@ class CardInfoFragment : Fragment() {
 								text = getString(R.string.level_info, monsterCard.level)
 								R.drawable.level_xyz_monster_s
 							}
+
 							MonsterType.LINK_MONSTER -> {
 								text = getString(R.string.linkval_info, monsterCard.level)
 								R.drawable.linkval_s
 							}
+
 							else -> {
 								text = getString(R.string.level_info, monsterCard.level)
 								R.drawable.level_monster_s
@@ -157,7 +164,7 @@ class CardInfoFragment : Fragment() {
 				} ?: textViewScale.apply {
 					isGone = true
 				}
-				
+
 			} else {
 				textViewAtk.isGone = true
 				textViewDef.isGone = true
@@ -165,22 +172,19 @@ class CardInfoFragment : Fragment() {
 				textViewAttribute.isGone = true
 				textViewScale.isGone = true
 			}
-			
+
 			MainScope().launch {
 				imageViewFullCard.apply {
-					if (this@CardInfoFragment::image.isInitialized)
-						setImageDrawable(image)
-					startAnimation(
-						AnimationUtils.loadAnimation(context, R.anim.scale_enter_anim)
-					)
-					setOnClickListener {
-
+					drawable?.let {
+						setOnClickListener {
+							findNavController().navigate(R.id.action_cardInfoFragment_to_dialogImageCard)
+						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	private fun TextView.setIconAndText(@StringRes stringResource: Int, value: DomainEnum) {
 		this.apply {
 			setCompoundDrawablesWithIntrinsicBounds(
@@ -192,10 +196,10 @@ class CardInfoFragment : Fragment() {
 			)
 		}
 	}
-	
+
 	override fun onDestroyView() {
 		super.onDestroyView()
 		_infoBinding = null
 	}
-	
+
 }

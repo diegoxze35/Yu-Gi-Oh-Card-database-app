@@ -1,7 +1,6 @@
 package com.android.yugioh.ui.view
 
 import android.graphics.Typeface
-import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -186,9 +185,9 @@ class MainCardActivity : AppCompatActivity() {
 		fragmentMap[destinationId]?.invoke()
 	}
 
-	fun startDetailFragment(card: Card, imageCard: Drawable?) {
+	fun startDetailFragment(card: Card) {
 		clearFocus()
-		viewModel.onClickCard(card, imageCard)
+		viewModel.onClickCard(card)
 		navController.navigate(R.id.action_listCardFragment_to_cardInfoFragment)
 	}
 

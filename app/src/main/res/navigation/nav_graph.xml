@@ -27,6 +27,9 @@
 		<action
 			android:id="@+id/action_cardInfoFragment_to_listCardFragment"
 			app:destination="@id/listCardFragment" />
+		<action
+			android:id="@+id/action_cardInfoFragment_to_dialogImageCard"
+			app:destination="@id/dialogImageCard" />
 	</fragment>
 	<dialog
 		android:id="@+id/dialogAdvancedSearch"
@@ -36,4 +39,13 @@
 			android:id="@+id/action_dialogAdvancedSearch_to_listCardFragment"
 			app:destination="@id/listCardFragment" />
 	</dialog>
+	<dialog
+		android:id="@+id/dialogImageCard"
+		android:name="com.android.yugioh.ui.view.dialog.DialogImageCard"
+		android:label="DialogImageCard" >
+		<action
+			android:id="@+id/action_dialogImageCard_to_cardInfoFragment"
+			app:destination="@id/cardInfoFragment" />
+	</dialog>
+
 </navigation>

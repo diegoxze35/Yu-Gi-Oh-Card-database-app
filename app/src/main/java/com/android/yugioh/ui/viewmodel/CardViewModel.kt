@@ -1,6 +1,5 @@
 package com.android.yugioh.ui.viewmodel
 
-import android.graphics.drawable.Drawable
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,7 +30,6 @@ class CardViewModel @Inject constructor(
 	private var loading =
 		CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY, block = {})
 	var querySearch = String()
-	private val cardData: MutableMap<Card, Drawable> by lazy { mutableMapOf() }
 	lateinit var clickedCard: Card
 	private val _fragmentListLiveData = MutableLiveData(
 		ListFragmentState(
@@ -47,14 +45,13 @@ class CardViewModel @Inject constructor(
 		get() = useCaseLiveData.value is UseCaseOnlineSearchBy
 	val isRemoteSearchAdvance: Boolean
 		get() = useCaseLiveData.value is SearchCardByOptionsOlineUseCase
+	fun onClickCard(card: Card) { clickedCard = card }
+	fun setSearchUseCase(useCase: UseCaseSearchBy<*>) {
+		useCaseLiveData.value = useCase
+	}
 
 	init {
 		getListRandomCards()
-	}
-
-	fun getImageCurrentCardOrNull(card: Card): Drawable? = cardData[card]
-	fun setSearchUseCase(useCase: UseCaseSearchBy<*>) {
-		useCaseLiveData.value = useCase
 	}
 
 	fun getListRandomCards() {
@@ -76,11 +73,6 @@ class CardViewModel @Inject constructor(
 				}
 				.onFailure { /*TODO()*/ }
 		}
-	}
-
-	fun onClickCard(card: Card, imageCard: Drawable?) {
-		imageCard?.let { cardData[card] = it }
-		clickedCard = card
 	}
 
 	val filterListLiveData: LiveData<List<Card>> =
