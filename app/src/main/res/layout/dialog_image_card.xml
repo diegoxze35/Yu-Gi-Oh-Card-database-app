@@ -4,5 +4,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="0dp"
 	android:layout_height="0dp"
+	tools:layout_width="410dp"
+	tools:layout_height="580dp"
+	tools:scaleType="centerInside"
 	tools:ignore="ContentDescription"
 	tools:src="@drawable/_90809975"/>

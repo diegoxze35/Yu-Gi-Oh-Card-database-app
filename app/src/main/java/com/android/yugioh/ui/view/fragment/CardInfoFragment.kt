@@ -23,8 +23,6 @@ import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
 import com.android.yugioh.domain.data.DomainEnum
 import com.android.yugioh.ui.viewmodel.CardViewModel
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 
 class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 
@@ -173,13 +171,9 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 				textViewScale.isGone = true
 			}
 
-			MainScope().launch {
-				imageViewFullCard.apply {
-					drawable?.let {
-						setOnClickListener {
-							findNavController().navigate(R.id.action_cardInfoFragment_to_dialogImageCard)
-						}
-					}
+			if(imageViewFullCard.drawable != null) {
+				imageViewFullCard.setOnClickListener {
+					findNavController().navigate(R.id.action_cardInfoFragment_to_dialogImageCard)
 				}
 			}
 		}

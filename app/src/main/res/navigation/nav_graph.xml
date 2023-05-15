@@ -42,6 +42,7 @@
 	<dialog
 		android:id="@+id/dialogImageCard"
 		android:name="com.android.yugioh.ui.view.dialog.DialogImageCard"
+		tools:layout="@layout/dialog_image_card"
 		android:label="DialogImageCard" >
 		<action
 			android:id="@+id/action_dialogImageCard_to_cardInfoFragment"
