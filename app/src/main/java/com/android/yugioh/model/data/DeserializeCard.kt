@@ -4,6 +4,7 @@ import com.android.yugioh.domain.data.Card
 import com.android.yugioh.domain.data.Card.BanListState
 import com.android.yugioh.domain.data.Card.FormatCard
 import com.android.yugioh.domain.data.Card.Image
+import com.android.yugioh.domain.data.DomainEnum
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
@@ -19,10 +20,10 @@ interface DeserializeCard {
 		const val FORMATS_FIELD = "formats"
 	}
 	
-	fun <T : Enum<T>> deserializeStringToEnumValue(value: String, enum: Array<T>): T {
+	fun <T : DomainEnum> deserializeStringToEnumValue(value: String, enum: Array<T>): T {
 		return enum.find {
 			value == it.toString()
-		}!!
+		} ?: enum.last()
 	}
 	
 	fun deserializeListImage(array: JsonArray): List<Image> = array.map {

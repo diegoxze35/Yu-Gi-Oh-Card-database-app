@@ -2,7 +2,7 @@
 	<!-- Base application theme. -->
 	<style name="Theme.YuGiOh" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 		<!-- Primary brand color. -->
-		<item name="colorPrimary">@color/white</item>
+		<item name="colorPrimary">@color/main_color_night</item>
 		<item name="colorPrimaryDark">@color/main_color_night</item>
 		<item name="colorAccent">@color/teal_200</item>
 		<item name="colorOnSecondary">@color/white</item>
@@ -11,6 +11,7 @@
 		<item name="colorSecondary"> @color/teal_200 </item>
 		<item name="android:textColor">@color/white</item>
 		<item name="android:textColorHint">#C3C3C3</item>
+		<item name="android:tintMode">@color/white</item>
 	</style>
 	
 	<style name="DropDownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">

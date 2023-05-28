@@ -40,6 +40,11 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 	): View {
 		_listFragmentBinding = FragmentListCardBinding.inflate(inflater, container, false)
+		with(activity) {
+			mainBinding.searchView.isGone = false
+			mainBinding.iconToolbar.isGone = false
+			supportActionBar?.title = null
+		}
 		return listFragmentBinding.root
 	}
 
@@ -51,7 +56,7 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 			}
 			addOnScrollListener(object : RecyclerView.OnScrollListener() {
 				override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-					activity.clearFocus()
+					activity.mainBinding.searchView.clearFocus()
 					if (viewModel.canAddFilterList) return
 					if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL))
 						viewModel.getListRandomCards()
@@ -89,7 +94,7 @@ class ListCardFragment(private val picasso: Picasso) : Fragment() {
 
 	override fun onResume() {
 		super.onResume()
-		activity.clearFocus()
+		activity.mainBinding.searchView.clearFocus()
 		with(resources.configuration.orientation) {
 			if (this == Configuration.ORIENTATION_LANDSCAPE) listFragmentBinding.recyclerViewCard.layoutManager =
 				GridLayoutManager(context, SPAN_COUNT)

@@ -77,8 +77,18 @@ data class SkillCard(
 			LUMIS_UMBRA("Lumis Umbra"),
 			PARADOX_BROTH("Paradox Broth"),
 			CHUMLEY_HUFFI("Chumley Huffi"),
-			LUMIS_AND_UMB("Lumis and Umb"),
-			EMPTY("");
+			NIGHTSHROUD("Nightshroud"),
+			ABIDOS_THE_TH("Abidos the Th"),
+			TITAN("Titan"),
+			THELONIOUS_VI("Thelonious Vi"),
+			THE_SUPREME_K("The Supreme K"),
+			ADRIAN_GECKO("Adrian Gecko"),
+			DON_ZALOOG("Don Zaloog"),
+			AMNAEL("Amnael"),
+			CAMULA("Camula"),
+			KAGEMARU("Kagemaru"),
+			LUMIS_AND_UMB("Lumis and Umb");
+
 			
 			override fun toString(): String = race
 			

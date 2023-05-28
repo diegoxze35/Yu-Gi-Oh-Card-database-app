@@ -193,6 +193,7 @@ data class MonsterCard(
 			HIGH_DRAGON("High Dragon", R.drawable.high_dragon_s),
 			CELESTIAL_WAR("Celestial War", R.drawable.celestial_war_s),
 			OMEGA_PSYCHIC("Omega Psychic", R.drawable.omega_psychic_s),
+			ILLUSIONIST("Illusionist", R.drawable.illusionist_s),
 			
 			//*OTHER*//*
 			CREATOR_GOD("Creator-God", R.drawable.divine_beast_s);

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -20,21 +21,22 @@ class DialogAdvancedSearch(
 	private val adapters: Map<String, ArrayAdapter<*>>,
 	private val advancedSearchUseCase: SearchCardByOptionsOlineUseCase
 ) : DialogFragment(R.layout.dialog_advanced_search) {
-
+	private val activity: AppCompatActivity by lazy { requireActivity() as AppCompatActivity }
 	private var _dialogBinding: DialogAdvancedSearchBinding? = null
 	private val dialogBinding: DialogAdvancedSearchBinding get() = _dialogBinding!!
 	private val options = StringBuilder()
 	private val viewModel: CardViewModel by activityViewModels()
 
 	companion object {
-		const val TYPE = "type"
-		const val CARD = "card"
+		private const val TYPE = "type"
+		private const val CARD = "card"
 		const val SPLIT = ','
 		const val EQ = '='
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		activity.supportActionBar?.hide()
 		isCancelable = false
 	}
 
@@ -73,7 +75,7 @@ class DialogAdvancedSearch(
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		dialogBinding.apply {
-			imageButtonClose.setOnClickListener { findNavController().navigate(R.id.action_dialogAdvancedSearch_to_listCardFragment) }
+			imageButtonClose.setOnClickListener { activity.supportActionBar?.show(); dismiss() }
 			radioGroup.setOnCheckedChangeListener { _, radioButtonId ->
 				options.clear()
 				buttonSubmit.isEnabled = true
@@ -136,6 +138,7 @@ class DialogAdvancedSearch(
 
 				viewModel.querySearch = "$options".dropLast(1) //delete last ','
 				viewModel.setSearchUseCase(advancedSearchUseCase)
+				activity.supportActionBar?.show()
 				findNavController().navigate(R.id.action_dialogAdvancedSearch_to_listCardFragment)
 			}
 		}

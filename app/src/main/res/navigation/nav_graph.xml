@@ -12,10 +12,10 @@
 		<action
 			android:id="@+id/action_listCardFragment_to_cardInfoFragment"
 			app:destination="@id/cardInfoFragment"
-			app:enterAnim="@anim/alpha_in"
+			app:enterAnim="@anim/transate_enter_anim"
 			app:exitAnim="@anim/alpha_out"
 			app:popEnterAnim="@anim/alpha_in"
-			app:popExitAnim="@anim/alpha_out" />
+			app:popExitAnim="@anim/translate_out_anim" />
 		<action
 			android:id="@+id/action_listCardFragment_to_dialogAdvancedSearch"
 			app:destination="@id/dialogAdvancedSearch" />
@@ -28,8 +28,11 @@
 			android:id="@+id/action_cardInfoFragment_to_listCardFragment"
 			app:destination="@id/listCardFragment" />
 		<action
-			android:id="@+id/action_cardInfoFragment_to_dialogImageCard"
-			app:destination="@id/dialogImageCard" />
+			android:id="@+id/action_cardInfoFragment_to_imageCardFragment"
+			app:destination="@id/imageCardFragment" />
+		<action
+			android:id="@+id/action_cardInfoFragment_to_dialogAdvancedSearch"
+			app:destination="@id/dialogAdvancedSearch" />
 	</fragment>
 	<dialog
 		android:id="@+id/dialogAdvancedSearch"
@@ -39,14 +42,13 @@
 			android:id="@+id/action_dialogAdvancedSearch_to_listCardFragment"
 			app:destination="@id/listCardFragment" />
 	</dialog>
-	<dialog
-		android:id="@+id/dialogImageCard"
-		android:name="com.android.yugioh.ui.view.dialog.DialogImageCard"
-		tools:layout="@layout/dialog_image_card"
-		android:label="DialogImageCard" >
+	<fragment
+		android:id="@+id/imageCardFragment"
+		android:name="com.android.yugioh.ui.view.fragment.CardImageFragment"
+		tools:layout="@layout/fragment_image_card">
 		<action
-			android:id="@+id/action_dialogImageCard_to_cardInfoFragment"
+			android:id="@+id/action_imageCardFragment_to_cardInfoFragment"
 			app:destination="@id/cardInfoFragment" />
-	</dialog>
+	</fragment>
 
 </navigation>

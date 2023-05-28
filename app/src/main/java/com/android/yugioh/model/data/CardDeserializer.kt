@@ -3,15 +3,11 @@ package com.android.yugioh.model.data
 import com.android.yugioh.domain.data.Card
 import com.android.yugioh.domain.data.SpellTrapCard
 import com.android.yugioh.domain.data.MonsterCard
-import com.android.yugioh.domain.data.MonsterCard.Companion.RaceMonsterCard
 import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
-import com.android.yugioh.domain.data.MonsterCard.Companion.AttributeMonster
 import com.android.yugioh.domain.data.SkillCard
-import com.android.yugioh.domain.data.SkillCard.Companion.RaceSkill
 import com.android.yugioh.domain.data.SkillCard.Companion.TypeSkill
 import com.android.yugioh.domain.data.Card.FormatCard
 import com.android.yugioh.domain.data.SpellTrapCard.Companion.TypeSpellTrap
-import com.android.yugioh.domain.data.SpellTrapCard.Companion.RaceSpellTrap
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -36,25 +32,25 @@ object CardDeserializer : JsonDeserializer<Card>, DeserializeCard {
 				TypeSpellTrap.SPELL_CARD.toString(), TypeSpellTrap.TRAP_CARD.toString() ->
 					SpellTrapCard(
 						id, name, deserializeStringToEnumValue(
-							type, TypeSpellTrap.values()
+							type, enumValues()
 						), description, deserializeStringToEnumValue(
-							get("race").asString, RaceSpellTrap.values()
+							get("race").asString, enumValues()
 						), archetype, images, deserializeFormatAndBanInfo(this)
 					)
 				TypeSkill.SKILL_CARD.toString() -> SkillCard(
 					id, name, description, deserializeStringToEnumValue(
-						get("race").asString, RaceSkill.values()
+						get("race").asString, enumValues()
 					), archetype, images
 				)
 				else -> MonsterCard(
 					id,
 					name,
 					deserializeStringToEnumValue(
-						type, MonsterType.values()
+						type, enumValues()
 					),
 					description,
 					deserializeStringToEnumValue(
-						get("race").asString, RaceMonsterCard.values()
+						get("race").asString, enumValues()
 					),
 					archetype,
 					images,
@@ -70,7 +66,7 @@ object CardDeserializer : JsonDeserializer<Card>, DeserializeCard {
 					},
 					get("level")?.asByte ?: get("linkval").asByte,
 					deserializeStringToEnumValue(
-						get("attribute").asString, AttributeMonster.values()
+						get("attribute").asString, enumValues()
 					),
 					get("scale")?.asByte
 				)

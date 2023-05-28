@@ -1,5 +1,6 @@
 package com.android.yugioh.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,9 +44,11 @@ class CardViewModel @Inject constructor(
 		get() = querySearch.isNotEmpty() || useCaseLiveData.value is SearchCardByOptionsOlineUseCase
 	val isRemoteSearch: Boolean
 		get() = useCaseLiveData.value is UseCaseOnlineSearchBy
-	val isRemoteSearchAdvance: Boolean
-		get() = useCaseLiveData.value is SearchCardByOptionsOlineUseCase
-	fun onClickCard(card: Card) { clickedCard = card }
+
+	fun onClickCard(card: Card) {
+		clickedCard = card
+	}
+
 	fun setSearchUseCase(useCase: UseCaseSearchBy<*>) {
 		useCaseLiveData.value = useCase
 	}
@@ -94,7 +97,7 @@ class CardViewModel @Inject constructor(
 						emit(it)
 					}
 					.onFailure {
-						/*TODO()*/
+						Log.d("DESERIALIZER_ERROR", "ERROR IN GET CARDS", it)
 					}
 				_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 					copy(loadListState = loadListState.copy(isLoadingGone = true))

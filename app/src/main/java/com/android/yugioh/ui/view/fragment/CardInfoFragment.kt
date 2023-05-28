@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
@@ -13,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.android.yugioh.R
 import com.android.yugioh.databinding.FragmentCardInfoBinding
@@ -21,6 +21,7 @@ import com.android.yugioh.domain.data.SkillCard
 import com.android.yugioh.domain.data.SpellTrapCard
 import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
 import com.android.yugioh.domain.data.DomainEnum
+import com.android.yugioh.ui.view.MainCardActivity
 import com.android.yugioh.ui.viewmodel.CardViewModel
 import com.squareup.picasso.Picasso
 
@@ -34,6 +35,15 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 		private const val START_SCROLL = 0
 	}
 
+	override fun onCreate(savedInstanceState: Bundle?) {
+		with(requireActivity() as MainCardActivity) {
+			supportActionBar?.title = viewModel.clickedCard.name
+			mainBinding.searchView.isGone = true
+			mainBinding.iconToolbar.isGone = true
+		}
+		super.onCreate(savedInstanceState)
+	}
+
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 	): View {
@@ -41,9 +51,6 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 		with(infoBinding.imageViewFullCard) {
 			/*Using Picasso cache*/
 			picasso.load(viewModel.clickedCard.cardImages[0].imageUrl).noFade().into(this)
-			startAnimation(
-				AnimationUtils.loadAnimation(context, R.anim.scale_enter_anim)
-			)
 		}
 		return infoBinding.root
 	}
@@ -90,8 +97,14 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 					}
 				}
 			}
-			textViewType.setIconAndText(R.string.any_text, viewModel.clickedCard.type)
-			textViewRace.setIconAndText(R.string.any_text, viewModel.clickedCard.race)
+			textViewType.setIconAndText(
+				R.string.any_text,
+				viewModel.clickedCard.type
+			)
+			textViewRace.setIconAndText(
+				R.string.any_text,
+				viewModel.clickedCard.race
+			)
 			viewModel.clickedCard.format?.let {
 				it.tcg?.banListState?.let { TCG ->
 					textViewBanListTCG.setIconAndText(
@@ -129,38 +142,42 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 				}
 			}
 			if (viewModel.clickedCard is MonsterCard) {
-				val monsterCard = viewModel.clickedCard as MonsterCard
-				textViewAtk.text = "${monsterCard.attack}"
-				monsterCard.defense?.let { textViewDef.text = "$it" }
-					?: textViewDef.apply { isGone = true }
-				textViewLevelMonster.apply {
-					lateinit var text: String
-					setCompoundDrawablesWithIntrinsicBounds(
-						0, 0, 0, when (monsterCard.type) {
-							MonsterType.XYZ_MONSTER,
-							MonsterType.XYZ_PENDULUM_EFFECT_MONSTER -> {
-								text = getString(R.string.level_info, monsterCard.level)
-								R.drawable.level_xyz_monster_s
-							}
+				with(viewModel.clickedCard as MonsterCard) {
+					textViewAtk.text = "$attack"
+					defense?.let { textViewDef.text = "$it" } ?: textViewDef.apply { isGone = true }
+					textViewLevelMonster.apply {
+						lateinit var text: String
+						setCompoundDrawablesWithIntrinsicBounds(
+							0, 0, 0, when (type) {
+								MonsterType.XYZ_MONSTER,
+								MonsterType.XYZ_PENDULUM_EFFECT_MONSTER -> {
+									text = getString(R.string.level_info, level)
+									R.drawable.level_xyz_monster_s
+								}
 
-							MonsterType.LINK_MONSTER -> {
-								text = getString(R.string.linkval_info, monsterCard.level)
-								R.drawable.linkval_s
-							}
+								MonsterType.LINK_MONSTER -> {
+									text = getString(R.string.linkval_info, level)
+									R.drawable.linkval_s
+								}
 
-							else -> {
-								text = getString(R.string.level_info, monsterCard.level)
-								R.drawable.level_monster_s
+								else -> {
+									text = getString(R.string.level_info, level)
+									R.drawable.level_monster_s
+								}
 							}
-						}
+						)
+						this.text = text
+					}
+					textViewAttribute.setIconAndText(
+						R.string.any_text,
+						attribute
 					)
-					this.text = text
-				}
-				textViewAttribute.setIconAndText(R.string.any_text, monsterCard.attribute)
-				monsterCard.scaleOfPendulum?.let {
-					textViewScale.text = getString(R.string.pendulum_scale, it)
-				} ?: textViewScale.apply {
-					isGone = true
+					scaleOfPendulum?.let {
+						textViewScale.text = getString(R.string.pendulum_scale, it)
+					}
+						?: textViewScale.apply {
+							isGone = true
+						}
 				}
 
 			} else {
@@ -171,9 +188,17 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 				textViewScale.isGone = true
 			}
 
-			if(imageViewFullCard.drawable != null) {
-				imageViewFullCard.setOnClickListener {
-					findNavController().navigate(R.id.action_cardInfoFragment_to_dialogImageCard)
+			imageViewFullCard.apply {
+				if (drawable != null) {
+					setOnClickListener {
+						findNavController().navigate(
+							R.id.action_cardInfoFragment_to_imageCardFragment,
+							args = null,
+							navOptions = null,
+							navigatorExtras = FragmentNavigatorExtras(this to viewModel.clickedCard.name)
+						)
+					}
+					transitionName = viewModel.clickedCard.name
 				}
 			}
 		}
@@ -195,5 +220,4 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 		super.onDestroyView()
 		_infoBinding = null
 	}
-
 }

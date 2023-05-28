@@ -12,7 +12,7 @@
 		<item name="colorSecondary">@color/teal_200</item>
 		<item name="android:textColor">@color/black</item>
 		<item name="android:textColorHint">#C3C3C3</item>
-		
+		<item name="android:tintMode">@color/white</item>
 	</style>
 	
 	<style name="DropDownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
