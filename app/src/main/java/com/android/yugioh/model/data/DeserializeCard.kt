@@ -20,7 +20,7 @@ interface DeserializeCard {
 		const val FORMATS_FIELD = "formats"
 	}
 	
-	fun <T : DomainEnum> deserializeStringToEnumValue(value: String, enum: Array<T>): T {
+	fun <T : DomainEnum> deserializeStringToEnumValue(value: String, enum: Array<out T>): T {
 		return enum.find {
 			value == it.toString()
 		} ?: enum.last()
@@ -78,5 +78,3 @@ interface DeserializeCard {
 		} else null
 	}
 }
-
-
