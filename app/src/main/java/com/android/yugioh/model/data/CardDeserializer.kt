@@ -6,15 +6,14 @@ import com.android.yugioh.domain.data.MonsterCard
 import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
 import com.android.yugioh.domain.data.SkillCard
 import com.android.yugioh.domain.data.SkillCard.Companion.TypeSkill
-import com.android.yugioh.domain.data.Card.FormatCard
 import com.android.yugioh.domain.data.SpellTrapCard.Companion.TypeSpellTrap
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import java.lang.reflect.Type
 
-object CardDeserializer : JsonDeserializer<Card>, DeserializeCard {
-
+object CardDeserializer : JsonDeserializer<Card> {
+	private val deserializer = Deserializer
 	override fun deserialize(
 		json: JsonElement,
 		typeOfT: Type?,
@@ -26,35 +25,35 @@ object CardDeserializer : JsonDeserializer<Card>, DeserializeCard {
 			val name = get("name").asString
 			val description = get("desc").asString
 			val archetype = get("archetype")?.asString
-			val images = deserializeListImage(get("card_images").asJsonArray)
+			val images = deserializer.deserializeListImage(get("card_images").asJsonArray)
 
 			when (val type = get("type").asString) {
 				TypeSpellTrap.SPELL_CARD.toString(), TypeSpellTrap.TRAP_CARD.toString() ->
 					SpellTrapCard(
-						id, name, deserializeStringToEnumValue(
+						id, name, deserializer.deserializeStringToEnumValue(
 							type, enumValues()
-						), description, deserializeStringToEnumValue(
+						), description, deserializer.deserializeStringToEnumValue(
 							get("race").asString, enumValues()
-						), archetype, images, deserializeFormatAndBanInfo(this)
+						), archetype, images, deserializer.deserializeFormatAndBanInfo(this)
 					)
 				TypeSkill.SKILL_CARD.toString() -> SkillCard(
-					id, name, description, deserializeStringToEnumValue(
+					id, name, description, deserializer.deserializeStringToEnumValue(
 						get("race").asString, enumValues()
 					), archetype, images
 				)
 				else -> MonsterCard(
 					id,
 					name,
-					deserializeStringToEnumValue(
+					deserializer.deserializeStringToEnumValue(
 						type, enumValues()
 					),
 					description,
-					deserializeStringToEnumValue(
+					deserializer.deserializeStringToEnumValue(
 						get("race").asString, enumValues()
 					),
 					archetype,
 					images,
-					if (type != "${MonsterType.TOKEN}") deserializeFormatAndBanInfo(this)
+					if (type != "${MonsterType.TOKEN}") deserializer.deserializeFormatAndBanInfo(this)
 					else null,
 					with(get("atk")) {
 						if (!isJsonNull) return@with asShort
@@ -65,7 +64,7 @@ object CardDeserializer : JsonDeserializer<Card>, DeserializeCard {
 						0
 					},
 					get("level")?.asByte ?: get("linkval").asByte,
-					deserializeStringToEnumValue(
+					deserializer.deserializeStringToEnumValue(
 						get("attribute").asString, enumValues()
 					),
 					get("scale")?.asByte
@@ -73,12 +72,4 @@ object CardDeserializer : JsonDeserializer<Card>, DeserializeCard {
 			}
 		}
 	}
-
-	override fun getFormatList(): List<FormatCard> = listOf(
-		FormatCard.TCG(banListState = null),
-		FormatCard.OCG(banListState = null),
-		FormatCard.RushDuel(banListState = null),
-		FormatCard.DuelLinks(banListState = null)
-	)
-
 }
