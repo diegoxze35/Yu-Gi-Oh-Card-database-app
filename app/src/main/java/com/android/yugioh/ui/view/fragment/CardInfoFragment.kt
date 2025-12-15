@@ -59,7 +59,9 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 		super.onViewCreated(view, savedInstanceState)
 		infoBinding.apply {
 			buttonAddToDeck.setOnClickListener {
-				//Add to deck functionality to be implemented/
+				findNavController().navigate(
+					R.id.action_cardInfoFragment_to_dialogAddToDeck
+				)
 			}
 			mainScroll.apply {
 				post {

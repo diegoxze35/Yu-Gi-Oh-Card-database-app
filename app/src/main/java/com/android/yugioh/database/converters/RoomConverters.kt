@@ -9,14 +9,12 @@ import java.util.Date
 class RoomConverters {
     private val gson = Gson()
 
-    // --- Fechas ---
     @TypeConverter
     fun fromTimestamp(value: Long?): Date? = value?.let { Date(it) }
 
     @TypeConverter
     fun dateToTimestamp(date: Date?): Long? = date?.time
 
-    // --- Lista de Imágenes (JSON) ---
     @TypeConverter
     fun fromImageList(value: String?): List<Card.Image>? {
         if (value == null) return null

@@ -17,12 +17,12 @@ interface DeckDao {
 
 	@Transaction
 	@Query("""
-		SELECT deckId,
-  			SUM(quantity) FILTER (WHERE section = 'MAIN') AS total_main,
-			SUM(quantity) FILTER (WHERE section = 'SIDE') AS total_side
-			FROM deck_card_cross_ref GROUP BY deckId;
+		    SELECT deckId as id, name, created_at,
+        		SUM(CASE WHEN section = 'MAIN' THEN quantity ELSE 0 END) AS total_main, 
+        		SUM(CASE WHEN section = 'SIDE' THEN quantity ELSE 0 END) AS total_side 
+    		FROM deck_card_cross_ref INNER JOIN deck on deckId = deck.id GROUP BY deckId
 			  """)
-	suspend fun getAllDecksMetadata(): Flow<List<DeckMetadata>>
+	fun getAllDecksMetadata(): Flow<List<DeckMetadata>>
 
 	@Transaction
 	@Query("SELECT * FROM deck")
@@ -33,12 +33,12 @@ interface DeckDao {
 
 	@Transaction
 	@Query("SELECT * FROM deck WHERE id = :deckId")
-	suspend fun getDeckWithCards(deckId: Int): DeckWithCards
+	fun getDeckWithCards(deckId: Int): DeckWithCards
 
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
-	suspend fun insertCardToDeck(crossRef: DeckCardCrossRef)
+	fun insertCardToDeck(crossRef: DeckCardCrossRef)
 
 	@Delete
-    suspend fun removeCardFromDeck(crossRef: DeckCardCrossRef)
+    fun removeCardFromDeck(crossRef: DeckCardCrossRef)
 
 }

@@ -19,8 +19,10 @@ import com.android.yugioh.databinding.FragmentDialogAddToDeckBinding
 import com.android.yugioh.domain.data.Card
 import com.android.yugioh.ui.viewmodel.AddToDeckDialogViewModel
 import com.android.yugioh.ui.viewmodel.CardViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class DialogAddToDeck : DialogFragment(R.layout.fragment_dialog_add_to_deck) {
 
 	private val activity: AppCompatActivity by lazy { requireActivity() as AppCompatActivity }
