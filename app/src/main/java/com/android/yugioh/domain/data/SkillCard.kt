@@ -18,11 +18,11 @@ data class SkillCard(
 	
 	companion object {
 		
-		enum class TypeSkill(override val type: String) : Type {
+		enum class TypeSkill(override val typeName: String) : Type {
 			
 			SKILL_CARD("Skill Card");
 			
-			override fun toString(): String = type
+			override fun toString(): String = typeName
 			
 			override val color: Int
 				get() = R.color.color_skill_card
@@ -34,7 +34,7 @@ data class SkillCard(
 				get() = this
 		}
 		
-		enum class RaceSkill(override val race: String) : Race {
+		enum class RaceSkill(override val raceName: String) : Race {
 			
 			DR_VELLIAN_C("Dr. Vellian C"),
 			CHAZZ_PRINCET("Chazz Princet"),
@@ -90,7 +90,7 @@ data class SkillCard(
 			LUMIS_AND_UMB("Lumis and Umb");
 
 			
-			override fun toString(): String = race
+			override fun toString(): String = raceName
 			
 			override val icon: Int
 				get() = R.drawable.race_skill_s

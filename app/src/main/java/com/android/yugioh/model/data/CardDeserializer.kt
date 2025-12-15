@@ -36,38 +36,47 @@ object CardDeserializer : JsonDeserializer<Card> {
 							get("race").asString, enumValues()
 						), archetype, images, deserializer.deserializeFormatAndBanInfo(this)
 					)
+
 				TypeSkill.SKILL_CARD.toString() -> SkillCard(
 					id, name, description, deserializer.deserializeStringToEnumValue(
 						get("race").asString, enumValues()
 					), archetype, images
 				)
+
 				else -> MonsterCard(
-					id,
-					name,
-					deserializer.deserializeStringToEnumValue(
+					id = id,
+					name = name,
+					type = deserializer.deserializeStringToEnumValue(
 						type, enumValues()
 					),
-					description,
-					deserializer.deserializeStringToEnumValue(
+					description = description,
+					race = deserializer.deserializeStringToEnumValue(
 						get("race").asString, enumValues()
 					),
-					archetype,
-					images,
-					if (type != "${MonsterType.TOKEN}") deserializer.deserializeFormatAndBanInfo(this)
+					archetype = archetype,
+					cardImages = images,
+					format = if (type != "${MonsterType.TOKEN}") deserializer.deserializeFormatAndBanInfo(
+						this
+					)
 					else null,
-					with(get("atk")) {
-						if (!isJsonNull) return@with asShort
-						0
+					attack = get("atk")?.let {
+						if (!it.isJsonNull) return@let it.asShort
+						null
 					},
-					get("def")?.let {
+					defense = get("def")?.let {
 						if (!it.isJsonNull) return@let it.asShort
 						0
 					},
-					get("level")?.asByte ?: get("linkval").asByte,
-					deserializer.deserializeStringToEnumValue(
-						get("attribute").asString, enumValues()
-					),
-					get("scale")?.asByte
+					level = get("level")?.let {
+						if (!it.isJsonNull) return@let it.asByte
+						null
+					} ?: get("linkval")?.asByte,
+					attribute = get("attribute")?.let {
+						deserializer.deserializeStringToEnumValue(
+							it.asString, enumValues()
+						)
+					},
+					scaleOfPendulum = get("scale")?.asByte
 				)
 			}
 		}

@@ -7,10 +7,10 @@
 	<!-- Text colors -->
 	<color name="black">#FF000000</color>
 	<color name="white">#FFFFFFFF</color>
-	<color name="myTextColor">#FF000000</color>
+	<color name="text_color">#FF000000</color>
 	<color name="end_color">#E4AD80</color>
-	<color name="internet_OK">#7CF680</color>
-	<color name="internet_not_OK">#F67C7C</color>
+	<color name="color_ok">#7CF680</color>
+	<color name="color_not_ok">#F67C7C</color>
 	
 	<!-- Colors for CardView views according to card -->
 	<color name="color_normal_monster">#D9A35B</color>
@@ -24,6 +24,9 @@
 	<color name="color_tramp_card">#C63690</color>
 	<color name="color_token_card">#BBBBBB</color>
 	<color name="color_skill_card">#7EC8E4</color>
+	
+	<!-- DeckItem Item Card -->
+	<color name="color_deck_card">#FDB859</color>
 	
 	<!-- Colors border card -->
 	<color name="color_border_card1"> #51576E  </color>

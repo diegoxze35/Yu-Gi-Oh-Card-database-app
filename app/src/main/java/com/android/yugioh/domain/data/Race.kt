@@ -2,6 +2,6 @@ package com.android.yugioh.domain.data
 
 interface Race : DomainEnum {
 	
-	val race: String
+	val raceName: String
 	
 }

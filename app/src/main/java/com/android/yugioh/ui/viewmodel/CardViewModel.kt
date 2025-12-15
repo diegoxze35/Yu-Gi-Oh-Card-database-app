@@ -1,12 +1,11 @@
 package com.android.yugioh.ui.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.android.yugioh.domain.GetRandomCardsOnlineUseCase
 import com.android.yugioh.domain.SearchCardByOptionsOlineUseCase
 import com.android.yugioh.domain.UseCaseOnlineSearchBy
@@ -74,7 +73,7 @@ class CardViewModel @Inject constructor(
 						)
 					}
 				}
-				.onFailure { /*TODO()*/ }
+				.onFailure {  }
 		}
 	}
 
@@ -96,9 +95,7 @@ class CardViewModel @Inject constructor(
 						}
 						emit(it)
 					}
-					.onFailure {
-						Log.d("DESERIALIZER_ERROR", "ERROR IN GET CARDS", it)
-					}
+					.onFailure { }
 				_fragmentListLiveData.value = with(_fragmentListLiveData.value!!) {
 					copy(loadListState = loadListState.copy(isLoadingGone = true))
 				}

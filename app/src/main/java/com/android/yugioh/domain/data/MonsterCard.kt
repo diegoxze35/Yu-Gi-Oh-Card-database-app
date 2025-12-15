@@ -11,17 +11,17 @@ data class MonsterCard(
 	override val archetype: String?,
 	override val cardImages: List<Image>,
 	override val format: Format?,
-	val attack: Short,
+	val attack: Short?,
 	val defense: Short?, //link monsters defense is null
-	val level: Byte, /*Represents a level monster or link rating value in link monsters*/
-	val attribute: AttributeMonster,
+	val level: Byte?, /*Represents a level monster, link rating value in link monsters*/
+	val attribute: AttributeMonster?,
 	val scaleOfPendulum: Byte?
 ) : Card(id, name, type, description, race, archetype, cardImages, format) {
 	
 	companion object {
 		
 		enum class MonsterType(
-			override val type: String,
+			override val typeName: String,
 			override val color: Int,
 			override val icon: Int
 		) : Type {
@@ -157,10 +157,10 @@ data class MonsterCard(
 			
 			override val enum: Enum<*> get() = this
 			
-			override fun toString(): String = type
+			override fun toString(): String = typeName
 		}
 		
-		enum class RaceMonsterCard(override val race: String, override val icon: Int) : Race {
+		enum class RaceMonsterCard(override val raceName: String, override val icon: Int) : Race {
 			
 			SPELLCASTER("Spellcaster", R.drawable.spellcaster_s),
 			DRAGON("Dragon", R.drawable.dragon_s),
@@ -200,7 +200,7 @@ data class MonsterCard(
 			
 			override val enum: Enum<*> get() = this
 			
-			override fun toString(): String = race
+			override fun toString(): String = raceName
 			
 		}
 		

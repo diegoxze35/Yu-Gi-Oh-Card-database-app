@@ -17,7 +17,7 @@ data class SpellTrapCard(
 	companion object {
 		
 		enum class TypeSpellTrap(
-			override val type: String,
+			override val typeName: String,
 			override val color: Int,
 			override val icon: Int
 		) : Type {
@@ -25,14 +25,14 @@ data class SpellTrapCard(
 			SPELL_CARD("Spell Card", R.color.color_spell_card, R.drawable.spell_card_s_info),
 			TRAP_CARD("Trap Card", R.color.color_tramp_card, R.drawable.trap_card_s_info);
 			
-			override fun toString(): String = type
+			override fun toString(): String = typeName
 			
 			override val enum: Enum<*>
 				get() = this
 			
 		}
 		
-		enum class RaceSpellTrap(override val race: String, override val icon: Int) : Race {
+		enum class RaceSpellTrap(override val raceName: String, override val icon: Int) : Race {
 			
 			/*Spell and trap*/
 			NORMAL("Normal", R.drawable.normal_s),
@@ -47,7 +47,7 @@ data class SpellTrapCard(
 			/*Only Trap*/
 			COUNTER("Counter", R.drawable.counter_s);
 			
-			override fun toString(): String = race
+			override fun toString(): String = raceName
 			
 			override val enum: Enum<*>
 				get() = this

@@ -57,7 +57,7 @@ object Deserializer : DeserializeCard {
 				it.first.banListState = banResponse?.get(it.second)?.asString?.let { strBan ->
 					deserializeStringToEnumValue(
 						strBan,
-						enumValues()
+						enumValues<Card.BanListState>()
 					)
 				} ?: Card.BanListState.UNLIMITED
 				it.first

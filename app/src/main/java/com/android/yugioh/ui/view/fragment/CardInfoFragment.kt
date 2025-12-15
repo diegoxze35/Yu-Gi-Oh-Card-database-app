@@ -59,7 +59,7 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 		super.onViewCreated(view, savedInstanceState)
 		infoBinding.apply {
 			buttonAddToDeck.setOnClickListener {
-				Toast.makeText(context, "$it", Toast.LENGTH_SHORT).show()
+				//Add to deck functionality to be implemented/
 			}
 			mainScroll.apply {
 				post {
@@ -146,7 +146,7 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 					textViewAtk.text = "$attack"
 					defense?.let { textViewDef.text = "$it" } ?: textViewDef.apply { isGone = true }
 					textViewLevelMonster.apply {
-						lateinit var text: String
+						val text: String
 						setCompoundDrawablesWithIntrinsicBounds(
 							0, 0, 0, when (type) {
 								MonsterType.XYZ_MONSTER,
@@ -168,10 +168,12 @@ class CardInfoFragment(private val picasso: Picasso) : Fragment() {
 						)
 						this.text = text
 					}
-					textViewAttribute.setIconAndText(
-						R.string.any_text,
-						attribute
-					)
+					attribute?.let {
+						textViewAttribute.setIconAndText(
+							R.string.any_text,
+							it
+						)
+					}
 					scaleOfPendulum?.let {
 						textViewScale.text = getString(R.string.pendulum_scale, it)
 					}

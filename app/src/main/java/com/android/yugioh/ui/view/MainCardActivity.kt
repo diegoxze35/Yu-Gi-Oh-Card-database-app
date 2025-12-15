@@ -41,10 +41,10 @@ class MainCardActivity : AppCompatActivity() {
 	}
 	private lateinit var navController: NavController
 	private val colorOK by lazy {
-		ContextCompat.getColor(this, R.color.internet_OK)
+		ContextCompat.getColor(this, R.color.color_ok)
 	}
 	private val colorFailure by lazy {
-		ContextCompat.getColor(this, R.color.internet_not_OK)
+		ContextCompat.getColor(this, R.color.color_not_ok)
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,18 +78,24 @@ class MainCardActivity : AppCompatActivity() {
 
 			override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
 				return when (menuItem.itemId) {
-					R.id.advanced_search_options -> {
-						navController.currentBackStackEntry?.let {
-							navController.navigate(
-								if (it.destination.id == R.id.listCardFragment)
-									R.id.action_listCardFragment_to_dialogAdvancedSearch
-								else
-									R.id.action_cardInfoFragment_to_dialogAdvancedSearch
-							)
-							return true
-						} ?: return false
-					}
-					R.id.my_decks_option -> true
+					R.id.advanced_search_options -> navController.currentBackStackEntry?.let {
+						navController.navigate(
+							if (it.destination.id == R.id.listCardFragment)
+								R.id.action_listCardFragment_to_dialogAdvancedSearch
+							else
+								R.id.action_cardInfoFragment_to_dialogAdvancedSearch
+						)
+						true
+					} ?: false
+					R.id.my_decks_option -> navController.currentBackStackEntry?.let {
+						navController.navigate(
+							if (it.destination.id == R.id.listCardFragment)
+								R.id.action_listCardFragment_to_deckFragment
+							else
+								R.id.action_cardInfoFragment_to_deckFragment
+						)
+						true
+					} ?: false
 					else -> false
 				}
 			}

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-	<color name="main_color_app">#54341D</color>
+	<color name="main_color_app">#432714</color>
 	<color name="main_color_night"> #54341D </color>
 	<color name="teal_200">@color/color_border_card1</color>
 	
-	<color name="myTextColor">#FFFFFFFF</color>
-	<color name="internet_OK">#18A41D</color>
-	<color name="internet_not_OK">#CA1F1F</color>
+	<color name="text_color">#FFFFFFFF</color>
+	<color name="color_ok">#18A41D</color>
+	<color name="color_not_ok">#CA1F1F</color>
 	<color name="end_color"> #FF000000 </color>
 	
 	<color name="color_normal_monster">#B98630</color>
@@ -21,6 +21,8 @@
 	<color name="color_tramp_card">#8D1962</color>
 	<color name="color_token_card"> #7D7D7C </color>
 	<color name="color_skill_card">#3896B9</color>
+	
+	<color name="color_deck_card">#440F02</color>
 	
 	<color name="cardBackground">#002945</color>
 </resources>

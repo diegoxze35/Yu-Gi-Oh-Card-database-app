@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="185dp"
+	android:layout_height="wrap_content"
+	app:contentPadding="12dp"
+	app:cardCornerRadius="12dp"
+	android:layout_margin="4dp"
+	app:strokeColor="@color/main_color_app"
+	app:strokeWidth="2dp"
+	app:cardBackgroundColor="@color/color_deck_card">
+	
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+		
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textAlignment="center"
+			android:textColor="@color/text_color"
+			android:textStyle="bold"
+			android:textSize="22sp"
+			android:singleLine="true"
+			android:scrollHorizontally="true"
+			tools:text="Fluffal Deck" />
+		
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textAlignment="center"
+			android:layout_marginVertical="4dp"
+			android:textSize="18sp"
+			android:textColor="@color/text_color"
+			tools:text="07/06/2024" />
+		
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAlignment="center"
+			android:textStyle="italic|bold"
+			android:textSize="18sp"
+			android:textColor="@color/text_color"
+			tools:background="@color/color_ok"
+			tools:text="It can be used in duels" />
+		
+		<ImageView
+			android:layout_gravity="center"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="@null"
+			android:src="@drawable/my_decks_icon"
+			/>
+	
+	</LinearLayout>
+</com.google.android.material.card.MaterialCardView>
