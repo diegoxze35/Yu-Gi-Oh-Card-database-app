@@ -36,7 +36,7 @@ interface DeckDao {
 	fun getDeckWithCards(deckId: Int): DeckWithCards
 
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
-	fun insertCardToDeck(crossRef: DeckCardCrossRef)
+	suspend fun insertCardToDeck(crossRef: DeckCardCrossRef)
 
 	@Delete
     fun removeCardFromDeck(crossRef: DeckCardCrossRef)

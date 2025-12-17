@@ -40,12 +40,14 @@
 	<string name="add_to_my_deck">Add to my deck</string>
 	
 	<string name="results_of_search">Results</string>
-	<!-- TODO: Remove or change this placeholder text -->
-	<string name="hello_blank_fragment">Hello blank fragment</string>
 	<string name="create_new_deck">Create new deck</string>
 	<string name="your_decks">Your decks</string>
 	<string name="close">Close</string>
 	<string name="cancel">Cancel</string>
 	<string name="deck_s_name">Deck\'s name</string>
 	<string name="no_decks">You don\'t have any decks</string>
+	<string name="create">Create</string>
+	<string name="copies">Copies:</string>
+	<string name="legal_deck">It can be used in duels</string>
+	<string name="illegal_deck">It cannot be used in duels</string>
 </resources>

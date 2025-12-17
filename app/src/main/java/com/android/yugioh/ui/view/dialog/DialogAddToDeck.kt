@@ -24,18 +24,16 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DialogAddToDeck : DialogFragment(R.layout.fragment_dialog_add_to_deck) {
-
-	private val activity: AppCompatActivity by lazy { requireActivity() as AppCompatActivity }
 	private var _dialogBinding: FragmentDialogAddToDeckBinding? = null
 	private val dialogBinding: FragmentDialogAddToDeckBinding get() = _dialogBinding!!
 	private val viewModel: CardViewModel by activityViewModels()
 	private val dialogViewModel: AddToDeckDialogViewModel by viewModels()
 	private lateinit var clickedCard: Card
-	private val deckAdapter = DeckAdapter()
+	private lateinit var deckAdapter: DeckAdapter
+	private var currentCopies = 1
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		activity.supportActionBar?.hide()
 		isCancelable = false
 	}
 
@@ -51,8 +49,15 @@ class DialogAddToDeck : DialogFragment(R.layout.fragment_dialog_add_to_deck) {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		dialog?.window?.setLayout(
+			ViewGroup.LayoutParams.MATCH_PARENT,
+			ViewGroup.LayoutParams.WRAP_CONTENT
+		)
 		setupListeners()
 		dialogBinding.apply {
+			deckAdapter = DeckAdapter { deck ->
+				dialogViewModel.addCardToDeck(deck.id, clickedCard, currentCopies)
+			}
 			rvDecks.adapter = deckAdapter
 			btnClose.setOnClickListener {
 				dismiss()
@@ -102,6 +107,26 @@ class DialogAddToDeck : DialogFragment(R.layout.fragment_dialog_add_to_deck) {
 			dialogBinding.etNewDeckName.text?.clear()
 			hideKeyboard()
 		}
+
+		dialogBinding.btnDecrease.setOnClickListener {
+			if (currentCopies > 1) {
+				currentCopies--
+				updateCounterUI()
+			}
+		}
+
+		dialogBinding.btnIncrease.setOnClickListener {
+			if (currentCopies < 3) {
+				currentCopies++
+				updateCounterUI()
+			}
+		}
+	}
+
+	private fun updateCounterUI() {
+		dialogBinding.tvCountValue.text = currentCopies.toString()
+		dialogBinding.btnDecrease.isEnabled = currentCopies > 1
+		dialogBinding.btnIncrease.isEnabled = currentCopies < 3
 	}
 
 	private fun renderState(state: DeckDialogState) {
@@ -112,7 +137,12 @@ class DialogAddToDeck : DialogFragment(R.layout.fragment_dialog_add_to_deck) {
 			isEmpty: Boolean = false
 		) {
 			dialogBinding.progressBar.isVisible = isLoading
-			dialogBinding.rvDecks.isVisible = isListMode && !isEmpty
+			val showListContent = isListMode && !isEmpty
+			dialogBinding.rvDecks.isVisible = showListContent
+			dialogBinding.tvLabelCopies.isVisible = showListContent
+			dialogBinding.btnDecrease.isVisible = showListContent
+			dialogBinding.tvCountValue.isVisible = showListContent
+			dialogBinding.btnIncrease.isVisible = showListContent
 			dialogBinding.btnAdd.isVisible = isListMode
 			dialogBinding.btnClose.isVisible = isListMode
 			dialogBinding.tvEmptyMessage.isVisible = isEmpty

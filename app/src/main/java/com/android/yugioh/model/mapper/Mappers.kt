@@ -1,10 +1,12 @@
 package com.android.yugioh.model.mapper
 
 import com.android.yugioh.database.entities.CardEntity
+import com.android.yugioh.database.entities.DeckMetadata
 import com.android.yugioh.database.entities.FormatDbInfo
 import com.android.yugioh.domain.data.Card
 import com.android.yugioh.domain.data.Card.BanListState
 import com.android.yugioh.domain.data.Card.FormatCard
+import com.android.yugioh.domain.data.DeckItem
 import com.android.yugioh.domain.data.MonsterCard
 import com.android.yugioh.domain.data.MonsterCard.Companion.AttributeMonster
 import com.android.yugioh.domain.data.MonsterCard.Companion.MonsterType
@@ -88,7 +90,7 @@ fun Card.toEntity(): CardEntity {
 		pendulumScale = null
 	}
 
-	val category = when(this) {
+	val category = when (this) {
 		is MonsterCard -> "MONSTER"
 		is SpellTrapCard -> "SPELL_TRAP"
 		is SkillCard -> "SKILL"
@@ -122,3 +124,10 @@ fun Card.toEntity(): CardEntity {
 		pendulumScale = pendulumScale
 	)
 }
+
+fun DeckMetadata.toDomain() = DeckItem(
+	id = deck.id,
+	name = deck.name,
+	createdAt = deck.createdAt,
+	isLegal = totalMain >= 40 && totalMain <= 60 && totalSide >= 0 && totalSide <= 15,
+)

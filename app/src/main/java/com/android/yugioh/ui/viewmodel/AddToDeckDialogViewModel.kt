@@ -2,8 +2,10 @@ package com.android.yugioh.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.yugioh.database.dao.DeckDao
-import com.android.yugioh.database.entities.DeckEntity
+import com.android.yugioh.domain.AddCardToDeckUseCase
+import com.android.yugioh.domain.CreateNewDeckUseCase
+import com.android.yugioh.domain.GetAllDeckEntitiesUseCase
+import com.android.yugioh.domain.data.Card
 import com.android.yugioh.ui.view.dialog.DeckDialogEvent
 import com.android.yugioh.ui.view.dialog.DeckDialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,19 +17,20 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class AddToDeckDialogViewModel @Inject constructor(
-	private val deckDao: DeckDao
+	getAllDecks: GetAllDeckEntitiesUseCase,
+	private val addCardToDeckUseCase: AddCardToDeckUseCase,
+	private val createNewDeckUseCase: CreateNewDeckUseCase
 ) : ViewModel() {
 
 	private val _isCreatingMode = MutableStateFlow(false)
 	private val _events = Channel<DeckDialogEvent>()
 	val events = _events.receiveAsFlow()
 	val uiState: StateFlow<DeckDialogState> = combine(
-		deckDao.getAllDecks(),
+		getAllDecks(),
 		_isCreatingMode
 	) { decks, isCreating ->
 		when {
@@ -57,14 +60,24 @@ class AddToDeckDialogViewModel @Inject constructor(
 		viewModelScope.launch {
 			_isLoadingSave.value = true
 			try {
-				val newDeck = DeckEntity(name = name, createdAt = Date())
-				deckDao.insertDeck(newDeck)
+				createNewDeckUseCase(name.trim())
 				_events.send(DeckDialogEvent.ShowToast("'$name'"))
 				_isCreatingMode.value = false
 			} catch (e: Exception) {
 				_events.send(DeckDialogEvent.ShowToast("${e.message}"))
 			} finally {
 				_isLoadingSave.value = false
+			}
+		}
+	}
+
+	fun addCardToDeck(deckId: Int, card: Card, quantity: Int = 1) {
+		viewModelScope.launch {
+			try {
+				addCardToDeckUseCase(deckId, card, quantity)
+				_events.send(DeckDialogEvent.ShowToast("Card added to deck successfully"))
+			} catch (e: Exception) {
+				_events.send(DeckDialogEvent.ShowToast("Error: ${e.message}"))
 			}
 		}
 	}

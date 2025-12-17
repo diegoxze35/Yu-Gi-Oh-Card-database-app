@@ -4,22 +4,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:padding="16dp">
 
     <TextView
         android:id="@+id/dialog_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/your_decks"
         android:textSize="20sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -41,25 +42,80 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_decks"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_width="0dp"
+        android:layout_height="320dp"
         android:layout_marginTop="16dp"
         tools:listitem="@layout/item_deck"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/dialog_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_label_copies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/copies"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_decks"
+        app:layout_constraintBottom_toTopOf="@id/btn_add" />
+
+    <Button
+        android:id="@+id/btn_decrease"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:insetLeft="0dp"
+        android:insetRight="0dp"
+        android:padding="0dp"
+        android:text="-"
+        android:textSize="18sp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toEndOf="@id/tv_label_copies"
+        app:layout_constraintBottom_toBottomOf="@id/tv_label_copies"
+        app:layout_constraintTop_toTopOf="@id/tv_label_copies" />
+
+    <TextView
+        android:id="@+id/tv_count_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="12dp"
+        app:layout_constraintStart_toEndOf="@id/btn_decrease"
+        app:layout_constraintBottom_toBottomOf="@id/btn_decrease"
+        app:layout_constraintTop_toTopOf="@id/btn_decrease" />
+
+    <Button
+        android:id="@+id/btn_increase"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:insetLeft="0dp"
+        android:insetRight="0dp"
+        android:padding="0dp"
+        android:text="+"
+        android:textSize="18sp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintStart_toEndOf="@id/tv_count_value"
+        app:layout_constraintBottom_toBottomOf="@id/tv_count_value"
+        app:layout_constraintTop_toTopOf="@id/tv_count_value" />
 
     <Button
         android:id="@+id/btn_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_new_deck"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
+        android:textColor="@color/text_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_close"
         app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintTop_toBottomOf="@id/rv_decks" />
+        app:layout_constraintTop_toBottomOf="@id/tv_label_copies" />
 
     <Button
         android:id="@+id/btn_close"
@@ -67,11 +123,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/close"
-        android:layout_marginTop="16dp"
+        android:textColor="@color/text_color"
+        android:layout_marginTop="24dp"
         app:layout_constraintStart_toEndOf="@id/btn_add"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_decks" />
-
+        app:layout_constraintTop_toBottomOf="@id/tv_label_copies" />
+    
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_new_deck_name"
         android:layout_width="match_parent"
@@ -79,13 +136,14 @@
         android:layout_marginTop="16dp"
         android:hint="@string/deck_s_name"
         android:visibility="gone"
-        tools:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_title">
-
+        app:layout_constraintTop_toBottomOf="@id/dialog_title"
+        tools:visibility="gone">
+        
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_new_deck_name"
+            android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapSentences"
@@ -96,12 +154,13 @@
         android:id="@+id/btn_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/create_new_deck"
+        android:text="@string/create"
         android:enabled="false"
         android:visibility="gone"
+        tools:visibility="gone"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toStartOf="@id/btn_cancel_create"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_cancel_create"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintTop_toBottomOf="@id/til_new_deck_name" />
 

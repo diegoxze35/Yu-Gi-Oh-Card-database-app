@@ -62,7 +62,7 @@
 	<fragment
 		android:id="@+id/deckFragment"
 		android:name="com.android.yugioh.ui.view.fragment.DeckFragment"
-		android:label="fragment_deck"
+		android:label="@string/menu_main_activity_my_decks"
 		tools:layout="@layout/fragment_deck" />
 	<dialog
 		android:id="@+id/dialogAddToDeck"
