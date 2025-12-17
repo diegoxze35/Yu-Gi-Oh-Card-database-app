@@ -50,4 +50,6 @@
 	<string name="copies">Copies:</string>
 	<string name="legal_deck">It can be used in duels</string>
 	<string name="illegal_deck">It cannot be used in duels</string>
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

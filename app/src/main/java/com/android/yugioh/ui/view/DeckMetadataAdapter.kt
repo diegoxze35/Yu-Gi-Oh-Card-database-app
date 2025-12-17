@@ -11,7 +11,7 @@ import com.android.yugioh.R
 import com.android.yugioh.databinding.LayoutItemDeckBinding
 import com.android.yugioh.domain.data.DeckItem
 
-class DeckMetadataAdapter() : ListAdapter<DeckItem, DeckMetadataAdapter.DeckMetadataViewHolder>(
+class DeckMetadataAdapter(private val onClick: (DeckItem) -> Unit) : ListAdapter<DeckItem, DeckMetadataAdapter.DeckMetadataViewHolder>(
 	DiffCallback
 ) {
 
@@ -31,6 +31,9 @@ class DeckMetadataAdapter() : ListAdapter<DeckItem, DeckMetadataAdapter.DeckMeta
 	override fun onBindViewHolder(holder: DeckMetadataViewHolder, position: Int) {
 		val deckItem = getItem(position)
 		holder.bindingItemDeck.apply {
+			root.setOnClickListener {
+				onClick(deckItem)
+			}
 			deckName.text = deckItem.name
 			deckDate.text = deckItem.createdAt.toString()
 			deckLegal.apply {

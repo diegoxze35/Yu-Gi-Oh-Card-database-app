@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.android.yugioh.databinding.FragmentDeckBinding
 import com.android.yugioh.ui.view.DeckMetadataAdapter
 import com.android.yugioh.ui.view.MainCardActivity
@@ -43,7 +44,13 @@ class DeckFragment : Fragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		deckMetadataAdapter = DeckMetadataAdapter()
+		deckMetadataAdapter = DeckMetadataAdapter {
+			val action = DeckFragmentDirections.actionDeckFragmentToDeckCardsFragment(
+				deckName = it.name,
+				deckId = it.id
+			)
+			findNavController().navigate(action)
+		}
 		decksBinding.recyclerViewDecks.adapter = deckMetadataAdapter
 		viewLifecycleOwner.lifecycleScope.launch {
 			viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

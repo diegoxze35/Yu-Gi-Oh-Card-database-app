@@ -26,7 +26,7 @@
 	<fragment
 		android:id="@+id/cardInfoFragment"
 		android:name="com.android.yugioh.ui.view.fragment.CardInfoFragment"
-		tools:layout="@layout/fragment_card_info" >
+		tools:layout="@layout/fragment_card_info">
 		<action
 			android:id="@+id/action_cardInfoFragment_to_listCardFragment"
 			app:destination="@id/listCardFragment" />
@@ -46,7 +46,7 @@
 	<dialog
 		android:id="@+id/dialogAdvancedSearch"
 		android:name="com.android.yugioh.ui.view.dialog.DialogAdvancedSearch"
-		tools:layout="@layout/dialog_advanced_search" >
+		tools:layout="@layout/dialog_advanced_search">
 		<action
 			android:id="@+id/action_dialogAdvancedSearch_to_listCardFragment"
 			app:destination="@id/listCardFragment" />
@@ -63,15 +63,34 @@
 		android:id="@+id/deckFragment"
 		android:name="com.android.yugioh.ui.view.fragment.DeckFragment"
 		android:label="@string/menu_main_activity_my_decks"
-		tools:layout="@layout/fragment_deck" />
+		tools:layout="@layout/fragment_deck">
+		<action
+			android:id="@+id/action_deckFragment_to_deckCardsFragment"
+			app:destination="@id/deckCardsFragment" />
+	</fragment>
 	<dialog
 		android:id="@+id/dialogAddToDeck"
 		android:name="com.android.yugioh.ui.view.dialog.DialogAddToDeck"
-		tools:layout="@layout/fragment_dialog_add_to_deck"
-		android:label="DialogAddToDeck" >
+		android:label="DialogAddToDeck"
+		tools:layout="@layout/fragment_dialog_add_to_deck">
 		<action
 			android:id="@+id/action_dialogAddToDeck_to_cardInfoFragment"
 			app:destination="@id/cardInfoFragment" />
 	</dialog>
+	<fragment
+		android:id="@+id/deckCardsFragment"
+		android:name="com.android.yugioh.ui.view.dialog.DeckCardsFragment"
+		tools:layout="@layout/fragment_deck_cards">
+		<argument
+			android:name="deckId"
+			android:defaultValue="0"
+			app:argType="integer" />
+		<argument
+			android:name="deckName"
+			app:argType="string" />
+		<action
+			android:id="@+id/action_deckCardsFragment_to_cardInfoFragment"
+			app:destination="@id/cardInfoFragment" />
+	</fragment>
 
 </navigation>

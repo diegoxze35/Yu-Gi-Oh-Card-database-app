@@ -4,6 +4,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import com.android.yugioh.domain.SearchCardByOptionsOlineUseCase
+import com.android.yugioh.ui.view.dialog.DeckCardsFragment
 import com.android.yugioh.ui.view.dialog.DialogAdvancedSearch
 import com.android.yugioh.ui.view.fragment.CardImageFragment
 import com.android.yugioh.ui.view.fragment.CardInfoFragment
@@ -27,6 +28,7 @@ class MyFragmentFactory @Inject constructor(
 			DialogAdvancedSearch::class.java.name -> DialogAdvancedSearch(archetypes, adapters, advancedSearchUseCase)
 			CardInfoFragment::class.java.name -> CardInfoFragment(picasso)
 			CardImageFragment::class.java.name -> CardImageFragment(picasso)
+			DeckCardsFragment::class.java.name -> DeckCardsFragment(picasso)
 			else -> super.instantiate(classLoader, className)
 		}
 	}

@@ -33,7 +33,7 @@ interface DeckDao {
 
 	@Transaction
 	@Query("SELECT * FROM deck WHERE id = :deckId")
-	fun getDeckWithCards(deckId: Int): DeckWithCards
+	suspend fun getDeckWithCards(deckId: Int): DeckWithCards
 
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
 	suspend fun insertCardToDeck(crossRef: DeckCardCrossRef)
